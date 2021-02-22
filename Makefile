@@ -25,9 +25,17 @@
 #
 
 ast_test: ast_test.cmo
-	ocamlc -o $@ $(OBJS) ast_test.cmo
+	ocamlc -o $@ $<
 
-tests/%.out: %.in ast_test
+scanner_test: scanner_test.cmo
+	ocamlc -o $@ $<
+
+tests/ast/%.out: %.in ast_test
 	ast_test $< > $@
 
-run_ast_test: $(wildcard tests/*.out)
+tests/scanner/%.out: %.in scanner_test
+	scanner_test $< > $@
+
+run_ast_test: $(wildcard tests/ast/*.out)
+
+run_scanner_test: $(wildcard tests/scanner/*.out)
