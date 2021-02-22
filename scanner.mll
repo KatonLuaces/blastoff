@@ -1,6 +1,6 @@
-(* Ocamllex scanner for MicroC *)
+(* Ocamllex scanner for BLAStoff *)
 
-{ open Microcparse }
+{ open Blastoffparse }
 
 let digit = ['0' - '9']
 let digits = digit+
