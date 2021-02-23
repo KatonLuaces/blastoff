@@ -2,13 +2,12 @@
    check the resulting AST and generate an SAST from it, generate LLVM IR,
    and dump the module *)
 
-type action = Ast | Sast | LLVM_IR | Compile | Parse | Scanner
+type action = Ast | Sast | LLVM_IR | Compile
 
 let () =
   let action = ref Compile in
   let set_action a () = action := a in
   let speclist = [
-    ("-t", Arg.Unit (set_action Scanner), "Print tokens" );
     ("-a", Arg.Unit (set_action Ast), "Print the AST");
     ("-s", Arg.Unit (set_action Sast), "Print the SAST");
     ("-l", Arg.Unit (set_action LLVM_IR), "Print the generated LLVM IR");
@@ -25,8 +24,7 @@ let () =
     Ast -> print_string (Ast.string_of_program ast)
   | _ -> let sast = Semant.check ast in
     match !action with
-    | Parse   -> ()
-    | Ast     -> ()
+    | Ast     -> print_string (Ast.string_of_program ast)
     | Sast    -> print_string (Sast.string_of_sprogram sast)
     | LLVM_IR -> print_string (Llvm.string_of_llmodule (Codegen.translate sast))
     | Compile -> let m = Codegen.translate sast in
