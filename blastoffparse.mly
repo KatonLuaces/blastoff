@@ -6,7 +6,7 @@ open Ast
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA PLUS MINUS TIMES DIVIDE ASSIGN
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
-%token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
+%token RETURN IF ELSE FOR WHILE INT BOOL FLOAT 
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID FLIT
@@ -37,33 +37,26 @@ decls:
  | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
 fdecl:
-   typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { typ = $1;
-	 fname = $2;
-	 formals = List.rev $4;
-	 locals = List.rev $7;
-	 body = List.rev $8 } }
+   ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+     { { fname = $1;
+	 formals = List.rev $3;
+	 locals = List.rev $6;
+	 body = List.rev $7 } }
 
 formals_opt:
     /* nothing */ { [] }
   | formal_list   { $1 }
 
 formal_list:
-    typ ID                   { [($1,$2)]     }
-  | formal_list COMMA typ ID { ($3,$4) :: $1 }
-
-typ:
-    INT   { Int   }
-  | BOOL  { Bool  }
-  | FLOAT { Float }
-  | VOID  { Void  }
+    ID                   { [($1,$2)]     }
+  | formal_list COMMA ID { ($3,$4) :: $1 }
 
 vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   typ ID SEMI { ($1, $2) }
+   ID SEMI { ($1, $2) }
 
 stmt_list:
     /* nothing */  { [] }
@@ -105,6 +98,19 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
+  | LBRACK mat_content RBRACK { $2            }
+
+mat_content:
+    mat_row { $1 }
+  | mat_row SEMI mat_content { [$1; $3] }
+
+mat_row:
+    el { [$1] }
+  | el COMMA mat_row {$1 : $3 }
+  | { Noexpr } (* empty array TODO: test if this is a correct means of adding an empty array *)
+
+el:
+    LITERAL { $1 }
 
 args_opt:
     /* nothing */ { [] }

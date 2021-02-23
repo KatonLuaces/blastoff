@@ -36,10 +36,10 @@ printbig : printbig.c
 # Building the tarball
 
 TESTS = \
-  add1 
+  func1 
 
 FAILS = \
-  assign1 
+  assign
 
 TESTFILES = $(TESTS:%=test-%.blst) $(TESTS:%=test-%.out) \
 	    $(FAILS:%=fail-%.blst) $(FAILS:%=fail-%.err)
