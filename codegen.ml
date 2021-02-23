@@ -36,9 +36,7 @@ let translate (globals, functions) =
   (* Return the LLVM type for a BLAStoff type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
-    | A.Bool  -> i1_t
     | A.Float -> float_t
-    | A.Void  -> void_t
   in
 
   (* Create a map of global variables after creating each *)

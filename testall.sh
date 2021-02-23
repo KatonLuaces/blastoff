@@ -12,16 +12,9 @@ export OCAMLRUNPARAM='p'
 LLI="lli"
 #LLI="/usr/local/opt/llvm/bin/lli"
 
-# Path to the LLVM compiler
-LLC="llc"
-
-# Path to the C compiler
-CC="cc"
-
 # Path to the blastoff compiler.  Usually "./blastoff.native"
 # Try "_build/blastoff.native" if ocamlbuild was unable to create a symbolic link.
 BLASTOFF="./blastoff.native"
-#BLASTOFF="_build/blastoff.native"
 
 # Set time limit for all operations
 ulimit -t 30
@@ -94,12 +87,44 @@ Check() {
 
     generatedfiles=""
 
-    # generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
-    Run "$BLASTOFF" "$1" ">" "${basename}.ll" &&
+    generatedfiles="$generatedfiles ${basename}.ll" &&
+    Run "$BLASTOFF -a" "$1" ">" "${basename}.ll" &&
     # Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     # Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
     # Run "./${basename}.exe" > "${basename}.out" &&
-    Compare ${basename}.out ${reffile}.out ${basename}.diff
+    Compare ${basename}.ll ${reffile}.out ${basename}.diff
+
+    # Report the status and clean up the generated files
+
+    if [ $error -eq 0 ] ; then
+	if [ $keep -eq 0 ] ; then
+	    rm -f $generatedfiles
+	fi
+	echo "OK"
+	echo "###### SUCCESS" 1>&2
+    else
+	echo "###### FAILED" 1>&2
+	globalerror=$error
+    fi
+}
+
+CheckAst() {
+    error=0
+    basename=`echo $1 | sed 's/.*\\///
+                             s/.bl//'`
+    reffile=`echo $1 | sed 's/.bl$//'`
+    basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
+
+    echo -n "$basename..."
+
+    echo 1>&2
+    echo "###### Testing $basename" 1>&2
+
+    generatedfiles=""
+
+    generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
+    RunFail "$BLASTOFF" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
+    Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
 
@@ -168,13 +193,6 @@ LLIFail() {
 
 which "$LLI" >> $globallog || LLIFail
 
-if [ ! -f printbig.o ]
-then
-    echo "Could not find printbig.o"
-    echo "Try \"make printbig.o\""
-    exit 1
-fi
-
 if [ $# -ge 1 ]
 then
     files=$@
@@ -186,14 +204,15 @@ for file in $files
 do
     case $file in
 	*ast-*)
-	    Check $file 2>> $globallog
+	    CheckAst $file 2>> $globallog
 	    ;;
-	# *parser-*)
+	# *fail-*)
 	#     CheckFail $file 2>> $globallog
 	#     ;;
 	*)
 	    echo "unknown file type $file"
-	    globalerror=1
+	    #globalerror=1
+        globalerror=0
 	    ;;
     esac
 done

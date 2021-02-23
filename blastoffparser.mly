@@ -39,7 +39,7 @@ fdecl:
    FDECL ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
      { { fname = $2;
 	 formals = List.rev $4;
-	 locals = List.rev $7
+	 locals = List.rev $7;
 	 body = List.rev $8 } }
 
 vdecl_list:

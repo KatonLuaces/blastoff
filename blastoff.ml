@@ -19,7 +19,7 @@ let () =
   Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
   
   let lexbuf = Lexing.from_channel !channel in
-  let ast = Blastoffparse.program Scanner.token lexbuf in  
+  let ast = Blastoffparser.program Scanner.token lexbuf in
   match !action with
     Ast -> print_string (Ast.string_of_program ast)
   | _ -> let sast = Semant.check ast in

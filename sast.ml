@@ -2,7 +2,7 @@
 
 open Ast
 
-type sexpr = typ * sx
+type sexpr = sx
 and sx =
     SLiteral of int
   | SFliteral of string
@@ -23,19 +23,18 @@ type sstmt =
   | SWhile of sexpr * sstmt
 
 type sfunc_decl = {
-    styp : typ;
     sfname : string;
-    sformals : bind list;
-    slocals : bind list;
+    sformals : string list;
+    slocals : string list;
     sbody : sstmt list;
   }
 
-type sprogram = bind list * sfunc_decl list
+type sprogram = string list * sfunc_decl list
 
 (* Pretty-printing functions *)
 
-let rec string_of_sexpr (t, e) =
-  "(" ^ string_of_typ t ^ " : " ^ (match e with
+let rec string_of_sexpr e =
+  "(" ^ " : " ^ (match e with
     SLiteral(l) -> string_of_int l
   | SBoolLit(true) -> "true"
   | SBoolLit(false) -> "false"
@@ -65,8 +64,7 @@ let rec string_of_sstmt = function
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
 
 let string_of_sfdecl fdecl =
-  string_of_typ fdecl.styp ^ " " ^
-  fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
+  fdecl.sfname ^ "(" ^ String.concat ", " fdecl.sformals ^
   ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.slocals) ^
   String.concat "" (List.map string_of_sstmt fdecl.sbody) ^

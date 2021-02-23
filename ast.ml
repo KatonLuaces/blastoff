@@ -5,6 +5,8 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
+type typ = Int | Float
+
 type expr =
     Literal of int
   | MatrixLit of int list list

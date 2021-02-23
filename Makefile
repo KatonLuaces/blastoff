@@ -26,7 +26,7 @@ blastoff.native :
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff *.ll
+	rm -rf testall.log ocamlllvm *.diff *.ll blastoffparser.ml blastoffparser.mli
 
 # Testing the "printbig" example
 
@@ -41,8 +41,8 @@ TESTS = \
 FAILS = \
   assign
 
-TESTFILES = $(TESTS:%=test-%.blst) $(TESTS:%=test-%.out) \
-	    $(FAILS:%=fail-%.blst) $(FAILS:%=fail-%.err)
+TESTFILES = $(TESTS:%=test-%.bl) $(TESTS:%=test-%.out) \
+	    $(FAILS:%=fail-%.bl) $(FAILS:%=fail-%.out)
 
 TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparse.mly \
 	README scanner.mll semant.ml testall.sh \
