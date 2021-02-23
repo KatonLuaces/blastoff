@@ -26,7 +26,7 @@ blastoff.native :
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff *.ll
+	rm -rf testall.log ocamlllvm *.diff *.ll blastoffparser.ml blastoffparser.mli
 
 # Testing the "printbig" example
 
