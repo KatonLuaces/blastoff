@@ -31,7 +31,7 @@ globalerror=0
 keep=0
 
 Usage() {
-    echo "Usage: testall.sh [options] [.mc files]"
+    echo "Usage: testall.sh [options] [.bl files]"
     echo "-k    Keep intermediate files"
     echo "-h    Print this help"
     exit 1
@@ -80,8 +80,8 @@ RunFail() {
 Check() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
-                             s/.mc//'`
-    reffile=`echo $1 | sed 's/.mc$//'`
+                             s/.bl//'`
+    reffile=`echo $1 | sed 's/.bl$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     echo -n "$basename..."
@@ -91,11 +91,11 @@ Check() {
 
     generatedfiles=""
 
-    generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
+    # generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
     Run "$BLASTOFF" "$1" ">" "${basename}.ll" &&
-    Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
-    Run "./${basename}.exe" > "${basename}.out" &&
+    # Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
+    # Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
+    # Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
@@ -115,8 +115,8 @@ Check() {
 CheckFail() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
-                             s/.mc//'`
-    reffile=`echo $1 | sed 's/.mc$//'`
+                             s/.bl//'`
+    reffile=`echo $1 | sed 's/.bl$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     echo -n "$basename..."
@@ -176,18 +176,18 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/test-*.mc tests/fail-*.mc"
+    files="tests/ast-*.bl tests/parser-*.bl"
 fi
 
 for file in $files
 do
     case $file in
-	*test-*)
+	*ast-*)
 	    Check $file 2>> $globallog
 	    ;;
-	*fail-*)
-	    CheckFail $file 2>> $globallog
-	    ;;
+	# *parser-*)
+	#     CheckFail $file 2>> $globallog
+	#     ;;
 	*)
 	    echo "unknown file type $file"
 	    globalerror=1
