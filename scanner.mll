@@ -20,8 +20,8 @@ let digits = digit+
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
-| '['      [ LBRACK ]
-| ']'      [ RBRACK ]
+| '['      { LBRACK }
+| ']'      { RBRACK }
 | '('      { LPAREN }
 | ')'      { RPAREN }
 | '{'      { LBRACE }
@@ -44,7 +44,9 @@ rule token = parse
 | "!"      { NOT }
 | digits as lxm { LITERAL(int_of_string lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm 
-                            { try
+                            { print_endline "find lxm: ";
+                              print_endline lxm;
+                              try
                                 Hashtbl.find keyword_table lxm 
                               with Not_found ->
                                 ID(lxm)}
