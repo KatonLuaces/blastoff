@@ -8,4 +8,3 @@ Fatal error: exception Parsing.Parse_error
 ###### Testing ast-tokens
 ./blastoff.native tests/ast-tokens.bl > ast-tokens.ll
 Fatal error: exception Parsing.Parse_error
-###### FAILED

@@ -5,6 +5,9 @@
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
 
+# Print intermediary states of parser
+export OCAMLRUNPARAM='p'
+
 # Path to the LLVM interpreter
 LLI="lli"
 #LLI="/usr/local/opt/llvm/bin/lli"
