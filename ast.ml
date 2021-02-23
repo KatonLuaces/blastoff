@@ -5,13 +5,14 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Matrix 
+type typ = Int | Bool | Float | Void
 
 type bind = typ * string
 
 type expr =
     Literal of int
   | Fliteral of string
+  | MatrixLit of int list * (int * int)
   | BoolLit of bool
   | Id of string
   | Binop of expr * op * expr
@@ -86,7 +87,10 @@ let rec string_of_stmt = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
 let string_of_typ = function
-    Matrix -> "matrix"
+    Int -> "int"
+  | Bool -> "bool"
+  | Float -> "float"
+  | Void -> "void"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
@@ -101,9 +105,3 @@ let string_of_fdecl fdecl =
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)
-
-(* UNFINISHED *)
-let ast_test input_file =
-  let lexbuf = Lexing.from_channel input_file in
-  let prog = (*Parser.program*) Scanner.token lexbuf in
-  print_endline(string_of_program prog)

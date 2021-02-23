@@ -1,41 +1,55 @@
+# "make test" Compiles everything and runs the regression tests
+
+.PHONY : test
+test : all testall.sh
+	./testall.sh
+
+# "make all" builds the executable as well as the "printbig" library designed
+# to test linking external code
+
+.PHONY : all
+all : blastoff.native printbig.o
+
+# "make blastoff.native" compiles the compiler
 #
-# Patterns
+# The _tags file controls the operation of ocamlbuild, e.g., by including
+# packages, enabling warnings
 #
+# See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-%.ml: %.mll
-	ocamllex $<
+blastoff.native :
+	opam config exec -- \
+	ocamlbuild -use-ocamlfind blastoff.native
 
-%.ml %.mli: %.mly
-	ocamlyacc $<
+# "make clean" removes all generated files
 
-%.cmo: %.ml %.cmi
-	ocamlc -c $<
+.PHONY : clean
+clean :
+	ocamlbuild -clean
+	rm -rf testall.log ocamlllvm *.diff
 
-%.cmi: %.mli
-	ocamlc -c $<
+# Testing the "printbig" example
 
-#
-# Compilation targets
-#
+printbig : printbig.c
+	cc -o printbig -DBUILD_TEST printbig.c
 
-# TBD
+# Building the tarball
 
-#
-# Tests
-#
+TESTS = \
+  add1 
 
-ast_test: ast_test.cmo
-	ocamlc -o $@ $<
+FAILS = \
+  assign1 
 
-scanner_test: scanner_test.cmo
-	ocamlc -o $@ $<
+TESTFILES = $(TESTS:%=test-%.blst) $(TESTS:%=test-%.out) \
+	    $(FAILS:%=fail-%.blst) $(FAILS:%=fail-%.err)
 
-tests/ast/%.out: %.in ast_test
-	ast_test $< > $@
+TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparse.mly \
+	README scanner.mll semant.ml testall.sh \
+	printbig.c arcade-font.pbm font2c \
+	Dockerfile \
+	$(TESTFILES:%=tests/%) 
 
-tests/scanner/%.out: %.in scanner_test
-	scanner_test $< > $@
-
-run_ast_test: $(wildcard tests/ast/*.out)
-
-run_scanner_test: $(wildcard tests/scanner/*.out)
+blastoff.tar.gz : $(TARFILES)
+	cd .. && tar czf blastoff/blastoff.tar.gz \
+		$(TARFILES:%=blastoff/%)
