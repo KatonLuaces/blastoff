@@ -20,8 +20,8 @@ let digits = digit+
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
-| '['      [ LBRACK ]
-| ']'      [ RBRACK ]
+| '['      { LBRACK }
+| ']'      { RBRACK }
 | '('      { LPAREN }
 | ')'      { RPAREN }
 | '{'      { LBRACE }
