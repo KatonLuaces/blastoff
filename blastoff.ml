@@ -8,7 +8,7 @@ let () =
   let action = ref Compile in
   let set_action a () = action := a in
   let speclist = [
-    ("-t", Arg.Unti (set_action Scanner) "Print tokens" );
+    ("-t", Arg.Unti (set_action Scanner), "Print tokens" );
     ("-a", Arg.Unit (set_action Ast), "Print the AST");
     ("-s", Arg.Unit (set_action Sast), "Print the SAST");
     ("-l", Arg.Unit (set_action LLVM_IR), "Print the generated LLVM IR");
