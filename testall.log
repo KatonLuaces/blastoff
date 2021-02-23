@@ -2,6 +2,12 @@
 
 ###### Testing test-func1
 ./blastoff.native tests/test-func1.blst > test-func1.ll
+State 0: shift to state 1
+State 1: reduce by rule 2
+State 4: read token ID(def)
+Discarding state 4
+Discarding state 1
+No more states to discard
 Fatal error: exception Parsing.Parse_error
 ###### FAILED
 

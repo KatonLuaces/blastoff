@@ -1,4 +1,0 @@
-1c1
-< Fatal error: exception Parsing.Parse_error
----
-> Fatal error: exception Failure("illegal assignment int = bool in i = false")

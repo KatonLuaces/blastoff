@@ -1,6 +1,18 @@
 (* Ocamllex scanner for BLAStoff *)
 
-{ open Blastoffparse }
+{ 
+open Blastoffparse 
+(* http://caml.inria.fr/pub/docs/manual-ocaml-4.00/manual026.html#toc111 *)
+let keyword_table = Hashtbl.create 97
+let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
+                   [ "while", WHILE;
+                     "return", RETURN;
+                     "if", IF;
+                     "else", ELSE;
+                     "for", FOR;
+                     "def", FDECL;
+                     "let", VDECL; ]
+}
 
 let digit = ['0' - '9']
 let digits = digit+
@@ -30,20 +42,12 @@ rule token = parse
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
-| "if"     { IF }
-| "else"   { ELSE }
-| "for"    { FOR }
-| "while"  { WHILE }
-| "return" { RETURN }
-| "int"    { INT }
-| "bool"   { BOOL }
-| "float"  { FLOAT }
-| "void"   { VOID }
-| "true"   { BLIT(true)  }
-| "false"  { BLIT(false) }
 | digits as lxm { LITERAL(int_of_string lxm) }
-| digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lxm { FLIT(lxm) }
-| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']*     as lxm { ID(lxm) }
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm 
+                            { try
+                                Hashtbl.find keyword_table lxm 
+                              with Not_found ->
+                                ID(lxm)}
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
