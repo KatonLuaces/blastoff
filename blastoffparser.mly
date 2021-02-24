@@ -99,11 +99,11 @@ expr:
 
 mat_content:
     mat_row { $1 }
-  | mat_content SEMI mat_row { [$1; $3] }
+  | mat_content SEMI mat_row { $1 :: $3 }
 
 mat_row:
     el { [$1] }
-  | el COMMA mat_row {$1 : $3 }
+  | el COMMA mat_row {$3 :: $1 }
 
 el:
     LITERAL { $1 }
