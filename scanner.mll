@@ -14,7 +14,8 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
                      "let", VDECL; 
                      "I", IMAT;
                      "Zero", ZEROMAT;
-                     "T", TRANSP]
+                     "T", TRANSP;
+                     "range", RANGEMAT]
 }
 
 let digit = ['0' - '9']

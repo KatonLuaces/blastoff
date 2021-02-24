@@ -9,7 +9,10 @@ type typ = Int | Float
 
 type expr =
     Literal of int
-  | MatrixLit of int list list
+  | Matlit of int list list
+  | Imat of int 
+  | Zeromat of int * int
+  | Rangemat of int
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
@@ -40,6 +43,7 @@ let string_of_op = function
     Add -> "+"
   | Sub -> "-"
   | Matmul -> "*"
+  | Elmul -> "@"
   | Equal -> "=="
   | Neq -> "!="
   | Less -> "<"
@@ -48,6 +52,7 @@ let string_of_op = function
   | Geq -> ">="
   | And -> "&&"
   | Or -> "||"
+
 
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
@@ -58,8 +63,11 @@ let rec string_of_expr = function
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")" 
-  | MatrixLit(m) -> let string_of_row row = List.fold_left (fun acc el-> acc ^ (string_of_int el) ^ ",") "" row in
+  | Matlit(m) -> let string_of_row row = List.fold_left (fun acc el-> acc ^ (string_of_int el) ^ ",") "" row in
                         (List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m) ^ "]"
+  | Imat(s) -> "I( " ^ string_of_int s ^ ")"
+  | Rangemat(s) -> "Range( " ^ string_of_int s ^ ")"
+  | Zeromat(n,m) -> "Zero( " ^ string_of_int n ^ ", " ^ string_of_int m ^ ")"
   | Noexpr -> ""
   and string_of_e_with_uop e = let str_expr = string_of_expr e in function
     Neg -> "-" ^ str_expr

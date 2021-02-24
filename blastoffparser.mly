@@ -4,7 +4,7 @@
 open Ast
 %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA PLUS MINUS MATMUL ELMULT ASSIGN FDECL VDECL
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA PLUS MINUS MATMUL ELMULT ASSIGN FDECL VDECL RANGEMAT
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR IMAT ELMAT TRANSP VLINE SEMIRING CONCAT ZEROMAT
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
 %token <int> LITERAL
@@ -37,8 +37,8 @@ decls:
 
 fdecl:
    FDECL ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { fname = $2;
-	 formals = List.rev $4;
+     { { fname = $2; 
+         formals = List.rev $4;
 	 locals = List.rev $7;
 	 body = List.rev $8 } }
 
@@ -93,7 +93,11 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
-  | LBRACK mat_content RBRACK { MatrixLit($2) }
+  | VLINE expr VLINE   { Unop(Size, $2)       }
+  | IMAT LPAREN LITERAL RPAREN { Imat($3)        }
+  | ZEROMAT LPAREN LITERAL COMMA LITERAL RPAREN {Zeromat($3, $5)}
+  | RANGEMAT LPAREN LITERAL RPAREN {Rangemat($3) }
+  | LBRACK mat_content RBRACK { Matlit($2) }
 
 mat_content:
     mat_row { [$1] }

@@ -197,14 +197,14 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/ast-*.bl tests/parser-*.bl"
+    files="tests/test-*.bl"
 fi
 
 for file in $files
 do
     case $file in
-	*ast-*)
-	    CheckAst $file 2>> $globallog
+	*test-*)
+	    Check $file 2>> $globallog
 	    ;;
 	# *fail-*)
 	#     CheckFail $file 2>> $globallog
