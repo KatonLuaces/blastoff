@@ -105,9 +105,6 @@ mat_row:
     LITERAL { [$1] }
   | mat_row COMMA LITERAL {$3 :: $1 }
 
-el:
-    LITERAL { $1 }
-
 args_opt:
     /* nothing */ { [] }
   | args_list  { List.rev $1 }
