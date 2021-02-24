@@ -33,3 +33,5 @@ _opam/
 
 # custom
 testall.log
+.devcontainer/
+blastoffparser.output
