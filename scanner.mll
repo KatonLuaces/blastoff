@@ -1,6 +1,6 @@
 (* Ocamllex scanner for BLAStoff *)
 
-{ open Blastoffparser 
+{ open Blastoffparser
 
 (* http://caml.inria.fr/pub/docs/manual-ocaml-4.00/manual026.html#toc111 *)
 let keyword_table = Hashtbl.create 97
@@ -43,11 +43,11 @@ rule token = parse
 | "||"     { OR }
 | "!"      { NOT }
 | digits as lxm { LITERAL(int_of_string lxm) }
-| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm 
-                            { print_endline "find lxm: ";
-                              print_endline lxm;
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
+                            { (*print_endline "find lxm: ";
+                              print_endline lxm;*)
                               try
-                                Hashtbl.find keyword_table lxm 
+                                Hashtbl.find keyword_table lxm
                               with Not_found ->
                                 ID(lxm)}
 | eof { EOF }
