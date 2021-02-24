@@ -8,7 +8,7 @@ test : all testall.sh
 # to test linking external code
 
 .PHONY : all
-all : blastoff.native printbig.o
+all : blastoff.native
 
 # "make blastoff.native" compiles the compiler
 #
@@ -28,11 +28,6 @@ clean :
 	ocamlbuild -clean
 	rm -rf testall.log ocamlllvm *.diff *.ll blastoffparser.ml blastoffparser.mli
 
-# Testing the "printbig" example
-
-printbig : printbig.c
-	cc -o printbig -DBUILD_TEST printbig.c
-
 # Building the tarball
 
 TESTS = \
@@ -46,7 +41,7 @@ TESTFILES = $(TESTS:%=test-%.bl) $(TESTS:%=test-%.out) \
 
 TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparse.mly \
 	README scanner.mll semant.ml testall.sh \
-	printbig.c arcade-font.pbm font2c \
+	arcade-font.pbm font2c \
 	Dockerfile \
 	$(TESTFILES:%=tests/%) 
 
