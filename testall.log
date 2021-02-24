@@ -61,27 +61,83 @@ State 23: read token ID(a)
 State 23: shift to state 38
 State 38: read token ASSIGN
 State 38: shift to state 57
-State 57: read token ZEROMAT
-State 57: shift to state 32
-State 32: read token LPAREN
-State 32: shift to state 50
-State 50: read token LITERAL(3)
-State 50: shift to state 78
-State 78: read token RPAREN
-Discarding state 78
-Discarding state 50
-Discarding state 32
-Discarding state 57
-Discarding state 38
-Discarding state 23
-Discarding state 21
-Discarding state 19
-Discarding state 17
-Discarding state 15
-Discarding state 12
-Discarding state 10
-Discarding state 5
-Discarding state 4
-Discarding state 1
-No more states to discard
+State 57: read token ID(Zero)
+State 57: shift to state 38
+State 38: read token LPAREN
+State 38: shift to state 56
+State 56: read token LITERAL(3)
+State 56: shift to state 37
+State 37: reduce by rule 24
+State 83: read token COMMA
+State 83: reduce by rule 52
+State 85: shift to state 107
+State 107: read token LITERAL(4)
+State 107: shift to state 37
+State 37: reduce by rule 24
+State 112: read token RPAREN
+State 112: reduce by rule 53
+State 85: reduce by rule 51
+State 84: shift to state 106
+State 106: reduce by rule 39
+State 86: read token SEMI
+State 86: reduce by rule 38
+State 40: shift to state 58
+State 58: reduce by rule 15
+State 39: reduce by rule 14
+State 23: read token ID(size)
+State 23: shift to state 38
+State 38: read token ASSIGN
+State 38: shift to state 57
+State 57: read token VLINE
+State 57: shift to state 31
+State 31: read token ID(M)
+State 31: shift to state 38
+State 38: read token VLINE
+State 38: reduce by rule 25
+State 49: shift to state 77
+State 77: reduce by rule 41
+State 86: read token SEMI
+State 86: reduce by rule 38
+State 40: shift to state 58
+State 58: reduce by rule 15
+State 39: reduce by rule 14
+State 23: read token ID(b)
+State 23: shift to state 38
+State 38: read token ASSIGN
+State 38: shift to state 57
+State 57: read token IMAT
+State 57: shift to state 30
+State 30: read token LPAREN
+State 30: shift to state 48
+State 48: read token LITERAL(3)
+State 48: shift to state 76
+State 76: read token RPAREN
+State 76: shift to state 101
+State 101: reduce by rule 42
+State 86: read token SEMI
+State 86: reduce by rule 38
+State 40: shift to state 58
+State 58: reduce by rule 15
+State 39: reduce by rule 14
+State 23: read token RANGEMAT
+State 23: shift to state 29
+State 29: read token LPAREN
+State 29: shift to state 47
+State 47: read token LITERAL(46)
+State 47: shift to state 75
+State 75: read token RPAREN
+State 75: shift to state 100
+State 100: reduce by rule 44
+State 40: read token SEMI
+State 40: shift to state 58
+State 58: reduce by rule 15
+State 39: reduce by rule 14
+State 23: read token RBRACE
+State 23: shift to state 26
+State 26: reduce by rule 5
+State 9: reduce by rule 4
+State 4: read token EOF
+State 4: shift to state 7
+State 7: reduce by rule 1
+State 3: reduce by rule 54
 ###### SUCCESS
