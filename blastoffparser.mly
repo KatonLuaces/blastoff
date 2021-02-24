@@ -47,7 +47,7 @@ vdecl_list:
  | vdecl_list vdecl {$2 :: $1}
 
 vdecl:
-    VDECL ID {$2};
+    VDECL ID SEMI {$2};
 
 formals_opt:
     /* nothing */ { [] }
