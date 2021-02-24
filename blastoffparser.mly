@@ -43,7 +43,7 @@ fdecl:
 	 body = List.rev $8 } }
 
 vdecl_list:
-    /* nothing */
+    /* nothing */ { [] }
  | vdecl_list vdecl {$2 :: $1}
 
 vdecl:
