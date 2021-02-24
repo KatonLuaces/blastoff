@@ -88,11 +88,11 @@ Check() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll" &&
-    Run "$BLASTOFF -a" "$1" ">" "${basename}.ll" &&
+    Run "$BLASTOFF -a" "$1" # ">" "${basename}.ll" &&
     # Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     # Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
     # Run "./${basename}.exe" > "${basename}.out" &&
-    Compare ${basename}.ll ${reffile}.out ${basename}.diff
+    # Compare ${basename}.ll ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
 
@@ -197,13 +197,13 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/test-*.bl"
+    files="tests/temp-*.bl"
 fi
 
 for file in $files
 do
     case $file in
-	*test-*)
+	*temp-*)
 	    Check $file 2>> $globallog
 	    ;;
 	# *fail-*)
