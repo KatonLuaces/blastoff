@@ -1,9 +1,9 @@
 (* Abstract Syntax Tree and functions for printing it *)
 
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
+type op = Add | Sub | Matmul | Elmul | Equal | Neq | Less | Leq | Greater | Geq |
           And | Or
 
-type uop = Neg | Not
+type uop = Neg | Size | Transp
 
 type typ = Int | Float
 
@@ -39,8 +39,7 @@ type program = string list * func_decl list
 let string_of_op = function
     Add -> "+"
   | Sub -> "-"
-  | Mult -> "*"
-  | Div -> "/"
+  | Matmul -> "*"
   | Equal -> "=="
   | Neq -> "!="
   | Less -> "<"
@@ -50,22 +49,23 @@ let string_of_op = function
   | And -> "&&"
   | Or -> "||"
 
-let string_of_uop = function
-    Neg -> "-"
-  | Not -> "!"
-
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
-  | Unop(o, e) -> string_of_uop o ^ string_of_expr e
+  | Unop(o, e) -> string_of_e_with_uop e o
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")" 
   | MatrixLit(m) -> let string_of_row row = List.fold_left (fun acc el-> acc ^ (string_of_int el) ^ ",") "" row in
                         (List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m) ^ "]"
   | Noexpr -> ""
+  and string_of_e_with_uop e = let str_expr = string_of_expr e in function
+    Neg -> "-" ^ str_expr
+  | Size -> "|" ^ str_expr ^ "|"
+  | Transp -> str_expr ^ "^T"
+
 
 let rec string_of_stmt = function
     Block(stmts) ->

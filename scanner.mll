@@ -11,7 +11,10 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
                      "else", ELSE;
                      "for", FOR;
                      "def", FDECL;
-                     "let", VDECL; ]
+                     "let", VDECL; 
+                     "I", IMAT;
+                     "Zero", ZEROMAT;
+                     "T", TRANSP]
 }
 
 let digit = ['0' - '9']
@@ -20,18 +23,21 @@ let digits = digit+
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
+| '|'      { VLINE }
 | '['      { LBRACK }
 | ']'      { RBRACK }
 | '('      { LPAREN }
 | ')'      { RPAREN }
 | '{'      { LBRACE }
 | '}'      { RBRACE }
+| '#'      { SEMIRING }
+| '@'      { ELMULT   }
+| ':'      { CONCAT }
 | ';'      { SEMI }
 | ','      { COMMA }
 | '+'      { PLUS }
 | '-'      { MINUS }
-| '*'      { TIMES }
-| '/'      { DIVIDE }
+| '*'      { MATMUL }
 | '='      { ASSIGN }
 | "=="     { EQ }
 | "!="     { NEQ }
