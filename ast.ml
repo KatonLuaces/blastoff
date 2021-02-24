@@ -64,7 +64,7 @@ let rec string_of_expr = function
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")" 
   | MatrixLit(m) -> let string_of_row row = List.fold_left (fun acc el-> acc ^ (string_of_int el) ^ ",") "" row in
-                        List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "" m
+                        (List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m) ^ "]"
   | Noexpr -> ""
 
 let rec string_of_stmt = function
