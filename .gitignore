@@ -30,3 +30,6 @@ setup.log
 _opam/
 
 .DS_Store
+
+# custom
+testall.log
