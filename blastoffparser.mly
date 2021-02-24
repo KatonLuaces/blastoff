@@ -98,12 +98,12 @@ expr:
   | LBRACK mat_content RBRACK { MatrixLit($2) }
 
 mat_content:
-    mat_row { $1 }
-  | mat_content SEMI mat_row { $1 :: $3 }
+    mat_row { [$1] }
+  | mat_content SEMI mat_row {$3 :: $1}
 
 mat_row:
-    el { [$1] }
-  | el COMMA mat_row {$3 :: $1 }
+    LITERAL { [$1] }
+  | mat_row COMMA LITERAL {$3 :: $1 }
 
 el:
     LITERAL { $1 }

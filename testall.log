@@ -1,0 +1,45 @@
+/usr/bin/lli
+
+###### Testing ast-comments
+./blastoff.native < tests/ast-comments.bl 2> ast-comments.err >> testall.log
+###### FAILED
+
+###### Testing ast-function
+./blastoff.native < tests/ast-function.bl 2> ast-function.err >> testall.log
+find lxm: 
+def
+find lxm: 
+foo
+find lxm: 
+A
+find lxm: 
+B
+find lxm: 
+return
+diff -b ast-function.err tests/ast-function.err > ast-function.diff
+FAILED ast-function.err differs from tests/ast-function.err
+###### FAILED
+
+###### Testing ast-function_alt
+./blastoff.native < tests/ast-function_alt.bl 2> ast-function_alt.err >> testall.log
+find lxm: 
+def
+find lxm: 
+foo
+find lxm: 
+A
+find lxm: 
+B
+find lxm: 
+return
+diff -b ast-function_alt.err tests/ast-function_alt.err > ast-function_alt.diff
+FAILED ast-function_alt.err differs from tests/ast-function_alt.err
+###### FAILED
+
+###### Testing ast-matrixlit
+./blastoff.native < tests/ast-matrixlit.bl 2> ast-matrixlit.err >> testall.log
+find lxm: 
+M
+diff -b ast-matrixlit.err tests/ast-matrixlit.err > ast-matrixlit.diff
+FAILED ast-matrixlit.err differs from tests/ast-matrixlit.err
+###### FAILED
