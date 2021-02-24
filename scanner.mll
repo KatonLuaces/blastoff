@@ -13,7 +13,7 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
                      "def", FDECL;
                      "let", VDECL; 
                      "I", IMAT;
-                     "Zero", ZEROMAT;
+                     "Zeros", ZEROMAT;
                      "T", TRANSP;
                      "range", RANGEMAT]
 }
