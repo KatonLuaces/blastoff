@@ -80,7 +80,7 @@ Check() {
     reffile=`echo $1 | sed 's/.bl$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
-    echo -n "$basename..."
+    echo "$basename..."
 
     echo 1>&2
     echo "###### Testing $basename" 1>&2
@@ -197,13 +197,13 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/temp-*.bl"
+    files="tests/temp-*.bl tests/test-*.bl"
 fi
 
 for file in $files
 do
     case $file in
-	*temp-*)
+	*test-*)
 	    Check $file 2>> $globallog
 	    ;;
 	# *fail-*)
