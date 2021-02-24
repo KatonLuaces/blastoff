@@ -20,7 +20,16 @@ let () =
     Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
 
     let lexbuf = Lexing.from_channel !channel in
-    let ast = Blastoffparser.program Scanner.token lexbuf in
+    let string_of_token tok = match tok with
+      | Blastoffparser.SEMI -> "SEMI"
+      (*  add more  *)
+      | _ -> "UNK"
+    in
+    let scanner_token_wrapper lb = 
+      let tok = Scanner.token lb in
+      (* Printf.printf "%s " (string_of_token tok); *) tok 
+    in
+    let ast = Blastoffparser.program scanner_token_wrapper lexbuf in
       match !action with
       | Ast     -> print_string (Ast.string_of_program ast)
       | Sast    -> ()

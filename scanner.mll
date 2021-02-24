@@ -11,19 +11,16 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
                      "else", ELSE;
                      "for", FOR;
                      "def", FDECL;
-                     "let", VDECL; 
                      "I", IMAT;
                      "Zeros", ZEROMAT;
                      "T", TRANSP;
                      "range", RANGEMAT]
 }
 
-let digit = ['0' - '9']
-let digits = digit+
-
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
+| '-'?['0'-'9']* as lxm { LITERAL(int_of_string lxm) }
 | '|'      { VLINE }
 | '['      { LBRACK }
 | ']'      { RBRACK }
@@ -49,7 +46,6 @@ rule token = parse
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
-| digits as lxm { LITERAL(int_of_string lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
                             { (*print_endline "find lxm: ";
                               print_endline lxm;*)

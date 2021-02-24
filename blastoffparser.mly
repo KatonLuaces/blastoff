@@ -4,7 +4,7 @@
 open Ast
 %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA PLUS MINUS MATMUL ELMULT ASSIGN FDECL VDECL RANGEMAT
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA PLUS MINUS MATMUL ELMULT ASSIGN FDECL RANGEMAT
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR IMAT ELMAT TRANSP VLINE SEMIRING CONCAT ZEROMAT
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
 %token <int> LITERAL
@@ -28,26 +28,11 @@ open Ast
 %%
 
 program:
-  decls EOF { $1 }
-
-decls:
-   /* nothing */ { ([], [])               }
-  | decls vdecl { (($2 :: fst $1), snd $1) }
-  | decls fdecl { (fst $1, ($2 :: snd $1)) }
+  stmt_list EOF { $1 }
 
 fdecl:
-   FDECL ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { fname = $2; 
-         formals = List.rev $4;
-	 locals = List.rev $7;
-	 body = List.rev $8 } }
-
-vdecl_list:
-    /* nothing */ { [] }
- | vdecl_list vdecl {$2 :: $1}
-
-vdecl:
-    VDECL ID SEMI {$2};
+   FDECL ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+   { Fdecl($2, $4, List.rev $7) }
 
 formals_opt:
     /* nothing */ { [] }
@@ -63,6 +48,7 @@ stmt_list:
 
 stmt:
     expr SEMI                               { Expr $1               }
+  | fdecl                                   { $1                    }
   | RETURN expr_opt SEMI                    { Return $2             }
   | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
