@@ -1,4 +1,7 @@
 def main() {
   M = [1, 2; 3; 4, 5];
   a = Zeros(3);
+  size = |M|;
+  b = I(3);
+  range(46);
 }
