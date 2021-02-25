@@ -1,7 +1,0 @@
-def main() {
-  M = [1, 2; 3; 4, 5];
-  a = Zero(3, 4);
-  size = |M|;
-  b = I(3);
-  range(46);
-}
