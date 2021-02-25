@@ -171,19 +171,19 @@ State 49: read token ID(N)
 State 49: shift to state 21
 State 21: read token CONCAT
 State 21: reduce by rule 20
-State 82: shift to state 61
+State 82: reduce by rule 33
+State 25: shift to state 61
 State 61: read token ID(M)
 State 61: shift to state 21
 State 21: read token ELMUL
 State 21: reduce by rule 20
-State 95: shift to state 48
+State 95: reduce by rule 34
+State 25: shift to state 48
 State 48: read token ID(N)
 State 48: shift to state 21
 State 21: read token SEMI
 State 21: reduce by rule 20
 State 81: reduce by rule 24
-State 95: reduce by rule 34
-State 82: reduce by rule 33
 State 25: shift to state 46
 State 46: reduce by rule 9
 State 24: reduce by rule 8
@@ -249,19 +249,19 @@ State 49: read token ID(N)
 State 49: shift to state 21
 State 21: read token CONCAT
 State 21: reduce by rule 20
-State 82: shift to state 61
+State 82: reduce by rule 33
+State 25: shift to state 61
 State 61: read token ID(M)
 State 61: shift to state 21
 State 21: read token ELMUL
 State 21: reduce by rule 20
-State 95: shift to state 48
+State 95: reduce by rule 34
+State 25: shift to state 48
 State 48: read token ID(N)
 State 48: shift to state 21
 State 21: read token SEMI
 State 21: reduce by rule 20
 State 81: reduce by rule 24
-State 95: reduce by rule 34
-State 82: reduce by rule 33
 State 25: shift to state 46
 State 46: reduce by rule 9
 State 24: reduce by rule 8
