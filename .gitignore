@@ -35,3 +35,6 @@ _opam/
 testall.log
 .devcontainer/
 blastoffparser.output
+
+blastoffparser.ml
+blastoffparser.mli
