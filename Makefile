@@ -1,11 +1,10 @@
-# "make test" Compiles everything and runs the regression tests
+# "make test" compiles everything and runs the regression tests
 
 .PHONY : test
 test : all testall.sh
 	./testall.sh
 
-# "make all" builds the executable as well as the "printbig" library designed
-# to test linking external code
+# "make all" builds the executable
 
 .PHONY : all
 all : blastoff.native
@@ -31,7 +30,7 @@ clean :
 # Building the tarball
 
 TESTS = \
-  func1 
+  func1
 
 FAILS = \
   assign
@@ -43,7 +42,7 @@ TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparser.m
 	README scanner.mll semant.ml testall.sh \
 	arcade-font.pbm font2c \
 	Dockerfile \
-	$(TESTFILES:%=tests/%) 
+	$(TESTFILES:%=tests/%)
 
 blastoff.tar.gz : $(TARFILES)
 	cd .. && tar czf blastoff/blastoff.tar.gz \
