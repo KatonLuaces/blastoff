@@ -1,9 +1,9 @@
 (* Abstract Syntax Tree and functions for printing it *)
 
-type op = Add | Sub | Matmul | Elmul | Equal | Neq | Less | Leq | Greater | Geq |
-          And | Or
+type op = Add | Sub | Matmul | Elmul | Conv | Equal | Neq | Less | Leq | Greater | Geq |
+          And | Or  | Concat | Exponent 
 
-type uop = Neg | Size | Transp
+type uop = Neg | Size | Transp | Plusreduce | Mulreduce
 
 type typ = Int | Float
 
@@ -38,6 +38,7 @@ let string_of_op = function
   | Sub -> "-"
   | Matmul -> "*"
   | Elmul -> "@"
+  | Conv -> "~"
   | Equal -> "=="
   | Neq -> "!="
   | Less -> "<"
@@ -46,6 +47,8 @@ let string_of_op = function
   | Geq -> ">="
   | And -> "&&"
   | Or -> "||"
+  | Exponent -> "^"
+  | Concat -> ":"
 
 
 let rec string_of_expr = function
@@ -67,6 +70,8 @@ let rec string_of_expr = function
     Neg -> "-" ^ str_expr
   | Size -> "|" ^ str_expr ^ "|"
   | Transp -> str_expr ^ "^T"
+  | Plusreduce -> "+%" ^ str_expr
+  | Mulreduce -> "*%" ^ str_expr
 
 
 let rec string_of_stmt = function

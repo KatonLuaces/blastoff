@@ -12,8 +12,8 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
                      "for", FOR;
                      "def", FDECL;
                      "I", IMAT;
-                     "Zero", ZEROMAT;
                      "T", TRANSP;
+                     "Zero", ZEROMAT;
                      "range", RANGEMAT]
 }
 
@@ -29,7 +29,8 @@ rule token = parse
 | '{'      { LBRACE }
 | '}'      { RBRACE }
 | '#'      { SEMIRING }
-| '@'      { ELMULT   }
+| '@'      { ELMUL   }
+| '~'      { CONV }
 | ':'      { CONCAT }
 | ';'      { SEMI }
 | ','      { COMMA }
@@ -37,12 +38,15 @@ rule token = parse
 | '-'      { MINUS }
 | '*'      { MATMUL }
 | '='      { ASSIGN }
+| ['+']['%']     { PLUSREDUCE }
+| ['*']['%']     { MULREDUCE }
 | "=="     { EQ }
 | "!="     { NEQ }
 | '<'      { LT }
 | "<="     { LEQ }
 | ">"      { GT }
 | ">="     { GEQ }
+| "^"      { RAISE }
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
