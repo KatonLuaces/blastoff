@@ -23,9 +23,12 @@ open Ast
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left MATMUL 
-%right NOT
-
+%left MATMUL ELMUL
+%left CONCAT CONV
+%left RAISE 
+%right PLUSREDUCE MULREDUCE 
+%left TRANSP
+%right NOT 
 %%
 
 program:
