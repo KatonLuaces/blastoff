@@ -27,15 +27,9 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
+  | Fdecl of string * string list * stmt list
 
-type func_decl = {
-    fname : string;
-    formals : string list;
-    locals : string list;
-    body : stmt list;
-  }
-
-type program = string list * func_decl list
+type program = stmt list
 
 (* Pretty-printing functions *)
 
@@ -87,17 +81,8 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+  | Fdecl(name, formals, stmts) ->
+      "def " ^ name ^ "(" ^ String.concat ", " formals ^ "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
 
-let string_of_vdecl id =  "let " ^ id ^ ";\n"
-
-let string_of_fdecl fdecl =
-  "def " ^
-  fdecl.fname ^ "(" ^ String.concat ", " fdecl.formals ^
-  ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n"
-
-let string_of_program (vars, funcs) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)
+let string_of_program (stmts) =
+  String.concat "" (List.map string_of_stmt stmts)

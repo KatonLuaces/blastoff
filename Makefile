@@ -17,7 +17,7 @@ all : blastoff.native
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native :
+blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native
 
@@ -39,7 +39,7 @@ FAILS = \
 TESTFILES = $(TESTS:%=test-%.bl) $(TESTS:%=test-%.out) \
 	    $(FAILS:%=fail-%.bl) $(FAILS:%=fail-%.out)
 
-TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparse.mly \
+TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparser.mly \
 	README scanner.mll semant.ml testall.sh \
 	arcade-font.pbm font2c \
 	Dockerfile \
