@@ -5,7 +5,7 @@
 type action = Ast | Sast | LLVM_IR | Compile
 
 let () =
-  try
+    (*try*)
     let action = ref Compile in
     let set_action a () = action := a in
     let speclist = [
@@ -20,11 +20,6 @@ let () =
     Arg.parse speclist (fun filename -> channel := open_in filename) usage_msg;
 
     let lexbuf = Lexing.from_channel !channel in
-    let string_of_token tok = match tok with
-      | Blastoffparser.SEMI -> "SEMI"
-      (*  add more  *)
-      | _ -> "UNK"
-    in
     let scanner_token_wrapper lb = 
       let tok = Scanner.token lb in
       (* Printf.printf "%s " (string_of_token tok); *) tok 
@@ -35,8 +30,10 @@ let () =
       | Sast    -> ()
       | LLVM_IR -> ()
       | Compile -> ()
+  (*
   with
   (*| Not_found -> Printf.printf "NotFoundError: unknown error\n"; from_console map past run*)
   | Parsing.Parse_error -> print_endline "SyntaxError: invalid syntax";
   | Failure explanation -> print_endline explanation;
   (*| Runtime explanation -> Printf.printf "%s\n" explanation; flush stdout; from_console map past run*)
+  *)
