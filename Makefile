@@ -21,6 +21,11 @@ blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native
 
+#build graphblas operations file
+
+graphblas : graphblas.c
+	cc -o graphblas -DRUN_TEST graphblas.c
+
 # "make clean" removes all generated files
 
 .PHONY : clean
@@ -48,3 +53,4 @@ TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparser.m
 blastoff.tar.gz : $(TARFILES)
 	cd .. && tar czf blastoff/blastoff.tar.gz \
 		$(TARFILES:%=blastoff/%)
+
