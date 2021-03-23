@@ -6,7 +6,7 @@
 #  Compile and check the error of each expected-to-fail test
 
 # Print intermediary states of parser
-export OCAMLRUNPARAM='p'
+# export OCAMLRUNPARAM='p'
 
 # Path to the LLVM interpreter
 LLI="lli"
@@ -88,7 +88,7 @@ Check() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll" &&
-    Run "$BLASTOFF -a" "$1" # ">" "${basename}.ll" &&
+    Run "$BLASTOFF -l" "$1" # ">" "${basename}.ll" &&
     # Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     # Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
     # Run "./${basename}.exe" > "${basename}.out" &&

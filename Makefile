@@ -16,14 +16,17 @@ all : blastoff.native
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll
+blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll graphblas.bc
 	opam config exec -- \
-	ocamlbuild -use-ocamlfind blastoff.native
+	ocamlbuild -use-ocamlfind blastoff.native -pkgs llvm.bitreader
 
 #build graphblas operations file
 
 graphblas : graphblas.c
 	cc -o graphblas -DRUN_TEST graphblas.c
+
+graphblas.bc : graphblas.c
+	clang -emit-llvm -o graphblas.bc -c graphblas.c -Wno-varargs
 
 # "make clean" removes all generated files
 
