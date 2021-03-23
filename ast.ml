@@ -27,9 +27,15 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
-  | Fdecl of string * string list * stmt list
 
-type program = stmt list
+type func_decl = {
+    fname: string;
+    formals: string list;
+    body: stmt list;
+}
+
+
+type program = func_decl list * stmt list
 
 (* Pretty-printing functions *)
 
@@ -86,8 +92,10 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | Fdecl(name, formals, stmts) ->
-      "def " ^ name ^ "(" ^ String.concat ", " formals ^ "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
 
-let string_of_program (stmts) =
+let string_of_func func =     
+      "def " ^ func.fname ^ "(" ^ String.concat ", " func.formals ^ ")" ^ "{\n" ^ String.concat "" (List.map string_of_stmt func.body) ^ "}\n"
+
+let string_of_program (funcs, stmts) =
+  String.concat "" (List.map string_of_func funcs) ^ "\n" ^
   String.concat "" (List.map string_of_stmt stmts)

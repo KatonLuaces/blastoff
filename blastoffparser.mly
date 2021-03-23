@@ -32,11 +32,22 @@ open Ast
 %%
 
 program:
-  stmt_list EOF { $1 }
+  units EOF { $1 }
 
+units:
+    /* empty */ { ([], []) }
+    | units fdecl { ($2 :: fst $1 , snd $1)  }
+    | units stmt { (fst $1, $2 :: snd $1) }
+
+fdecl_list:
+    /* nothing */ { [] }
+    | fdecl_list fdecl {$2 :: $1}
+    
 fdecl:
    FDECL ID LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
-   { Fdecl($2, $4, List.rev $7) }
+   { { fname = $2;
+       formals = $4;
+       body = List.rev $7 } }
 
 formals_opt:
     /* nothing */ { [] }
@@ -52,7 +63,6 @@ stmt_list:
 
 stmt:
     expr SEMI                               { Expr $1               }
-  | fdecl                                   { $1                    }
   | RETURN expr_opt SEMI                    { Return $2             }
   | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
