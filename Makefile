@@ -33,7 +33,10 @@ graphblas.bc : graphblas.c
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff *.ll blastoffparser.ml blastoffparser.mli
+	rm -rf testall.log ocamlllvm *.diff *.ll \
+		blastoffparser.ml blastoffparser.mli blastoff.native \
+		graphblas graphblas.bc \
+
 
 # Building the tarball
 
