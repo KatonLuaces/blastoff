@@ -16,7 +16,7 @@ all : blastoff.native
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll graphblas.bc
+blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml graphblas.bc
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native -pkgs llvm.bitreader
 
