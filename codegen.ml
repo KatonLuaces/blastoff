@@ -14,59 +14,75 @@ let translate (functions, statements) =
       | Some t -> t)
   in
   let matmul = L.declare_function "matmul" matrix_t blastoff_module in
-  (* 
-
+  let mat_from_mat_lit = L.declare_function "mat_from_mat_lit" matrix_t blastoff_module in
   let function_decls : (L.llvalue * func_decl) StringMap.t =
-    let function_decl m fdecl = 
+    let function_decl m fdecl =
       let name = fdecl.fname in
       let ftype = matrix_t in
-      StringMap.add name (L.define_function name ftype blastoff_module, fdecl) m in
-    List.fold_left function_decl StringMap.empy functions in
-  let build_function_body fdecl = 
-    let (func, _) = StringMap.find fdecl.name function_decls in
+      StringMap.add name (L.define_function name ftype blastoff_module, fdecl) m
+    in
+    List.fold_left function_decl StringMap.empty functions
+  in
+  let build_function_body fdecl =
+    let func, _ = StringMap.find fdecl.fname function_decls in
     let builder = L.builder_at_end context (L.entry_block func) in
-
-    let local_vars = 
-      let add_formal m n p = 
+    let local_vars =
+      let add_formal m n p =
         L.set_value_name n p;
         let local = L.build_alloca matrix_t n builder in
         ignore (L.build_store p local builder);
-        Stringmap.add n local m
+        StringMap.add n local m
       in
       let add_local m n =
-        let local_var = L.build_alloca matrix_t n builder
-        in StringMap.add local_var m
+        let local_var = L.build_alloca matrix_t n builder in
+        StringMap.add n local_var m
       in
-
-      let formals = List.fold_left2 add_formal StringMap.empty 
-          fdecl.formals (Array.to_list (L.params func)) 
+      let formals =
+        List.fold_left2
+          add_formal
+          StringMap.empty
+          fdecl.formals
+          (Array.to_list (L.params func))
       in
-      List.fold_left add_local formals fdecl fdecl.locals
+      List.fold_left add_local formals []
+      (*TODO: decide in what form locals are necessary*)
     in
     let lookup n = StringMap.find n local_vars in
+    let add_terminal builder instr =
+      match L.block_terminator (L.insertion_block builder) with
+      | Some _ -> ()
+      | None -> ignore (instr builder)
+    in
     let rec build_expr builder = function
-        Matlit  m ->  L.build_call matrix_from_matrix_lit [| m |]
+      | Matlit m -> () (*L.build_call mat_from_mat_lit [| m |]*)
       | Binop (e1, op, e2) -> ()
       | Unop (e1, op) -> ()
-      | Assign (v , e1) -> ()
+      | Assign (v, e1) -> ()
       | Call (f, exprs) -> ()
     in
-
     let rec build_stmt builder = function
-        Block sl -> List.fold_left stmt builder
-      | Expr e -> ignore(build_expr builder e); builder
-      | Return e -> ignore(L.build_ret (build_expr builder e) builder); builder
-      | If (pred, thn, els) -> (); builder
-      | For  (e1, e2, e3, body) -> (); builder
-      | While (pred, body) -> (); builder
+      | Block sl -> List.fold_left build_stmt builder sl
+      | Expr e ->
+        ignore (build_expr builder e);
+        builder
+      (*
+      | Return e ->
+        ignore (L.build_ret (build_expr builder e) builder);
+        builder
+      | If (pred, thn, els) ->
+        ();
+        builder
+      | For (e1, e2, e3, body) ->
+        ();
+        builder
+      | While (pred, body) ->
+        ();
+        builder
+        *)
     in
-    let builder = stmt builder (Block fdecl.body) in
-    let add_terminal builder instr = 
-      match L.block_terminator (L.insertion_block builder) 
-      with Some _ -> ()
-         | None -> ignore (instr builder) 
-    in
-    List.iter build_function_body functions;
-    *)
+    let builder = build_stmt builder (Block fdecl.body) in
+    add_terminal builder (L.build_ret (L.const_int matrix_t 0))
+  in
+  List.iter build_function_body functions;
   blastoff_module
 ;;
