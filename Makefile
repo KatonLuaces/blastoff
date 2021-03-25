@@ -7,7 +7,7 @@ test : all testall.sh
 # "make all" builds the executable
 
 .PHONY : all
-all : blastoff.native
+all : blastoff.native graphblas.o
 
 # "make blastoff.native" compiles the compiler
 #
@@ -16,7 +16,7 @@ all : blastoff.native
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml graphblas.bc
+blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml 
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native -pkgs llvm.bitreader
 
@@ -25,17 +25,14 @@ blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml g
 graphblas : graphblas.c
 	cc -o graphblas -DRUN_TEST graphblas.c
 
-graphblas.bc : graphblas.c
-	clang -emit-llvm -o graphblas.bc -c graphblas.c -Wno-varargs
-
 # "make clean" removes all generated files
 
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff *.ll \
+	rm -rf testall.log ocamlllvm *.diff *.ll *.s *.o *.exe \
 		blastoffparser.ml blastoffparser.mli blastoff.native \
-		graphblas graphblas.bc \
+		graphblas graphblas.o \
 
 
 # Building the tarball
