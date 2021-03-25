@@ -16,7 +16,7 @@ all : blastoff.native graphblas.o
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml 
+blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml graphblas.bc
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native -pkgs llvm.bitreader
 
@@ -24,6 +24,9 @@ blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml
 
 graphblas : graphblas.c
 	cc -o graphblas -DRUN_TEST graphblas.c
+
+graphblas.bc : graphblas.c
+	clang -emit-llvm -o graphblas.bc -c graphblas.c -Wno-varargs
 
 # "make clean" removes all generated files
 
