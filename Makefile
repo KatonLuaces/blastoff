@@ -35,7 +35,7 @@ clean :
 	ocamlbuild -clean
 	rm -rf testall.log ocamlllvm *.diff *.ll *.s *.o *.exe \
 		blastoffparser.ml blastoffparser.mli blastoff.native \
-		graphblas graphblas.o \
+		graphblas graphblas.o graphblas.bc \
 
 
 # Building the tarball
