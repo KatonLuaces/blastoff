@@ -38,3 +38,5 @@ blastoffparser.output
 
 blastoffparser.ml
 blastoffparser.mli
+
+graphblas.bc
