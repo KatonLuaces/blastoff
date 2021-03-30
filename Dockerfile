@@ -30,6 +30,12 @@ RUN opam install -y \
     merlin \
     ocamlformat
 
+COPY GraphBLAS.h /usr/local/include/GraphBLAS.h
+COPY libgraphblas.so.4.0.3 /usr/local/lib/libgraphblas.so.4.0.3
+RUN ln -s /usr/local/lib/libgraphblas.so.4 /usr/local/lib/libgraphblas.so
+RUN ln -s /usr/local/lib/libgraphblas.so.4.0.3 /usr/local/lib/libgraphblas.so.4
+ENV LD_LIBRARY_PATH=/usr/local/lib
+
 WORKDIR /root
 
 ENTRYPOINT ["opam", "config", "exec", "--"]
