@@ -42,3 +42,5 @@ blastoffparser.ml
 blastoffparser.mli
 
 graphblas.bc
+
+.vscode
