@@ -107,8 +107,6 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
 int main(int argc, char** argv){
     struct matrix *A, *B, *C;
     
-    matrix_lib_init();
-
     A = matrix_create(3, 4);
     matrix_set_elem(A, 1, 0, 0);
     matrix_set_elem(A, 2, 1, 2);
