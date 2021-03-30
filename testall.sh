@@ -90,7 +90,7 @@ Check() {
     generatedfiles="$generatedfiles ${basename}.ll" &&
      "$BLASTOFF -l" "$1" ">" "${basename}.ll" &&
      "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-     "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" "-lgraphblas" &&
+     "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
      "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.ll ${reffile}.out ${basename}.diff
 
