@@ -129,7 +129,7 @@ CheckSyntax() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll" &&
-    Run "$BLASTOFF" "$1" # ">" "${basename}.ll" &&
+    Run "$BLASTOFF -l" "$1" # ">" "${basename}.ll" &&
     # Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     # Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
     # Run "./${basename}.exe" > "${basename}.out" &&
