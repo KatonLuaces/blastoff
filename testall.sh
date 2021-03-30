@@ -9,7 +9,7 @@
 # export OCAMLRUNPARAM='p'
 
 # Path to the LLVM interpreter
-LLI="lli"
+LLI="llc"
 #LLI="/usr/local/opt/llvm/bin/lli"
 
 # Path to the blastoff compiler.  Usually "./blastoff.native"
@@ -74,6 +74,41 @@ RunFail() {
 }
 
 Check() {
+    error=0
+    basename=`echo $1 | sed 's/.*\\///
+                             s/.bl//'`
+    reffile=`echo $1 | sed 's/.bl$//'`
+    basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
+
+    echo "$basename..."
+
+    echo 1>&2
+    echo "###### Testing $basename" 1>&2
+
+    generatedfiles=""
+
+    generatedfiles="$generatedfiles ${basename}.ll" &&
+     "$BLASTOFF -l" "$1" ">" "${basename}.ll" &&
+     "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
+     "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
+     "./${basename}.exe" > "${basename}.out" &&
+    Compare ${basename}.ll ${reffile}.out ${basename}.diff
+
+    # Report the status and clean up the generated files
+
+    if [ $error -eq 0 ] ; then
+	if [ $keep -eq 0 ] ; then
+	    rm -f $generatedfiles
+	fi
+	echo "OK"
+	echo "###### SUCCESS" 1>&2
+    else
+	echo "###### FAILED" 1>&2
+	globalerror=$error
+    fi
+}
+
+CheckSyntax() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
                              s/.bl//'`
@@ -205,6 +240,9 @@ do
     case $file in
 	*test-*)
 	    Check $file 2>> $globallog
+	    ;;
+	*syntax-*)
+	    CheckSyntax $file 2>> $globallog
 	    ;;
 	# *fail-*)
 	#     CheckFail $file 2>> $globallog
