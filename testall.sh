@@ -11,6 +11,7 @@
 # Path to the LLVM interpreter
 LLI="llc"
 #LLI="/usr/local/opt/llvm/bin/lli"
+CC="cc"
 
 # Path to the blastoff compiler.  Usually "./blastoff.native"
 # Try "_build/blastoff.native" if ocamlbuild was unable to create a symbolic link.
@@ -88,10 +89,10 @@ Check() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll" &&
-     "$BLASTOFF -l" "$1" ">" "${basename}.ll" &&
-     "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-     "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
-     "./${basename}.exe" > "${basename}.out" &&
+    Run "$BLASTOFF -l" "$1" ">" "${basename}.ll" &&
+    Run "$LLI" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "graphblas.o" &&
+    Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.ll ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
