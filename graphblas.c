@@ -36,6 +36,20 @@ static int GrB_ok(GrB_Info info)
 
 /* BELOW: Functions used externally */
 
+/* automatically called before main() */
+__attribute__((constructor))
+static void matrix_lib_init(void) {
+    if (!GrB_ok(GrB_init(GrB_BLOCKING)))
+        die("GrB_init");
+}
+
+/* should be called at the very end */
+void matrix_lib_finalize(void)
+{
+    if (!GrB_ok(GrB_finalize()))
+        die("GrB_finalize");
+}
+
 struct matrix *matrix_create(int nrows, int ncols)
 {
     struct matrix *A;
@@ -93,7 +107,7 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
 int main(int argc, char** argv){
     struct matrix *A, *B, *C;
     
-    GrB_init(GrB_BLOCKING);
+    matrix_lib_init();
 
     A = matrix_create(3, 4);
     matrix_set_elem(A, 1, 0, 0);
@@ -111,6 +125,6 @@ int main(int argc, char** argv){
     matrix_print(B);
     matrix_print(C);
 
-    GrB_finalize();
+    matrix_lib_finalize();
 }
 #endif
