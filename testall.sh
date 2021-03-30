@@ -9,8 +9,13 @@
 # export OCAMLRUNPARAM='p'
 
 # Path to the LLVM interpreter
-LLI="llc"
+LLI="lli"
 #LLI="/usr/local/opt/llvm/bin/lli"
+
+# Path to the LLVM compiler
+LLC="llc"
+
+# Path to the C compiler
 CC="cc"
 
 # Path to the blastoff compiler.  Usually "./blastoff.native"
@@ -89,11 +94,11 @@ Check() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll" &&
-    Run "$BLASTOFF -l" "$1" ">" "${basename}.ll" &&
-    Run "$LLI" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "graphblas.o" &&
+    Run "$BLASTOFF" "$1" ">" "${basename}.ll" &&
+    Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "graphblas.o" "-lgraphblas" &&
     Run "./${basename}.exe" > "${basename}.out" &&
-    Compare ${basename}.ll ${reffile}.out ${basename}.diff
+    Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
 
@@ -124,7 +129,7 @@ CheckSyntax() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll" &&
-    Run "$BLASTOFF -l" "$1" # ">" "${basename}.ll" &&
+    Run "$BLASTOFF" "$1" # ">" "${basename}.ll" &&
     # Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     # Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
     # Run "./${basename}.exe" > "${basename}.out" &&
