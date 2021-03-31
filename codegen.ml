@@ -1,4 +1,5 @@
 module L = Llvm
+module A = Ast
 open Ast
 module StringMap = Map.Make (String)
 
@@ -22,6 +23,8 @@ let translate (functions, statements) =
   let matrix_print_f = L.declare_function "matrix_print" matrix_print_t blastoff_module in
   let matrix_setelem_t = L.function_type i32_t [| matrix_t; i32_t; i32_t; i32_t |] in
   let matrix_setelem_f = L.declare_function "matrix_setelem" matrix_setelem_t blastoff_module in
+  let matrix_mul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
+  let matrix_mul_f = L.declare_function "matrix_mul" matrix_mul_t blastoff_module in
 
   let main_fdecl = { fname = "main"; formals = []; body = statements } in
 
@@ -91,8 +94,13 @@ let translate (functions, statements) =
           ) (List.rev m) ; mat
       | Call("print", [e]) ->
           L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder
-      (* | Binop (e1, op, e2) -> ()
-      | Unop (e1, op) -> ()
+      | Binop (e1, op, e2) ->
+          let e1' = build_expr builder e1
+          and e2' = build_expr builder e2 in ( 
+            match op with
+            A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
+          )
+      (* | Unop (e1, op) -> ()
       | Assign (v, e1) -> ()
       | Call (f, exprs) -> () *)
     in
