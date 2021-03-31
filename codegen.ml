@@ -20,6 +20,8 @@ let translate (functions, statements) =
   let matrix_create_f = L.declare_function "matrix_create" matrix_create_t blastoff_module in
   let matrix_print_t = L.function_type i32_t [| matrix_t |] in
   let matrix_print_f = L.declare_function "matrix_print" matrix_print_t blastoff_module in
+  let matrix_setelem_t = L.function_type i32_t [| matrix_t; i32_t; i32_t; i32_t |] in
+  let matrix_setelem_f = L.declare_function "matrix_setelem" matrix_setelem_t blastoff_module in
 
   let main_fdecl = { fname = "main"; formals = []; body = statements } in
 
@@ -71,12 +73,24 @@ let translate (functions, statements) =
       | None -> ignore (instr builder)
     in
     let rec build_expr builder e = match e with
-      | Matlit m -> L.build_call matrix_create_f [| 
+      | Matlit m -> let mat = L.build_call matrix_create_f [| 
           L.const_int i32_t (List.length m) ;
           L.const_int i32_t (List.length (List.hd m))
         |] "matrix_create" builder
+          in
+          List.iteri (
+            fun i row -> (
+              List.iteri (
+                fun j elem ->
+                  ignore(L.build_call matrix_setelem_f [| mat;
+                                                          L.const_int i32_t elem;
+                                                          L.const_int i32_t i;
+                                                          L.const_int i32_t j |] "matrix_setelem" builder)
+              )
+            ) (List.rev row)
+          ) (List.rev m) ; mat
       | Call("print", [e]) ->
-          L.build_call matrix_print_f [| (build_expr builder e) |] "print_matrix" builder
+          L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder
       (* | Binop (e1, op, e2) -> ()
       | Unop (e1, op) -> ()
       | Assign (v, e1) -> ()

@@ -70,8 +70,12 @@ void matrix_print(struct matrix *A)
         GrB_die("GxB_Matrix_fprint", A->mat);
 }
 
-void matrix_set_elem(struct matrix *A, int val, int row, int col)
+void matrix_setelem(struct matrix *A, int val, int row, int col)
 {
+    // 0 is the implicit value; storing it explicitly would waste space
+    if (val == 0)
+        return;
+    
     if (!GrB_ok(GrB_Matrix_setElement(A->mat, val, row, col)))
         GrB_die("GrB_Matrix_setElement", A->mat);
 }
@@ -109,14 +113,14 @@ int main(int argc, char** argv){
     struct matrix *A, *B, *C;
     
     A = matrix_create(3, 4);
-    matrix_set_elem(A, 1, 0, 0);
-    matrix_set_elem(A, 2, 1, 2);
-    matrix_set_elem(A, 2, 2, 2);
+    matrix_setelem(A, 1, 0, 0);
+    matrix_setelem(A, 2, 1, 2);
+    matrix_setelem(A, 2, 2, 2);
 
     B = matrix_create(4, 3);
-    matrix_set_elem(B, 3, 0, 0);
-    matrix_set_elem(B, 4, 1, 2);
-    matrix_set_elem(B, 5, 2, 2);
+    matrix_setelem(B, 3, 0, 0);
+    matrix_setelem(B, 4, 1, 2);
+    matrix_setelem(B, 5, 2, 2);
 
     C = matrix_mul(A, B);
 
