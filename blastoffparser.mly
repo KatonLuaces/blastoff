@@ -67,8 +67,6 @@ stmt:
   | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
-  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
-                                            { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
 
 expr_opt:
@@ -101,9 +99,6 @@ expr:
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }
-  | IMAT LPAREN LITERAL RPAREN { Imat($3)        }
-  | ZEROMAT LPAREN LITERAL COMMA LITERAL RPAREN {Zeromat($3, $5)}
-  | RANGEMAT LPAREN LITERAL RPAREN {Rangemat($3) }
   | LBRACK mat_content RBRACK { Matlit($2) }
 
 mat_content:

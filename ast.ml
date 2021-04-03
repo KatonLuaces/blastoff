@@ -24,16 +24,9 @@ type uop =
   | Plusreduce
   | Mulreduce
 
-type typ =
-  | Int
-  | Float
-
 type expr =
   | Literal of int
   | Matlit of int list list
-  | Imat of int
-  | Zeromat of int * int
-  | Rangemat of int
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
@@ -46,7 +39,6 @@ type stmt =
   | Expr of expr
   | Return of expr
   | If of expr * stmt * stmt
-  | For of expr * expr * expr * stmt
   | While of expr * stmt
 
 type func_decl =
@@ -90,9 +82,6 @@ let rec string_of_expr = function
       List.fold_left (fun acc el -> acc ^ string_of_int el ^ ",") "" row
     in
     List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m ^ "]"
-  | Imat s -> "I(" ^ string_of_int s ^ ")"
-  | Rangemat s -> "Range(" ^ string_of_int s ^ ")"
-  | Zeromat (n, m) -> "Zero(" ^ string_of_int n ^ ", " ^ string_of_int m ^ ")"
   | Noexpr -> ""
 
 and string_of_e_with_uop e =
@@ -112,15 +101,6 @@ let rec string_of_stmt = function
   | If (e, s, Block []) -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
   | If (e, s1, s2) ->
     "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
-  | For (e1, e2, e3, s) ->
-    "for ("
-    ^ string_of_expr e1
-    ^ " ; "
-    ^ string_of_expr e2
-    ^ " ; "
-    ^ string_of_expr e3
-    ^ ") "
-    ^ string_of_stmt s
   | While (e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 ;;
 

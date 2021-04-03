@@ -5,16 +5,13 @@
 (* http://caml.inria.fr/pub/docs/manual-ocaml-4.00/manual026.html#toc111 *)
 let keyword_table = Hashtbl.create 97
 let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
-                   [ "while", WHILE;
-                     "return", RETURN;
-                     "if", IF;
-                     "else", ELSE;
-                     "for", FOR;
-                     "def", FDECL;
-                     "I", IMAT;
-                     "T", TRANSP;
-                     "Zero", ZEROMAT;
-                     "range", RANGEMAT]
+    [ "while", WHILE;
+      "return", RETURN;
+      "if", IF;
+      "else", ELSE;
+      "for", FOR;
+      "def", FDECL;
+      "T", TRANSP]
 }
 
 rule token = parse
@@ -51,15 +48,15 @@ rule token = parse
 | "||"     { OR }
 | "!"      { NOT }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
-                            { (*print_endline "find lxm: ";
-                              print_endline lxm;*)
-                              try
-                                Hashtbl.find keyword_table lxm
-                              with Not_found ->
-                                ID(lxm)}
+  { (*print_endline "find lxm: ";
+      print_endline lxm;*)
+    try
+      Hashtbl.find keyword_table lxm
+    with Not_found ->
+      ID(lxm)}
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
 and comment = parse
-  "*/" { token lexbuf }
-| _    { comment lexbuf }
+      "*/" { token lexbuf }
+  | _    { comment lexbuf }
