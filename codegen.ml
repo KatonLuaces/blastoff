@@ -112,17 +112,28 @@ let translate (functions, statements) =
       | Return e ->
         ignore (L.build_ret (build_expr builder e) builder);
         builder
-      (*
       | If (pred, thn, els) ->
-        ();
-        builder
-      | For (e1, e2, e3, body) ->
-        ();
-        builder
+        let bool_val = build_expr builder pred in
+        let merge_bb = L.append_block context "merge" func in
+        let build_br_merge = L.build_br merge_bb in
+        let then_bb = L.append_block context "then" func in
+          add_terminal (build_stmt (L.builder_at_end context then_bb) thn) build_br_merge;
+        let else_bb = L.append_block context "else" func in
+          add_terminal (build_stmt (L.builder_at_end context else_bb) els) build_br_merge;
+        ignore(L.build_cond_br bool_val then_bb else_bb builder);
+        L.builder_at_end context merge_bb
       | While (pred, body) ->
-        ();
-        builder
-        *)
+        let pred_bb = L.append_block context "while" func in
+          ignore(L.build_br pred_bb builder);
+        let body_bb = L.append_block context "while_body" func in
+          add_terminal(build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
+        let pred_builder = L.builder_at_end context pred_bb in
+          let bool_val = build_expr pred_builder pred in
+            let merge_bb = L.append_block context "merge" func in
+            ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
+            L.builder_at_end context merge_bb
+      | For (e1, e2, e3, body) ->
+        build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] )
     in
     let builder = build_stmt builder (Block fdecl.body) in
     add_terminal builder (L.build_ret (L.const_int (if is_main then i32_t else matrix_t) 0))
