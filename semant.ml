@@ -11,7 +11,7 @@ module StringMap = Map.Make(String)
 let check (funcs, stmts) =
   
   (*TODO: Check vars (in funcs and in top level)*)
-  let rec check_vars loc stmt_lst = 
+  let check_vars loc stmt_lst = 
     let add_decl lst = function
       Expr e -> match e with Id var -> var :: lst | _ -> lst
     in
@@ -60,7 +60,7 @@ let check (funcs, stmts) =
     let _ = check_vars "body" func.body in
     func
 in
-let rec check_expr = function
+let check_expr = function
     Call(fname, args) as call ->
         let fd = find_func fname in
         let num_formals = List.length fd.formals in
@@ -71,5 +71,15 @@ let rec check_expr = function
 in
 let rec check_stmt = function 
       Expr e -> Expr (check_expr e)
-    | stmt -> stmt
+    | Block bl -> 
+        let rec check_stmt_list = function
+            [Return _ as s] -> [check_stmt s]
+            | Return _ :: _ -> raise (Failure "Unreachable statments after return")
+            | Block sl :: ss -> check_stmt_list (sl @ ss)
+            | s :: ss -> check_stmt s :: check_stmt_list ss
+            | [] -> []
+        in Block(check_stmt_list bl)
+    | If(p, b1, b2) -> If(p, check_stmt b1, check_stmt b2)
+    | While(p, s) -> While(p, check_stmt s)
+    | Return e -> Return(e)
   in (List.map check_function funcs, List.map check_stmt stmts)
