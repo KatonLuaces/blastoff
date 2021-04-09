@@ -24,9 +24,15 @@ type uop =
   | Plusreduce
   | Mulreduce
 
+type lit =
+  | IntLit of int
+  | FloatLit of float
+
 type expr =
-  | Literal of int
-  | Matlit of int list list
+  | Literal of lit (* TODO(Katon): This should be unnecessary eventually and thus should be removed*)
+  | UnkMatLit of lit list list
+  | IntMatLit of int list list
+  | FloatMatLit of float list list
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
@@ -69,19 +75,25 @@ let string_of_op = function
   | Concat -> ":"
 ;;
 
+let string_of_mat print_lit m = 
+   let string_of_row row =
+      List.fold_left (fun acc lit -> acc ^ print_lit lit ^ ",") "" row
+    in
+    List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m ^ "]"
+;;
 let rec string_of_expr = function
-  | Literal l -> string_of_int l
+  | Literal l -> (match l with IntLit ilit -> string_of_int ilit 
+                            | FloatLit flit -> string_of_float flit)
   | Id s -> s
   | Binop (e1, o, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop (o, e) -> string_of_e_with_uop e o
   | Assign (v, e) -> v ^ " = " ^ string_of_expr e
   | Call (f, el) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
-  | Matlit m ->
-    let string_of_row row =
-      List.fold_left (fun acc el -> acc ^ string_of_int el ^ ",") "" row
-    in
-    List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m ^ "]"
+  | UnkMatLit m -> string_of_mat (fun lit -> match lit with 
+        IntLit ilit -> string_of_int ilit| FloatLit flit -> string_of_float flit) m
+  | IntMatLit m -> string_of_mat string_of_int m
+  | FloatMatLit m -> string_of_mat string_of_float m
   | Noexpr -> ""
 
 and string_of_e_with_uop e =
@@ -93,7 +105,6 @@ and string_of_e_with_uop e =
   | Plusreduce -> "+%" ^ str_expr
   | Mulreduce -> "*%" ^ str_expr
 ;;
-
 let rec string_of_stmt = function
   | Block stmts -> "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
   | Expr expr -> string_of_expr expr ^ ";\n"
@@ -103,7 +114,6 @@ let rec string_of_stmt = function
     "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While (e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 ;;
-
 let string_of_func func =
   "def "
   ^ func.fname

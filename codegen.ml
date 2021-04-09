@@ -76,7 +76,7 @@ let translate (functions, statements) =
       | None -> ignore (instr builder)
     in
     let rec build_expr builder e = match e with
-      | Matlit m -> let mat = L.build_call matrix_create_f [| 
+      | IntMatLit m -> let mat = L.build_call matrix_create_f [| 
           L.const_int i32_t (List.length m) ;
           L.const_int i32_t (List.length (List.hd m))
         |] "matrix_create" builder
@@ -132,8 +132,6 @@ let translate (functions, statements) =
             let merge_bb = L.append_block context "merge" func in
             ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
             L.builder_at_end context merge_bb
-      | For (e1, e2, e3, body) ->
-        build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] )
     in
     let builder = build_stmt builder (Block fdecl.body) in
     add_terminal builder (L.build_ret (L.const_int (if is_main then i32_t else matrix_t) 0))

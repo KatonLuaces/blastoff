@@ -14,10 +14,12 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
       "T", TRANSP]
 }
 
+let digit = ['0'-'9']
+
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
-| '-'?['0'-'9']* as lxm { LITERAL(int_of_string lxm) }
+| '-'?digit* as lxm { LITERAL(int_of_string lxm) }
 | '|'      { VLINE }
 | '['      { LBRACK }
 | ']'      { RBRACK }

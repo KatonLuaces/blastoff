@@ -73,8 +73,12 @@ expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
 
+      
+lit:
+   LITERAL { IntLit($1) }
+
 expr:
-    LITERAL          { Literal($1)            }
+    lit          { Literal($1)            }
   | ID               { Id($1)                 }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
@@ -99,15 +103,15 @@ expr:
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }
-  | LBRACK mat_content RBRACK { Matlit($2) }
+  | LBRACK mat_content RBRACK { UnkMatLit($2) }
 
 mat_content:
     mat_row { [$1] }
   | mat_content SEMI mat_row {$3 :: $1}
 
 mat_row:
-    LITERAL { [$1] }
-  | mat_row COMMA LITERAL {$3 :: $1 }
+    lit { [$1] }
+  | mat_row COMMA lit {$3 :: $1 }
 
 args_opt:
     /* nothing */ { [] }

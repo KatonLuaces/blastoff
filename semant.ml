@@ -19,7 +19,7 @@ let check (funcs, stmts) =
     in
     let rec check_dups = function
       [] -> ()
-    | n1 :: n2 :: tl when n1 = n2 -> raise (Failure ("duplicate " ^ n1 ^ " in " ^ loc))
+    | n1 :: n2 :: _ when n1 = n2 -> raise (Failure ("duplicate " ^ n1 ^ " in " ^ loc))
     | _ :: tl -> check_dups tl
     in check_dups (List.sort compare decls)
   in
@@ -51,8 +51,25 @@ let check (funcs, stmts) =
   (* Collect all function names into one symbol table *)
   let function_decls = List.fold_left add_func built_in_decls funcs
   in 
+  let find_func fname = 
+    try StringMap.find fname function_decls
+    with Not_found -> raise (Failure ("Undeclared function " ^ fname ))
+  in
   let check_function func =
     (* Make sure no formals or locals are void or duplicates *)
     let _ = check_vars "body" func.body in
     func
-  in (List.map check_function funcs, stmts)
+in
+let rec check_expr = function
+    Call(fname, args) as call ->
+        let fd = find_func fname in
+        let num_formals = List.length fd.formals in
+        if List.length args != num_formals then
+        raise (Failure ("Expecting " ^ (string_of_int num_formals) ^ " arguments in " ^ string_of_expr call))
+        else call
+    | e -> e
+in
+let rec check_stmt = function 
+      Expr e -> Expr (check_expr e)
+    | stmt -> stmt
+  in (List.map check_function funcs, List.map check_stmt stmts)
