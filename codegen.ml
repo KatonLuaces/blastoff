@@ -92,8 +92,8 @@ let translate (functions, statements) =
               )
             ) (List.rev row)
           ) (List.rev m) ; mat
-      | UnkMatLit m -> raise (Failure "Type of matrix is unknown")
-      | Literal l -> raise (Failure "Naked literal")
+      | Assign (s , e) -> let comp_e = build_expr builder e in
+        ignore(L.build_store comp_e (lookup s) builder); comp_e 
       | Call("print", [e]) ->
           L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder
       | Binop (e1, op, e2) ->
@@ -102,8 +102,10 @@ let translate (functions, statements) =
             match op with
             A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
           )
+      | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
+      | Literal _ -> raise (Failure "Naked literal")
+      | Noexpr -> raise (Failure "No expression in codegen")
       (* | Unop (e1, op) -> ()
-      | Assign (v, e1) -> ()
       | Call (f, exprs) -> () *)
     in
     let rec build_stmt builder = function

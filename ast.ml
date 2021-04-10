@@ -73,14 +73,13 @@ let string_of_op = function
   | Or -> "||"
   | Exponent -> "^"
   | Concat -> ":"
-;;
 
 let string_of_mat print_lit m = 
    let string_of_row row =
       List.fold_left (fun acc lit -> acc ^ print_lit lit ^ ",") "" row
     in
     List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m ^ "]"
-;;
+
 let rec string_of_expr = function
   | Literal l -> (match l with IntLit ilit -> string_of_int ilit 
                             | FloatLit flit -> string_of_float flit)
@@ -104,7 +103,7 @@ and string_of_e_with_uop e =
   | Transp -> str_expr ^ "^T"
   | Plusreduce -> "+%" ^ str_expr
   | Mulreduce -> "*%" ^ str_expr
-;;
+
 let rec string_of_stmt = function
   | Block stmts -> "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
   | Expr expr -> string_of_expr expr ^ ";\n"
@@ -113,7 +112,7 @@ let rec string_of_stmt = function
   | If (e, s1, s2) ->
     "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While (e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-;;
+
 let string_of_func func =
   "def "
   ^ func.fname
@@ -123,10 +122,8 @@ let string_of_func func =
   ^ "{\n"
   ^ String.concat "" (List.map string_of_stmt func.body)
   ^ "}\n"
-;;
 
 let string_of_program (funcs, stmts) =
   String.concat "" (List.map string_of_func funcs)
   ^ "\n"
   ^ String.concat "" (List.map string_of_stmt stmts)
-;;
