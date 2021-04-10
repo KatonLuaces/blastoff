@@ -13,7 +13,8 @@ let check (funcs, stmts) =
   (*TODO: Check vars (in funcs and in top level)*)
   let check_vars loc stmt_lst = 
     let add_decl lst = function
-      Expr e -> match e with Id var -> var :: lst | _ -> lst
+      Expr e -> (match e with Id var -> var :: lst | _ -> lst )
+      | _ -> lst
     in
     let decls = List.fold_left add_decl [] stmt_lst
     in

@@ -92,6 +92,8 @@ let translate (functions, statements) =
               )
             ) (List.rev row)
           ) (List.rev m) ; mat
+      | UnkMatLit m -> raise (Failure "Type of matrix is unknown")
+      | Literal l -> raise (Failure "Naked literal")
       | Call("print", [e]) ->
           L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder
       | Binop (e1, op, e2) ->
