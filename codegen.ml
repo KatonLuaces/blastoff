@@ -102,7 +102,7 @@ let translate (functions, statements) =
              | _ -> raise (Failure "Invalid list of expressions passed to print"))
          | f -> let (fdef, fdecl) = StringMap.find f function_decls in
            let args = List.map (build_expr builder) (List.rev exprs) in
-           L.build_call fdef (Array.of_list args) (fname ^ "_result") builder)
+           L.build_call fdef (Array.of_list args) (fdecl.fname ^ "_result") builder)
       | Binop (e1, op, e2) ->
           let e1' = build_expr builder e1
           and e2' = build_expr builder e2 in ( 
@@ -112,8 +112,8 @@ let translate (functions, statements) =
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Literal _ -> raise (Failure "Naked literal")
       | Noexpr -> raise (Failure "No expression in codegen")
-      (* | Unop (e1, op) -> ()
-      | Call (f, exprs) -> () *)
+      | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
+      | Id v -> L.build_load (lookup v) v builder
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
