@@ -34,7 +34,8 @@ let check (funcs, stmts) =
       body = [] } map
     in List.fold_left add_bind StringMap.empty [ "Range";
 			                         "I";
-			                         "Zeros"; ]
+			                         "Zeros"; 
+                                                 "print";]
   in
 
   (* Add function name to symbol table *)
