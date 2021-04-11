@@ -36,10 +36,10 @@ let () =
     let sast = Semant.check ast in
   match !action with
   | Ast -> ()
-  | Semant -> print_string(Ast.string_of_program (Semant.check ast))
+  | Semant -> print_string(Ast.string_of_program sast)
   | LLVM_IR -> print_string(Llvm.string_of_llmodule (Codegen.translate sast))
   | Compile ->
-    let m = Codegen.translate ast in
+    let m = Codegen.translate sast in
     Llvm_analysis.assert_valid_module m;
     print_string (Llvm.string_of_llmodule m)
 ;;

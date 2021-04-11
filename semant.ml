@@ -64,20 +64,27 @@ let check (funcs, stmts) =
 in
 let is_float = function IntLit _ -> false | FloatLit _ -> true in
 let contains_float m = List.exists (fun lst -> List.exists (is_float) lst) m in
-let check_expr = function
+let rec check_expr = function
     Call(fname, args) as call ->
         let fd = find_func fname in
         let num_formals = List.length fd.formals in
         if List.length args != num_formals then
         raise (Failure ("Expecting " ^ (string_of_int num_formals) ^ " arguments in " ^ string_of_expr call))
-        else call
+        else Call (fname, List.map check_expr args)
     | UnkMatLit m -> let has_float = contains_float m in (match has_float with 
             true -> raise (Failure ("Matrix contains float")) 
             | false -> IntMatLit (List.map (fun row -> List.map 
                 (function IntLit lit -> lit 
                           | FloatLit _ -> raise (Failure "Expected Integers in Matrix")) row) 
                     m))
-    | e -> e
+    | Id n -> Id n
+    | Binop (e1, op, e2) -> Binop (check_expr e1, op, check_expr e2)
+    | Unop (op, e) -> Unop (op, check_expr e)
+    | Assign (n, e) -> Assign (n, check_expr e)
+    | Literal _ -> raise (Failure "Unexpected naked literal in semant checking")
+    | FloatMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
+    | IntMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
+    | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking") (*TODO(Katon): Check if noexpr should be illegal in all circumstances. If so, can it be removed entirely from the AST?*)
 in
 let rec check_stmt = function 
       Expr e -> Expr (check_expr e)
