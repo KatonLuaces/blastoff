@@ -92,7 +92,7 @@ let translate (functions, statements) =
               )
             ) (List.rev row)
           ) (List.rev m) ; mat
-
+      | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
       | Assign (s , e) -> let comp_e = build_expr builder e in
         ignore(L.build_store comp_e (lookup s) builder); comp_e 
       | Call(fname, exprs) ->
