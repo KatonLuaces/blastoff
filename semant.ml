@@ -61,6 +61,8 @@ let check (funcs, stmts) =
     let _ = check_vars "body" func.body in
     func
 in
+let is_float = function IntLit _ -> false | FloatLit _ -> true in
+let contains_float m = List.exists (fun lst -> List.exists (is_float) lst) m in
 let check_expr = function
     Call(fname, args) as call ->
         let fd = find_func fname in
@@ -68,6 +70,12 @@ let check_expr = function
         if List.length args != num_formals then
         raise (Failure ("Expecting " ^ (string_of_int num_formals) ^ " arguments in " ^ string_of_expr call))
         else call
+    | UnkMatLit m -> let has_float = contains_float m in (match has_float with 
+            true -> raise (Failure ("Matrix contains float")) 
+            | false -> IntMatLit (List.map (fun row -> List.map 
+                (function IntLit lit -> lit 
+                          | FloatLit _ -> raise (Failure "Expected Integers in Matrix")) row) 
+                    m))
     | e -> e
 in
 let rec check_stmt = function 

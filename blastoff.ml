@@ -33,10 +33,11 @@ let () =
   match !action with
   Ast -> print_string(Ast.string_of_program ast)
   | _ ->
+    let sast = Semant.check ast in
   match !action with
   | Ast -> ()
   | Semant -> print_string(Ast.string_of_program (Semant.check ast))
-  | LLVM_IR -> print_string(Llvm.string_of_llmodule (Codegen.translate ast))
+  | LLVM_IR -> print_string(Llvm.string_of_llmodule (Codegen.translate sast))
   | Compile ->
     let m = Codegen.translate ast in
     Llvm_analysis.assert_valid_module m;
