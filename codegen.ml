@@ -92,10 +92,17 @@ let translate (functions, statements) =
               )
             ) (List.rev row)
           ) (List.rev m) ; mat
+
       | Assign (s , e) -> let comp_e = build_expr builder e in
         ignore(L.build_store comp_e (lookup s) builder); comp_e 
-      | Call("print", [e]) ->
-          L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder
+      | Call(fname, exprs) ->
+        (match fname with 
+          "print" -> (match exprs with 
+              [e] -> L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder 
+             | _ -> raise (Failure "Invalid list of expressions passed to print"))
+         | f -> let (fdef, fdecl) = StringMap.find f function_decls in
+           let args = List.map (build_expr builder) (List.rev exprs) in
+           L.build_call fdef (Array.of_list args) (fname ^ "_result") builder)
       | Binop (e1, op, e2) ->
           let e1' = build_expr builder e1
           and e2' = build_expr builder e2 in ( 
