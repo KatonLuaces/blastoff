@@ -41,6 +41,7 @@ type expr =
   | Noexpr
 
 type stmt =
+  | Semiring of string
   | Block of stmt list
   | Expr of expr
   | Return of expr
@@ -105,6 +106,7 @@ and string_of_e_with_uop e =
   | Mulreduce -> "*%" ^ str_expr
 
 let rec string_of_stmt = function
+  | Semiring ring -> "#" ^ ring ^ "\n"
   | Block stmts -> "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
   | Expr expr -> string_of_expr expr ^ ";\n"
   | Return expr -> "return " ^ string_of_expr expr ^ ";\n"

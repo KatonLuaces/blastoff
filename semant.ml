@@ -37,7 +37,6 @@ let check (funcs, stmts) =
 			                         "Zeros"; 
                                                  "print";]
   in
-
   (* Add function name to symbol table *)
   let add_func map fd = 
     let built_in_err = "function " ^ fd.fname ^ " may not be defined"
@@ -88,6 +87,7 @@ let rec check_expr = function
 in
 let rec check_stmt = function 
       Expr e -> Expr (check_expr e)
+    | Semiring ring -> (match List.mem_assoc ring Constants.rings with true -> Semiring ring | false -> raise (Failure ("Unkown semiring " ^ ring)))
     | Block bl -> 
         let rec check_stmt_list = function
             [Return _ as s] -> [check_stmt s]

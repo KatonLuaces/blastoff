@@ -20,6 +20,8 @@ let translate (functions, statements) =
   let matrix_create_t = L.function_type matrix_t [| i32_t; i32_t |] in
   let matrix_create_f = L.declare_function "matrix_create" matrix_create_t blastoff_module in
   let matrix_print_t = L.function_type i32_t [| matrix_t |] in
+  let change_ring_t = L.function_type i32_t [| i32_t |] in
+  let change_ring_f = L.declare_function "change_ring" change_ring_t blastoff_module in
   let matrix_print_f = L.declare_function "matrix_print" matrix_print_t blastoff_module in
   let matrix_setelem_t = L.function_type i32_t [| matrix_t; i32_t; i32_t; i32_t |] in
   let matrix_setelem_f = L.declare_function "matrix_setelem" matrix_setelem_t blastoff_module in
@@ -117,6 +119,7 @@ let translate (functions, statements) =
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
+      | Semiring ring -> ignore (L.build_call change_ring_f [| L.const_int i32_t (List.assoc ring Constants.rings) |] "ring_change" builder); builder
       | Expr e ->
         ignore (build_expr builder e);
         builder

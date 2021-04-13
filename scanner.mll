@@ -27,7 +27,6 @@ rule token = parse
 | ')'      { RPAREN }
 | '{'      { LBRACE }
 | '}'      { RBRACE }
-| '#'      { SEMIRING }
 | '@'      { ELMUL   }
 | '~'      { CONV }
 | ':'      { CONCAT }
@@ -49,6 +48,7 @@ rule token = parse
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
+| '#'      { SEMIRING }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
   { (*print_endline "find lxm: ";
       print_endline lxm;*)

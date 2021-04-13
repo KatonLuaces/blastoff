@@ -4,7 +4,7 @@
 open Ast
 %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA 
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA SEMIRING
 %token MATMUL ELMUL ASSIGN FDECL RANGEMAT CONV PLUS MINUS RAISE PLUSREDUCE MULREDUCE
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR IMAT ELMAT TRANSP VLINE SEMIRING CONCAT ZEROMAT
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
@@ -63,6 +63,7 @@ stmt_list:
 
 stmt:
     expr SEMI                               { Expr $1               }
+  | SEMIRING ID SEMI                           { Semiring $2           }
   | RETURN expr_opt SEMI                    { Return $2             }
   | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
