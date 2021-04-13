@@ -33,7 +33,7 @@ let () =
   match !action with
   Ast -> print_string(Ast.string_of_program ast)
   | _ ->
-    let sast = Semant.check ast in
+    let sast = (try Semant.check ast with e -> let msg = Printexc.to_string e in raise (Failure ("Semantic Checking Error: " ^ msg))) in
   match !action with
   | Ast -> ()
   | Semant -> print_string(Ast.string_of_program sast)

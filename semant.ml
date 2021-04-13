@@ -28,14 +28,11 @@ let check (funcs, stmts) =
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls = 
-    let add_bind map name = StringMap.add name {
+    let add_bind map (name, args) = StringMap.add name {
       fname = name; 
-      formals = ["n"];
+      formals = args;
       body = [] } map
-    in List.fold_left add_bind StringMap.empty [ "Range";
-			                         "I";
-			                         "Zeros"; 
-                                                 "print";]
+    in List.fold_left add_bind StringMap.empty Constants.functions 
   in
   (* Add function name to symbol table *)
   let add_func map fd = 
@@ -80,7 +77,7 @@ let rec check_expr = function
     | Binop (e1, op, e2) -> Binop (check_expr e1, op, check_expr e2)
     | Unop (op, e) -> Unop (op, check_expr e)
     | Assign (n, e) -> Assign (n, check_expr e)
-    | Literal _ -> raise (Failure "Unexpected naked literal in semant checking")
+| Literal l -> check_expr (UnkMatLit [[l]])
     | FloatMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | IntMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking") (*TODO(Katon): Check if noexpr should be illegal in all circumstances. If so, can it be removed entirely from the AST?*)
