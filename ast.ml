@@ -30,6 +30,7 @@ type lit =
 
 type expr =
   | Literal of lit (* TODO(Katon): This should be unnecessary eventually and thus should be removed*)
+  | GraphLit of (int * int) list
   | UnkMatLit of lit list list
   | IntMatLit of int list list
   | FloatMatLit of float list list

@@ -15,11 +15,13 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add keyword_table kwd tok)
 }
 
 let digit = ['0'-'9']
+let arrow = ['-']['>']
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
-| '-'?digit* as lxm { LITERAL(int_of_string lxm) }
+| '-'?digit* as lxm { INTLITERAL(int_of_string lxm) }
+          | ['-']?digit*['.']digit* as lxm { FLOATLITERAL(float_of_string lxm) }
 | '|'      { VLINE }
 | '['      { LBRACK }
 | ']'      { RBRACK }
@@ -36,6 +38,7 @@ rule token = parse
 | '-'      { MINUS }
 | '*'      { MATMUL }
 | '='      { ASSIGN }
+| arrow     { EDGE }
 | ['+']['%']     { PLUSREDUCE }
 | ['*']['%']     { MULREDUCE }
 | "=="     { EQ }

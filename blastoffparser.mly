@@ -4,12 +4,13 @@
 open Ast
 %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA SEMIRING
+%token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA SEMIRING EDGE
 %token MATMUL ELMUL ASSIGN FDECL RANGEMAT CONV PLUS MINUS RAISE PLUSREDUCE MULREDUCE
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR IMAT ELMAT TRANSP VLINE SEMIRING CONCAT ZEROMAT
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
-%token <int> LITERAL
-%token <string> ID FLIT
+%token <int> INTLITERAL
+%token <float> FLOATLITERAL
+%token <string> ID
 %token EOF
 
 %start program
@@ -26,6 +27,7 @@ open Ast
 %left MATMUL ELMUL
 %left CONCAT CONV
 %left RAISE 
+%left EDGE
 %right PLUSREDUCE MULREDUCE 
 %left TRANSP
 %right NOT 
@@ -70,13 +72,21 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
 
+edge_list:
+    edge { [$1] }
+  | edge_list SEMI edge {$3 :: $1}
+
+edge:
+      INTLITERAL EDGE INTLITERAL { ($1, $3) }
+
 expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
 
       
 lit:
-   LITERAL { IntLit($1) }
+    INTLITERAL { IntLit($1) }
+  | FLOATLITERAL { FloatLit($1) }
 
 expr:
     lit          { Literal($1)            }
@@ -105,6 +115,7 @@ expr:
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }
   | LBRACK mat_content RBRACK { UnkMatLit($2) }
+  | LBRACK edge_list RBRACK { GraphLit($2) }
 
 mat_content:
     mat_row { [$1] }
