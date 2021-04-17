@@ -68,8 +68,10 @@ let translate (functions, statements) =
           fdecl.formals
           (Array.to_list (L.params func))
       in
-      List.fold_left add_local formals []
-      (*TODO: decide in what form locals are necessary*)
+      let add_assignment lst = function Expr e -> (match e with Assign (v, _) -> (match v with Id id -> id :: lst | _ -> lst )
+                                                              | _ -> lst) | _ -> lst in
+      let locals = List.fold_left add_assignment [] fdecl.body in
+      List.fold_left add_local formals locals
     in
     let lookup n = StringMap.find n local_vars in
     let add_terminal builder instr =
@@ -100,7 +102,7 @@ let translate (functions, statements) =
       | GraphLit _ -> raise (Failure "Graph Literal")
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
       | Assign (v , e) -> let comp_e = build_expr builder e in
-        (match v with Id s-> ignore(L.build_store comp_e (lookup s) builder)); comp_e 
+        (match v with Id s-> try ignore(L.build_store comp_e (lookup s) builder) with Not_found -> raise (Failure ("Undeclared variable " ^ s))); comp_e 
       | Call(fname, exprs) ->
         (match fname with 
           "print" -> (match exprs with 
