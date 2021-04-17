@@ -21,6 +21,7 @@ open Ast
 %right ASSIGN
 %left OR
 %left AND
+%right LBRACK RBRACK
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
@@ -96,15 +97,17 @@ expr:
   | expr CONCAT   expr { Binop($1, Concat,  $3)   }
   | expr RAISE expr  { Binop($1, Exponent, $3)  }
   | expr RAISE TRANSP { Unop(Transp, $1)      }
+  | NOT  expr        { Unop(Neg, $2)   }
+  | expr LBRACK expr RBRACK   { Binop($1, Selection, $3)}
   | PLUSREDUCE expr  { Unop(Plusreduce, $2)   }
   | MULREDUCE expr   { Unop(Mulreduce, $2)    }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }
-  | ID ASSIGN expr   { Assign($1, $3)         }
+  | expr ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }
   | LBRACK mat_content RBRACK { UnkMatLit($2) }
-  | LBRACE graph_content RBRACE { GraphLit($2) }
+  | LBRACK graph_content RBRACK { GraphLit($2) }
 
 mat_content:
     mat_row { [$1] }

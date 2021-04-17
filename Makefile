@@ -38,6 +38,8 @@ clean :
 		blastoffparser.ml blastoffparser.mli blastoff.native \
 		graphblas graphblas.o graphblas.bc \
 
+.PHONY : fresh
+fresh : clean test
 
 # Building the tarball
 

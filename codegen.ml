@@ -99,14 +99,14 @@ let translate (functions, statements) =
       | IntMatLit m -> build_int_matrix m
       | GraphLit _ -> raise (Failure "Graph Literal")
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
-      | Assign (s , e) -> let comp_e = build_expr builder e in
-        ignore(L.build_store comp_e (lookup s) builder); comp_e 
+      | Assign (v , e) -> let comp_e = build_expr builder e in
+        (match v with Id s-> ignore(L.build_store comp_e (lookup s) builder)); comp_e 
       | Call(fname, exprs) ->
         (match fname with 
           "print" -> (match exprs with 
               [e] -> L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder 
              | _ -> raise (Failure "Invalid list of expressions passed to print"))
-         | f -> let (fdef, fdecl) = (try StringMap.find f function_decls with Not_found -> raise (Failure ("Undeclared function ," ^ f ^ ", found in code generation"))) in
+         | f -> let (fdef, fdecl) = (try StringMap.find f function_decls with Not_found -> raise (Failure ("Undeclared function, " ^ f ^ ", found in code generation"))) in
            let args = List.map (build_expr builder) (List.rev exprs) in
            L.build_call fdef (Array.of_list args) (fdecl.fname ^ "_result") builder)
       | Binop (e1, op, e2) ->

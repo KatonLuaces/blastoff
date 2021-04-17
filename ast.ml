@@ -16,13 +16,14 @@ type op =
   | Or
   | Concat
   | Exponent
+  | Selection
 
 type uop =
   | Neg
-  | Size
   | Transp
   | Plusreduce
   | Mulreduce
+  | Size
 
 type lit =
   | IntLit of int
@@ -37,7 +38,7 @@ type expr =
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
-  | Assign of string * expr
+  | Assign of expr * expr
   | Call of string * expr list
   | Noexpr
 
@@ -75,6 +76,7 @@ let string_of_op = function
   | Or -> "||"
   | Exponent -> "^"
   | Concat -> ":"
+  | Selection -> raise (Failure "No String Of Selection Operator")
 
 let string_of_mat print_lit m = 
    let string_of_row row =
@@ -86,10 +88,10 @@ let rec string_of_expr = function
   | Literal l -> (match l with IntLit ilit -> string_of_int ilit 
                             | FloatLit flit -> string_of_float flit)
   | Id s -> s
-  | Binop (e1, o, e2) ->
-    string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
+  | Binop (e1, o, e2) -> (match o with Selection -> (string_of_expr e1) ^ "[" ^ (string_of_expr e2) ^ "]" |
+    o -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2)
   | Unop (o, e) -> string_of_e_with_uop e o
-  | Assign (v, e) -> v ^ " = " ^ string_of_expr e
+  | Assign (e1, e2) -> string_of_expr e1 ^ " = " ^ string_of_expr e2
   | Call (f, el) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | UnkMatLit m -> string_of_mat (fun lit -> match lit with 
         IntLit ilit -> string_of_int ilit| FloatLit flit -> string_of_float flit) m
