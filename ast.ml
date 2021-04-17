@@ -16,7 +16,6 @@ type op =
   | Or
   | Concat
   | Exponent
-  | Selection
 
 type uop =
   | Neg
@@ -36,6 +35,7 @@ type expr =
   | IntMatLit of int list list
   | FloatMatLit of float list list
   | Id of string
+  | Selection of expr * expr list
   | Binop of expr * op * expr
   | Unop of uop * expr
   | Assign of expr * expr
@@ -76,7 +76,6 @@ let string_of_op = function
   | Or -> "||"
   | Exponent -> "^"
   | Concat -> ":"
-  | Selection -> raise (Failure "No String Of Selection Operator")
 
 let string_of_mat print_lit m = 
    let string_of_row row =
@@ -88,8 +87,7 @@ let rec string_of_expr = function
   | Literal l -> (match l with IntLit ilit -> string_of_int ilit 
                             | FloatLit flit -> string_of_float flit)
   | Id s -> s
-  | Binop (e1, o, e2) -> (match o with Selection -> (string_of_expr e1) ^ "[" ^ (string_of_expr e2) ^ "]" |
-    o -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2)
+  | Binop (e1, o, e2) -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop (o, e) -> string_of_e_with_uop e o
   | Assign (e1, e2) -> string_of_expr e1 ^ " = " ^ string_of_expr e2
   | Call (f, el) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
@@ -98,7 +96,7 @@ let rec string_of_expr = function
   | IntMatLit m -> string_of_mat string_of_int m
   | FloatMatLit m -> string_of_mat string_of_float m
   | Noexpr -> ""
-
+  | Selection (e, args) -> (string_of_expr e) ^ "[" ^ String.concat " " (List.map string_of_expr args) ^ "]"
 and string_of_e_with_uop e =
   let str_expr = string_of_expr e in
   function

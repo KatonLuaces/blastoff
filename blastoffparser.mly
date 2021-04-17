@@ -56,6 +56,10 @@ formal_list:
     ID                   { [$1]     }
   | formal_list COMMA ID { $3 :: $1 }
 
+expr_list:
+    expr                   { [$1]     }
+  | expr_list COMMA expr { $3 :: $1 }
+
 stmt_list:
     /* nothing */  { [] }
   | stmt_list stmt { $2 :: $1 }
@@ -94,11 +98,11 @@ expr:
   | expr AND    expr { Binop($1, And,   $3)   }
   | expr OR     expr { Binop($1, Or,    $3)   }
   | expr CONV   expr { Binop($1, Conv,  $3)   }
-  | expr CONCAT   expr { Binop($1, Concat,  $3)   }
-  | expr RAISE expr  { Binop($1, Exponent, $3)  }
+  | expr CONCAT   expr { Binop($1, Concat,  $3)}
+  | expr RAISE expr  { Binop($1, Exponent, $3) }
   | expr RAISE TRANSP { Unop(Transp, $1)      }
   | NOT  expr        { Unop(Neg, $2)   }
-  | expr LBRACK expr RBRACK   { Binop($1, Selection, $3)}
+  | expr LBRACK expr_list RBRACK   { Selection($1, $3)}
   | PLUSREDUCE expr  { Unop(Plusreduce, $2)   }
   | MULREDUCE expr   { Unop(Mulreduce, $2)    }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }

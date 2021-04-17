@@ -82,6 +82,7 @@ let rec check_expr = function
     | IntMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking") (*TODO(Katon): Check if noexpr should be illegal in all circumstances. If so, can it be removed entirely from the AST?*)
 | GraphLit g -> GraphLit g
+| Selection _ ->  raise (Failure "Selection not implemented") (*TODO: Implement selection*)
 in
 let rec check_stmt = function 
       Expr e -> Expr (check_expr e)

@@ -120,6 +120,7 @@ let translate (functions, statements) =
       | Noexpr -> raise (Failure "No expression in codegen")
       | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
       | Id v -> L.build_load (lookup v) v builder
+      | Selection _ -> raise (Failure "Selection not implemented")
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
