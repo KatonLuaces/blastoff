@@ -68,13 +68,6 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
 
-edge_list:
-    edge { [$1] }
-  | edge_list SEMI edge {$3 :: $1}
-
-edge:
-      INTLITERAL EDGE INTLITERAL { ($1, $3) }
-
 expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
@@ -111,7 +104,7 @@ expr:
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }
   | LBRACK mat_content RBRACK { UnkMatLit($2) }
-  | LBRACK edge_list RBRACK { GraphLit($2) }
+  | LBRACE graph_content RBRACE { GraphLit($2) }
 
 mat_content:
     mat_row { [$1] }
@@ -120,6 +113,13 @@ mat_content:
 mat_row:
     lit { [$1] }
   | mat_row COMMA lit {$3 :: $1 }
+
+graph_content:
+    edge { [$1] }
+  | graph_content SEMI edge {$3 :: $1}
+
+edge:
+      INTLITERAL EDGE INTLITERAL { ($1, $3) }
 
 args_opt:
     /* nothing */ { [] }

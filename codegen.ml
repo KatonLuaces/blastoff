@@ -77,8 +77,8 @@ let translate (functions, statements) =
       | Some _ -> ()
       | None -> ignore (instr builder)
     in
-    let rec build_expr builder e = match e with
-      | IntMatLit m -> let mat = L.build_call matrix_create_f [| 
+    let build_int_matrix m  = 
+       let mat = L.build_call matrix_create_f [| 
           L.const_int i32_t (List.length m) ;
           L.const_int i32_t (List.length (List.hd m))
         |] "matrix_create" builder
@@ -94,6 +94,10 @@ let translate (functions, statements) =
               )
             ) (List.rev row)
           ) (List.rev m) ; mat
+    in
+    let rec build_expr builder e = match e with
+      | IntMatLit m -> build_int_matrix m
+      | GraphLit _ -> raise (Failure "Graph Literal")
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
       | Assign (s , e) -> let comp_e = build_expr builder e in
         ignore(L.build_store comp_e (lookup s) builder); comp_e 
