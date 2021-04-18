@@ -153,6 +153,8 @@ let translate (functions, statements) =
             let merge_bb = L.append_block context "merge" func in
             ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
             L.builder_at_end context merge_bb
+      (*| For (e1, e2, e3, body) ->
+        build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] ) *)
     in
     let builder = build_stmt builder (Block fdecl.body) in
     add_terminal builder (L.build_ret (L.const_int (if is_main then i32_t else matrix_t) 0))
