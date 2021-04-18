@@ -52,7 +52,7 @@ SignalError() {
 Compare() {
     generatedfiles="$generatedfiles $3"
     echo diff -b $1 $2 ">" $3 1>&2
-    diff -b "$1" "$2" > "\"$3\"" 2>&1 || {
+    diff -b "$1" "$2" > "$3" 2>&1 || {
 	SignalError "$1 differs"
 	echo "FAILED $1 differs from $2" 1>&2
     }
@@ -98,7 +98,7 @@ Check() {
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     Run "$CC" "-o" "${basename}.exe" "${basename}.s" "graphblas.o" "-lgraphblas" &&
     Run "./${basename}.exe" > "${basename}.out" &&
-    Compare ${basename}.out ${reffile}.out ${basename}.diff
+    Compare ${basename}.out ${reffile}.out ${basename}.dif
 
     # Report the status and clean up the generated files
 
