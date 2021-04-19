@@ -2,5 +2,5 @@ v = [1;1;1];
 v[1] = 2;
 u = [1;1;1];
 u[[0;2]] = 2;
-print(v);
-print(u);
+print(toString(v));
+print(toString(u));

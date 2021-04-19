@@ -1,1 +1,2 @@
+print(toString(Zero([4])));
 print(toString(Zero([3;2])));

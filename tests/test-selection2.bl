@@ -1,6 +1,7 @@
 M = Zero(2);
-M[0, 0] = 1;
-M[1, 1] = 1;
+M[1, 0] = 1;
 N = Zero(3);
-N[1, 1, 2, 2] = M;
-print(B);
+N[1, 1, 2, 2] = I(2);
+
+print(toString(M));
+print(toString(N));
