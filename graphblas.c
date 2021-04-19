@@ -42,10 +42,10 @@ void GrB_print(GrB_Matrix mat)
 
 void GrB_size(GrB_Matrix mat, GrB_Index *nrows, GrB_Index *ncols)
 {
-    if (!GrB_ok(GrB_Matrix_nrows(nrows, mat)))
+    if (nrows && !GrB_ok(GrB_Matrix_nrows(nrows, mat)))
         GrB_die("GrB_Matrix_nrows", mat);
 
-    if (!GrB_ok(GrB_Matrix_ncols(ncols, mat)))
+    if (ncols && !GrB_ok(GrB_Matrix_ncols(ncols, mat)))
         GrB_die("GrB_Matrix_ncols", mat);
 }
 
@@ -141,11 +141,8 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
     GrB_Info info;
     GrB_Index nrows, ncols;
     
-    if (!GrB_ok(GrB_Matrix_nrows(&nrows, A->mat)))
-        GrB_die("GrB_Matrix_nrows", A->mat);
-
-    if (!GrB_ok(GrB_Matrix_ncols(&ncols, B->mat)))
-        GrB_die("GrB_Matrix_ncols", B->mat);
+    GrB_size(A->mat, &nrows, NULL);
+    GrB_size(B->mat, NULL, &ncols);
 
     C = matrix_create(nrows, ncols);
 
@@ -159,6 +156,34 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
 
     if (!GrB_ok(info))
         GrB_die("GrB_mxm", A->mat);
+    
+    return C;
+}
+
+struct matrix *matrix_elmul(struct matrix *A, struct matrix *B)
+{
+    struct matrix *C;
+    GrB_Info info;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols;
+    
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+
+    if (A_nrows != B_nrows || A_ncols != B_ncols)
+        die("matrix_elmul bad dimensions");
+
+    C = matrix_create(A_nrows, A_ncols);
+
+    info = GrB_Matrix_eWiseMult_Semiring(C->mat,
+                                         GrB_NULL,
+                                         GrB_NULL,
+                                         GrB_PLUS_TIMES_SEMIRING_INT32,
+                                         A->mat,
+                                         B->mat,
+                                         GrB_NULL);
+
+    if (!GrB_ok(info))
+        GrB_die("GrB_Matrix_eWiseMult_Semiring", A->mat);
     
     return C;
 }

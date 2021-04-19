@@ -35,10 +35,13 @@ let translate (functions, statements) =
   let matrix_mul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
   let matrix_mul_f = L.declare_function "matrix_mul" matrix_mul_t blastoff_module in
 
+  let matrix_elmul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
+  let matrix_elmul_f = L.declare_function "matrix_elmul" matrix_elmul_t blastoff_module in
+
   let matrix_conv_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
   let matrix_conv_f = L.declare_function "matrix_conv" matrix_conv_t blastoff_module in
 
-  let main_fdecl = { fname = "main"; formals = []; body = statements } in
+  let main_fdecl = { fname = "main"; formals = []; body = List.rev statements } in
 
   (* Define each function (arguments and return type) so we can 
      call it even before we've created its body *)
@@ -115,7 +118,7 @@ let translate (functions, statements) =
         (match v with Id s-> ignore(L.build_store comp_e (lookup s) builder)); comp_e 
       | Call(fname, exprs) ->
         (match fname with 
-          "print" -> (match exprs with 
+           "print" -> (match exprs with 
               [e] -> L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder 
              | _ -> raise (Failure "Invalid list of expressions passed to print"))
          | "toString" -> (match exprs with 
@@ -129,6 +132,7 @@ let translate (functions, statements) =
           and e2' = build_expr builder e2 in ( 
             match op with
               A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
+            | A.Elmul  -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
             | A.Conv   -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
