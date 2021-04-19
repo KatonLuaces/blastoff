@@ -34,7 +34,7 @@ graphblas.bc : graphblas.c
 .PHONY : clean
 clean :
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff *.ll *.s *.o *.exe \
+	rm -rf testall.log ocamlllvm *.diff *.ll *.s *.o *.exe *.out *.err \
 		blastoffparser.ml blastoffparser.mli blastoff.native \
 		graphblas graphblas.o graphblas.bc \
 

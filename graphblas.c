@@ -66,8 +66,23 @@ struct matrix *matrix_create(int nrows, int ncols)
 
 void matrix_print(struct matrix *A)
 {
-    if (!GrB_ok(GxB_Matrix_fprint(A->mat, NULL, GxB_COMPLETE_VERBOSE, stdout)))
-        GrB_die("GxB_Matrix_fprint", A->mat);
+    GrB_Index nrows, ncols, i;
+    int32_t elem;
+    
+    if (!GrB_ok(GrB_Matrix_nrows(&nrows, A->mat)))
+        GrB_die("GrB_Matrix_nrows", A->mat);
+
+    if (!GrB_ok(GrB_Matrix_ncols(&ncols, A->mat)))
+        GrB_die("GrB_Matrix_ncols", A->mat);
+
+    if (ncols != 1)
+        die("Tried to print string with more than 1 col");
+
+    for (i = 0; i < nrows; i++) {
+        if (!GrB_ok(GrB_Matrix_extractElement(&elem, A->mat, i, 0)))
+            GrB_die("GrB_Matrix_extractElement", A->mat);
+        putchar(elem);
+    }
 }
 
 void matrix_setelem(struct matrix *A, int val, int row, int col)
@@ -90,7 +105,7 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
         GrB_die("GrB_Matrix_nrows", A->mat);
 
     if (!GrB_ok(GrB_Matrix_ncols(&ncols, B->mat)))
-        GrB_die("GrB_Matrix_ncols", A->mat);
+        GrB_die("GrB_Matrix_ncols", B->mat);
 
     C = matrix_create(nrows, ncols);
 
