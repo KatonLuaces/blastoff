@@ -1,0 +1,5 @@
+def f(M) {
+  return M;
+}
+
+print(f([3;3]));

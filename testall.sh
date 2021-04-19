@@ -93,7 +93,7 @@ Check() {
 
     generatedfiles=""
 
-    generatedfiles="$generatedfiles ${basename}.ll" &&
+    generatedfiles="$generatedfiles ${basename}.ll ${basename}.exe ${basename}.s" &&
     Run "$BLASTOFF" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     Run "$CC" "-o" "${basename}.exe" "${basename}.s" "graphblas.o" "-lgraphblas" &&
@@ -111,6 +111,9 @@ Check() {
     else
 	echo "###### FAILED" 1>&2
 	globalerror=$error
+	if [ $keep -eq 0 ] ; then
+	    rm -f $generatedfiles
+	fi
     fi
 }
 

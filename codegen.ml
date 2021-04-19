@@ -55,7 +55,7 @@ let translate (functions, statements) =
 
   (* Fill in the body of the given function *)
   let build_function_body fdecl is_main =
-    let func, _ = StringMap.find fdecl.fname function_decls in
+    let func, _ = try StringMap.find fdecl.fname function_decls with Not_found -> raise (Failure ("Unknown function, " ^ fdecl.fname)) in
     let builder = L.builder_at_end context (L.entry_block func) in
     let local_vars =
       let add_formal m n p =
@@ -80,7 +80,7 @@ let translate (functions, statements) =
       let locals = List.fold_left add_assignment [] fdecl.body in
       List.fold_left add_local formals locals
     in
-    let lookup n = StringMap.find n local_vars in
+    let lookup n = try StringMap.find n local_vars with Not_found -> raise (Failure ("Undeclared variable " ^ n)) in
     let add_terminal builder instr =
       match L.block_terminator (L.insertion_block builder) with
       | Some _ -> ()
@@ -109,7 +109,7 @@ let translate (functions, statements) =
       | GraphLit _ -> raise (Failure "Graph Literal")
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
       | Assign (v , e) -> let comp_e = build_expr builder e in
-        (match v with Id s-> try ignore(L.build_store comp_e (lookup s) builder) with Not_found -> raise (Failure ("Undeclared variable " ^ s))); comp_e 
+        (match v with Id s-> ignore(L.build_store comp_e (lookup s) builder)); comp_e 
       | Call(fname, exprs) ->
         (match fname with 
           "print" -> (match exprs with 
@@ -163,6 +163,8 @@ let translate (functions, statements) =
             let merge_bb = L.append_block context "merge" func in
             ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
             L.builder_at_end context merge_bb
+      (*| For (e1, e2, e3, body) ->
+        build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] ) *)
     in
     let builder = build_stmt builder (Block fdecl.body) in
     add_terminal builder (L.build_ret (L.const_int (if is_main then i32_t else matrix_t) 0))

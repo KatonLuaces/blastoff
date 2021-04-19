@@ -1,0 +1,3 @@
+v = Zeroes([5;1]);
+v[range(5)] = 1;
+print(v);

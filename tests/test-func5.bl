@@ -1,0 +1,9 @@
+M = [3];
+
+def foo(M) {
+  M = [4];
+}
+
+foo(M);
+
+print(M);
