@@ -53,11 +53,6 @@ let check (funcs, stmts) =
     try StringMap.find fname function_decls
     with Not_found -> raise (Failure ("Undeclared function " ^ fname ))
   in
-  let check_function func =
-    (* Make sure no formals or locals are void or duplicates *)
-    let _ = check_vars "body" func.body in
-    func
-in
 let is_float = function IntLit _ -> false | FloatLit _ -> true in
 let contains_float m = List.exists (fun lst -> List.exists (is_float) lst) m in
 let rec check_expr = function
@@ -86,15 +81,21 @@ in
 let rec check_stmt = function 
       Expr e -> Expr (check_expr e)
     | Semiring ring -> (match List.mem_assoc ring Constants.rings with true -> Semiring ring | false -> raise (Failure ("Unkown semiring " ^ ring)))
-    | Block bl -> 
-        let rec check_stmt_list = function
-            [Return _ as s]-> [check_stmt s]
-            | Return _ :: _ -> raise (Failure "Unreachable statments after return")
-            | Block sl :: ss -> check_stmt_list (sl @ ss)
-            | s :: ss -> check_stmt s :: check_stmt_list ss
-            | [] -> []
-        in Block(check_stmt_list bl)
+    | Block bl -> Block(check_stmt_list bl)
     | If(p, b1, b2) -> If(p, check_stmt b1, check_stmt b2)
     | While(p, s) -> While(p, check_stmt s)
     | Return e -> Return(check_expr e)
-  in (List.map check_function funcs, List.map check_stmt stmts)
+  and 
+    check_stmt_list = function
+      [Return _ as s]-> [check_stmt s]
+      | Return _ :: _ -> raise (Failure "Unreachable statments after return")
+      | Block sl :: ss -> check_stmt_list (sl @ ss)
+      | s :: ss -> check_stmt s :: check_stmt_list ss
+      | [] -> []
+  in
+  let check_function func =
+    (* Make sure no formals or locals are void or duplicates *)
+    let _ = check_vars "body" func.body in
+    let checked_body = check_stmt_list func.body in
+    {fname = func.fname; formals = func.formals; body = checked_body}
+in (List.map check_function funcs, List.map check_stmt stmts)
