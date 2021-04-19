@@ -1,60 +1,11 @@
 module L = Llvm
 module A = Ast
 open Ast
+open Definitions
 module StringMap = Map.Make (String)
 
 let translate (functions, statements) =
-  let context = L.global_context () in
-  let llmem = L.MemoryBuffer.of_file "graphblas.bc" in
-  let llm = Llvm_bitreader.parse_bitcode context llmem in
-  let blastoff_module = L.create_module context "BLAStoff" in
-
-  let i32_t = L.i32_type context
-  and matrix_t =
-    L.pointer_type
-      (match L.type_by_name llm "struct.matrix" with
-      | None -> raise (Failure "matrix type implementation not found")
-      | Some t -> t)
-  in
-
-  let matrix_create_t = L.function_type matrix_t [| i32_t; i32_t |] in
-  let matrix_create_f = L.declare_function "matrix_create" matrix_create_t blastoff_module in
-
-  let matrix_identity_t = L.function_type matrix_t [| matrix_t |] in
-  let matrix_identity_f = L.declare_function "matrix_create_identity" matrix_identity_t blastoff_module in
-
-  let matrix_zero_t = L.function_type matrix_t [| matrix_t |] in
-  let matrix_zero_f = L.declare_function "matrix_create_zero" matrix_zero_t blastoff_module in
-
-  let matrix_range_t = L.function_type matrix_t [| matrix_t |] in
-  let matrix_range_f = L.declare_function "matrix_create_range" matrix_range_t blastoff_module in
-
-  let matrix_print_t = L.function_type i32_t [| matrix_t |] in
-  let matrix_print_f = L.declare_function "matrix_print" matrix_print_t blastoff_module in
-
-  let matrix_tostring_t = L.function_type matrix_t [| matrix_t |] in
-  let matrix_tostring_f = L.declare_function "matrix_tostring" matrix_tostring_t blastoff_module in
-
-  let change_ring_t = L.function_type i32_t [| i32_t |] in
-  let change_ring_f = L.declare_function "change_ring" change_ring_t blastoff_module in
-
-  let matrix_setelem_t = L.function_type i32_t [| matrix_t; i32_t; i32_t; i32_t |] in
-  let matrix_setelem_f = L.declare_function "matrix_setelem" matrix_setelem_t blastoff_module in
-
-  let matrix_mul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
-  let matrix_mul_f = L.declare_function "matrix_mul" matrix_mul_t blastoff_module in
-
-  let matrix_conv_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
-  let matrix_conv_f = L.declare_function "matrix_conv" matrix_conv_t blastoff_module in
-
-  let matrix_elmul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
-  let matrix_elmul_f = L.declare_function "matrix_elmul" matrix_elmul_t blastoff_module in
-
-  let matrix_eladd_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
-  let matrix_eladd_f = L.declare_function "matrix_eladd" matrix_eladd_t blastoff_module in
-
   let main_fdecl = { fname = "main"; formals = []; body = List.rev statements } in
-
   (* Define each function (arguments and return type) so we can 
      call it even before we've created its body *)
   let function_decls : (L.llvalue * func_decl) StringMap.t =
@@ -166,7 +117,7 @@ let translate (functions, statements) =
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
-      | Semiring ring -> ignore (L.build_call change_ring_f [| L.const_int i32_t (List.assoc ring Constants.rings) |] "ring_change" builder); builder
+      | Semiring ring -> ignore (L.build_call change_ring_f [| L.const_int i32_t (List.assoc ring Definitions.rings) |] "ring_change" builder); builder
       | Expr e ->
         ignore (build_expr builder e);
         builder

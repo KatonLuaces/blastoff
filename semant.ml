@@ -32,7 +32,7 @@ let check (funcs, stmts) =
       fname = name; 
       formals = args;
       body = [] } map
-    in List.fold_left add_bind StringMap.empty Constants.functions 
+    in List.fold_left add_bind StringMap.empty Definitions.functions 
   in
   (* Add function name to symbol table *)
   let add_func map fd = 
@@ -80,7 +80,7 @@ let rec check_expr = function
 in
 let rec check_stmt = function 
       Expr e -> Expr (check_expr e)
-    | Semiring ring -> (match List.mem_assoc ring Constants.rings with true -> Semiring ring | false -> raise (Failure ("Unkown semiring " ^ ring)))
+    | Semiring ring -> (match List.mem_assoc ring Definitions.rings with true -> Semiring ring | false -> raise (Failure ("Unkown semiring " ^ ring)))
     | Block bl -> Block(check_stmt_list bl)
     | If(p, b1, b2) -> If(p, check_stmt b1, check_stmt b2)
     | While(p, s) -> While(p, check_stmt s)
