@@ -6,4 +6,4 @@ def foo(M) {
 
 foo(M);
 
-print(M);
+print(toString(M));

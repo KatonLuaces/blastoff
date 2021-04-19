@@ -2,4 +2,4 @@ def foo() {
     return;
 }
 
-print(foo());
+print(toString(foo()));

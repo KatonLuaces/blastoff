@@ -2,4 +2,4 @@ def f(M) {
   return M;
 }
 
-print(f([3;3]));
+print(toString(f([3;3])));

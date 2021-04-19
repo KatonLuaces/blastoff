@@ -1,1 +1,1 @@
-print(Zero([3;2]));
+print(toString(Zero([3;2])));
