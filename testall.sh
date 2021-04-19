@@ -6,7 +6,7 @@
 #  Compile and check the error of each expected-to-fail test
 
 # Print intermediary states of parser
-export OCAMLRUNPARAM='p'
+# export OCAMLRUNPARAM='p'
 
 # Path to the LLVM interpreter
 LLI="lli"
