@@ -1,0 +1,9 @@
+def f() {
+  def g() {
+    return [3];
+  }
+  return g;
+}
+
+closure = f()
+print(closure());
