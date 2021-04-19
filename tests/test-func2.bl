@@ -1,7 +1,5 @@
 def foo() {
-  return [3];
+  ;
 }
-def call(f) {
-  return f();
-}
-print(call(foo));
+
+print(foo());

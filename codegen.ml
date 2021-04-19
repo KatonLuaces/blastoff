@@ -156,6 +156,7 @@ let translate (functions, statements) =
             | A.Conv   -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
             | A.Elmul  -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
             | A.Add    -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
+            | A.Neq  -> L.build_fcmp L.Fcmp.One e1' e2' "fneq" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Literal _ -> raise (Failure "Naked literal")
