@@ -34,6 +34,12 @@ static int GrB_ok(GrB_Info info)
     }
 }
 
+void GrB_print(GrB_Matrix mat)
+{
+    if (!GrB_ok(GxB_Matrix_fprint(mat, NULL, GxB_COMPLETE_VERBOSE, stdout)))
+        die("GxB_Matrix_fprint");
+}
+
 /* automatically called before main() */
 __attribute__((constructor))
 static void matrix_lib_init(void) {
@@ -54,7 +60,6 @@ void matrix_lib_finalize(void)
 struct matrix *matrix_create(int nrows, int ncols)
 {
     struct matrix *A;
-
     if (!(A = malloc(sizeof *A)))
         die("malloc failed");
 
@@ -64,11 +69,31 @@ struct matrix *matrix_create(int nrows, int ncols)
     return A;
 }
 
+int matrix_getelem(struct matrix *A, int row, int col)
+{
+    int32_t elem = 0;
+
+    if (!GrB_ok(GrB_Matrix_extractElement(&elem, A->mat, row, col)))
+        GrB_die("GrB_Matrix_extractElement", A->mat);
+    
+    return elem;
+}
+
+void matrix_setelem(struct matrix *A, int val, int row, int col)
+{
+    // 0 is the implicit value; storing it explicitly would waste space
+    if (val == 0)
+        return;
+
+    if (!GrB_ok(GrB_Matrix_setElement(A->mat, val, row, col)))
+        GrB_die("GrB_Matrix_setElement", A->mat);
+}
+
 void matrix_print(struct matrix *A)
 {
     GrB_Index nrows, ncols, i;
-    int32_t elem;
-    
+    int elem;
+
     if (!GrB_ok(GrB_Matrix_nrows(&nrows, A->mat)))
         GrB_die("GrB_Matrix_nrows", A->mat);
 
@@ -78,22 +103,38 @@ void matrix_print(struct matrix *A)
     if (ncols != 1)
         die("Tried to print string with more than 1 col");
 
-    for (i = 0; i < nrows; i++) {
-        if (!GrB_ok(GrB_Matrix_extractElement(&elem, A->mat, i, 0)))
-            GrB_die("GrB_Matrix_extractElement", A->mat);
+    for (i = 0; i < nrows && (elem = matrix_getelem(A, i, 0)) != 0; i++)
         putchar(elem);
-    }
 }
 
-void matrix_setelem(struct matrix *A, int val, int row, int col)
+struct matrix *matrix_tostring(struct matrix *A)
 {
-    // 0 is the implicit value; storing it explicitly would waste space
-    if (val == 0)
-        return;
-    
-    if (!GrB_ok(GrB_Matrix_setElement(A->mat, val, row, col)))
-        GrB_die("GrB_Matrix_setElement", A->mat);
+    struct matrix *B;
+    GrB_Index nrows, ncols, i, j, k;
+    char buf[1000], *b;
+
+    if (!GrB_ok(GrB_Matrix_nrows(&nrows, A->mat)))
+        GrB_die("GrB_Matrix_nrows", A->mat);
+
+    if (!GrB_ok(GrB_Matrix_ncols(&ncols, A->mat)))
+        GrB_die("GrB_Matrix_ncols", A->mat);
+
+    B = matrix_create(nrows * (ncols + 1) * 20, 1);
+
+    k = 0;
+    for (i = 0; i < nrows; i++) {
+        for (j = 0; j < ncols; j++) {
+            snprintf(buf, sizeof(buf), "%d ", matrix_getelem(A, i, j));
+            for (b = buf; *b; b++)
+                matrix_setelem(B, *b, k++, 0);
+        }
+        matrix_setelem(B, '\n', k++, 0);
+    }
+    matrix_setelem(B, 0, k, 0);
+
+    return B;
 }
+
 
 struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
 {
@@ -138,9 +179,11 @@ int main(int argc, char** argv){
     matrix_setelem(B, 5, 2, 2);
 
     C = matrix_mul(A, B);
-
-    matrix_print(A);
-    matrix_print(B);
-    matrix_print(C);
+    matrix_print(matrix_tostring(A));
+    printf("\n");
+    matrix_print(matrix_tostring(B));
+    printf("\n");
+    matrix_print(matrix_tostring(C));
+    printf("\n");
 }
 #endif

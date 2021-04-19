@@ -24,7 +24,7 @@ blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml g
 
 # tester
 graphblas : graphblas.c
-	cc -o graphblas -DRUN_TEST graphblas.c -lgraphblas
+	cc -g -Wall -o graphblas -DRUN_TEST graphblas.c -lgraphblas
 
 graphblas.bc : graphblas.c
 	clang -emit-llvm -o graphblas.bc -c graphblas.c -Wno-varargs
