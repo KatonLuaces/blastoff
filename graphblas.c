@@ -49,6 +49,21 @@ void GrB_size(GrB_Matrix mat, GrB_Index *nrows, GrB_Index *ncols)
         GrB_die("GrB_Matrix_ncols", mat);
 }
 
+int32_t GrB_scalar(GrB_Matrix mat)
+{
+    GrB_Index nrows, ncols;
+    int32_t elem;
+
+    GrB_size(mat, &nrows, &ncols);
+    if (nrows != 1 || ncols != 1)
+        die("GrB_scalar mat dims bad");
+
+    if (!GrB_ok(GrB_Matrix_extractElement(&elem, mat, 0, 0)))
+        GrB_die("GrB_Matrix_extractElement", mat);
+
+    return elem;
+}
+
 /* automatically called before main() */
 __attribute__((constructor))
 static void matrix_lib_init(void) {
@@ -66,18 +81,6 @@ void matrix_lib_finalize(void)
 
 /* BELOW: Functions used externally */
 
-struct matrix *matrix_create(int nrows, int ncols)
-{
-    struct matrix *A;
-    if (!(A = malloc(sizeof *A)))
-        die("malloc failed");
-
-    if (!GrB_ok(GrB_Matrix_new(&A->mat, GrB_INT32, nrows, ncols)))
-        GrB_die("GrB_Matrix_new", A->mat);
-    
-    return A;
-}
-
 int matrix_getelem(struct matrix *A, int row, int col)
 {
     int32_t elem = 0;
@@ -91,11 +94,80 @@ int matrix_getelem(struct matrix *A, int row, int col)
 void matrix_setelem(struct matrix *A, int val, int row, int col)
 {
     // 0 is the implicit value; storing it explicitly would waste space
-    if (val == 0)
+    int32_t unused;
+    if (val == 0 && 
+            GrB_Matrix_extractElement(&unused, A->mat, row, col) == GrB_NO_VALUE)
         return;
 
     if (!GrB_ok(GrB_Matrix_setElement(A->mat, val, row, col)))
         GrB_die("GrB_Matrix_setElement", A->mat);
+}
+
+struct matrix *matrix_create(int nrows, int ncols)
+{
+    struct matrix *A;
+    if (!(A = malloc(sizeof *A)))
+        die("malloc failed");
+
+    if (!GrB_ok(GrB_Matrix_new(&A->mat, GrB_INT32, nrows, ncols)))
+        GrB_die("GrB_Matrix_new", A->mat);
+
+    return A;
+}
+
+struct matrix *matrix_create_zero(struct matrix *dims)
+{
+    GrB_Index dim_nrows, dim_ncols, nrows, ncols;
+
+    GrB_size(dims->mat, &dim_nrows, &dim_ncols);
+    if ((dim_nrows != 1 && dim_nrows != 2) || dim_ncols != 1)
+        die("matrix_create_zero invalid dims arg");
+
+    nrows = matrix_getelem(dims, 0, 0);
+    ncols = dim_nrows == 2 ? matrix_getelem(dims, 1, 0) : nrows;
+
+    return matrix_create(nrows, ncols);
+}
+
+struct matrix *matrix_create_identity(struct matrix *N_scalar)
+{
+    struct matrix *A;
+    GrB_Index i, n;
+
+    n = GrB_scalar(N_scalar->mat);
+    A = matrix_create(n, n);
+    for (i = 0; i < n; i++)
+        matrix_setelem(A, 1, i, i);
+
+    return A;
+}
+
+struct matrix *matrix_create_range(struct matrix *range)
+{
+    struct matrix *A;
+    int32_t lo, hi;
+    GrB_Index i, range_nrows, range_ncols;
+
+    GrB_size(range->mat, &range_nrows, &range_ncols);
+    if (range_nrows == 1 && range_ncols == 1) {
+        lo = 0;
+        hi = matrix_getelem(range, 0, 0);
+    } else if (range_nrows == 2 && range_ncols == 1) {
+        lo = matrix_getelem(range, 0, 0);
+        hi = matrix_getelem(range, 1, 0);
+    } else {
+        die("matrix_create_range invalid range arg");
+    }
+
+    if (lo > hi)
+        return matrix_create(0, 1);
+
+    A = matrix_create(hi - lo + 1, 1);
+    i = 0;
+    while (lo <= hi)
+        matrix_setelem(A, lo++, i++, 0);
+    
+    return A;
 }
 
 void matrix_print(struct matrix *A)
@@ -119,6 +191,9 @@ struct matrix *matrix_tostring(struct matrix *A)
 
     GrB_size(A->mat, &nrows, &ncols);
     B = matrix_create(nrows * (ncols + 1) * 20, 1);
+
+    if (nrows == 0 || ncols == 0)
+        return B;
 
     k = 0;
     for (i = 0; i < nrows; i++) {
@@ -219,7 +294,6 @@ struct matrix *matrix_eladd(struct matrix *A, struct matrix *B)
 struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
 {
     struct matrix *C;
-    GrB_Info info;
     GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols;
     int32_t sum;
     int i, j, v, w;
@@ -255,22 +329,16 @@ struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
 int main(int argc, char** argv){
     struct matrix *A, *B, *C;
     
-    A = matrix_create(3, 4);
-    matrix_setelem(A, 1, 0, 0);
-    matrix_setelem(A, 2, 1, 2);
-    matrix_setelem(A, 2, 2, 2);
+    A = matrix_create(2, 1);
+    matrix_setelem(A, 3, 0, 0);
+    matrix_setelem(A, 6, 1, 0);
 
-    B = matrix_create(4, 3);
-    matrix_setelem(B, 3, 0, 0);
-    matrix_setelem(B, 4, 1, 2);
-    matrix_setelem(B, 5, 2, 2);
-
-    C = matrix_mul(A, B);
     matrix_print(matrix_tostring(A));
     printf("\n");
+
+    B = matrix_create_range(A);
+
     matrix_print(matrix_tostring(B));
-    printf("\n");
-    matrix_print(matrix_tostring(C));
     printf("\n");
 }
 #endif

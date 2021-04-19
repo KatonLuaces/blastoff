@@ -20,6 +20,15 @@ let translate (functions, statements) =
   let matrix_create_t = L.function_type matrix_t [| i32_t; i32_t |] in
   let matrix_create_f = L.declare_function "matrix_create" matrix_create_t blastoff_module in
 
+  let matrix_identity_t = L.function_type matrix_t [| matrix_t |] in
+  let matrix_identity_f = L.declare_function "matrix_create_identity" matrix_identity_t blastoff_module in
+
+  let matrix_zero_t = L.function_type matrix_t [| matrix_t |] in
+  let matrix_zero_f = L.declare_function "matrix_create_zero" matrix_zero_t blastoff_module in
+
+  let matrix_range_t = L.function_type matrix_t [| matrix_t |] in
+  let matrix_range_f = L.declare_function "matrix_create_range" matrix_range_t blastoff_module in
+
   let matrix_print_t = L.function_type i32_t [| matrix_t |] in
   let matrix_print_f = L.declare_function "matrix_print" matrix_print_t blastoff_module in
 
@@ -127,6 +136,15 @@ let translate (functions, statements) =
          | "toString" -> (match exprs with 
               [e] -> L.build_call matrix_tostring_f [| (build_expr builder e) |] "matrix_tostring" builder 
              | _ -> raise (Failure "Invalid list of expressions passed to toString"))
+         | "I" -> (match exprs with 
+              [e] -> L.build_call matrix_identity_f [| (build_expr builder e) |] "matrix_identity" builder 
+             | _ -> raise (Failure "Invalid list of expressions passed to I"))
+         | "Zero" -> (match exprs with 
+              [e] -> L.build_call matrix_zero_f [| (build_expr builder e) |] "matrix_zero" builder 
+             | _ -> raise (Failure "Invalid list of expressions passed to Zero"))
+         | "range" -> (match exprs with 
+              [e] -> L.build_call matrix_range_f [| (build_expr builder e) |] "matrix_range" builder 
+             | _ -> raise (Failure "Invalid list of expressions passed to range"))
          | f -> let (fdef, fdecl) = (try StringMap.find f function_decls with Not_found -> raise (Failure ("Undeclared function, " ^ f ^ ", found in code generation"))) in
            let args = List.map (build_expr builder) (List.rev exprs) in
            L.build_call fdef (Array.of_list args) (fdecl.fname ^ "_result") builder)
