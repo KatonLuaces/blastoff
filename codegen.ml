@@ -35,6 +35,9 @@ let translate (functions, statements) =
   let matrix_mul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
   let matrix_mul_f = L.declare_function "matrix_mul" matrix_mul_t blastoff_module in
 
+  let matrix_conv_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
+  let matrix_conv_f = L.declare_function "matrix_conv" matrix_conv_t blastoff_module in
+
   let main_fdecl = { fname = "main"; formals = []; body = statements } in
 
   (* Define each function (arguments and return type) so we can 
@@ -125,7 +128,8 @@ let translate (functions, statements) =
           let e1' = build_expr builder e1
           and e2' = build_expr builder e2 in ( 
             match op with
-            A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
+              A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
+            | A.Conv   -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Literal _ -> raise (Failure "Naked literal")

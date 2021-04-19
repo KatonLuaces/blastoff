@@ -40,6 +40,15 @@ void GrB_print(GrB_Matrix mat)
         die("GxB_Matrix_fprint");
 }
 
+void GrB_size(GrB_Matrix mat, GrB_Index *nrows, GrB_Index *ncols)
+{
+    if (!GrB_ok(GrB_Matrix_nrows(nrows, mat)))
+        GrB_die("GrB_Matrix_nrows", mat);
+
+    if (!GrB_ok(GrB_Matrix_ncols(ncols, mat)))
+        GrB_die("GrB_Matrix_ncols", mat);
+}
+
 /* automatically called before main() */
 __attribute__((constructor))
 static void matrix_lib_init(void) {
@@ -94,12 +103,7 @@ void matrix_print(struct matrix *A)
     GrB_Index nrows, ncols, i;
     int elem;
 
-    if (!GrB_ok(GrB_Matrix_nrows(&nrows, A->mat)))
-        GrB_die("GrB_Matrix_nrows", A->mat);
-
-    if (!GrB_ok(GrB_Matrix_ncols(&ncols, A->mat)))
-        GrB_die("GrB_Matrix_ncols", A->mat);
-
+    GrB_size(A->mat, &nrows, &ncols);
     if (ncols != 1)
         die("Tried to print string with more than 1 col");
 
@@ -113,12 +117,7 @@ struct matrix *matrix_tostring(struct matrix *A)
     GrB_Index nrows, ncols, i, j, k;
     char buf[1000], *b;
 
-    if (!GrB_ok(GrB_Matrix_nrows(&nrows, A->mat)))
-        GrB_die("GrB_Matrix_nrows", A->mat);
-
-    if (!GrB_ok(GrB_Matrix_ncols(&ncols, A->mat)))
-        GrB_die("GrB_Matrix_ncols", A->mat);
-
+    GrB_size(A->mat, &nrows, &ncols);
     B = matrix_create(nrows * (ncols + 1) * 20, 1);
 
     k = 0;
@@ -163,6 +162,41 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
     
     return C;
 }
+
+struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
+{
+    struct matrix *C;
+    GrB_Info info;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols;
+    int32_t sum;
+    int i, j, v, w;
+
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+
+    if (A_nrows < B_nrows || A_ncols < B_ncols)
+        die("matrix_conv bad dimensions");
+
+    C_nrows = A_nrows - B_nrows + 1;
+    C_ncols = A_ncols - B_ncols + 1;
+    C = matrix_create(C_nrows, C_ncols);
+
+    for (i = 0; i < C_nrows; i++) {
+        for (j = 0; j < C_ncols; j++) {
+            sum = 0;
+            for (v = 0; v < B_nrows; v++) {
+                for (w = 0; w < B_ncols; w++) {
+                    sum += matrix_getelem(B, v, w) 
+                           * matrix_getelem(A, i+v, j+w);
+                }
+            }
+            matrix_setelem(C, sum, i, j);
+        }
+    }
+
+    return C;
+}
+
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){
