@@ -188,6 +188,34 @@ struct matrix *matrix_elmul(struct matrix *A, struct matrix *B)
     return C;
 }
 
+struct matrix *matrix_eladd(struct matrix *A, struct matrix *B)
+{
+    struct matrix *C;
+    GrB_Info info;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols;
+    
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+
+    if (A_nrows != B_nrows || A_ncols != B_ncols)
+        die("matrix_eladd bad dimensions");
+
+    C = matrix_create(A_nrows, A_ncols);
+
+    info = GrB_Matrix_eWiseAdd_Semiring(C->mat,
+                                        GrB_NULL,
+                                        GrB_NULL,
+                                        GrB_PLUS_TIMES_SEMIRING_INT32,
+                                        A->mat,
+                                        B->mat,
+                                        GrB_NULL);
+
+    if (!GrB_ok(info))
+        GrB_die("GrB_Matrix_eWiseAdd_Semiring", A->mat);
+    
+    return C;
+}
+
 struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
 {
     struct matrix *C;

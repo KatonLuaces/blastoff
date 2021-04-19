@@ -35,11 +35,14 @@ let translate (functions, statements) =
   let matrix_mul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
   let matrix_mul_f = L.declare_function "matrix_mul" matrix_mul_t blastoff_module in
 
+  let matrix_conv_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
+  let matrix_conv_f = L.declare_function "matrix_conv" matrix_conv_t blastoff_module in
+
   let matrix_elmul_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
   let matrix_elmul_f = L.declare_function "matrix_elmul" matrix_elmul_t blastoff_module in
 
-  let matrix_conv_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
-  let matrix_conv_f = L.declare_function "matrix_conv" matrix_conv_t blastoff_module in
+  let matrix_eladd_t = L.function_type matrix_t [| matrix_t; matrix_t |] in
+  let matrix_eladd_f = L.declare_function "matrix_eladd" matrix_eladd_t blastoff_module in
 
   let main_fdecl = { fname = "main"; formals = []; body = List.rev statements } in
 
@@ -132,8 +135,9 @@ let translate (functions, statements) =
           and e2' = build_expr builder e2 in ( 
             match op with
               A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
-            | A.Elmul  -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
             | A.Conv   -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
+            | A.Elmul  -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
+            | A.Add    -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Literal _ -> raise (Failure "Naked literal")
