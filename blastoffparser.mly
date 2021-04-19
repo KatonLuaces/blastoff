@@ -83,7 +83,7 @@ lit:
   | FLOATLITERAL { FloatLit($1) }
 
 expr:
-    lit          { Literal($1)            }
+      lit          { UnkMatLit([[$1]])            }
   | ID               { Id($1)                 }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MINUS  expr { Binop($1, Sub,   $3)   }
@@ -120,6 +120,7 @@ mat_content:
 mat_row:
     lit { [$1] }
   | mat_row COMMA lit {$3 :: $1 }
+  | /* nothing */ {[]}
 
 graph_content:
     edge { [$1] }

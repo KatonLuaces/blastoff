@@ -29,7 +29,6 @@ type lit =
   | FloatLit of float
 
 type expr =
-  | Literal of lit (* TODO(Katon): This should be unnecessary eventually and thus should be removed*)
   | GraphLit of (int * int) list
   | UnkMatLit of lit list list
   | IntMatLit of int list list
@@ -84,8 +83,6 @@ let string_of_mat print_lit m =
     List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m ^ "]"
 
 let rec string_of_expr = function
-  | Literal l -> (match l with IntLit ilit -> string_of_int ilit 
-                            | FloatLit flit -> string_of_float flit)
   | Id s -> s
   | Binop (e1, o, e2) -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop (o, e) -> string_of_e_with_uop e o

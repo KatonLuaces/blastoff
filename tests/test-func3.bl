@@ -1,5 +1,5 @@
 def foo() {
-    return [];
+    return;
 }
 
 print(foo());

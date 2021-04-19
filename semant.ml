@@ -77,10 +77,9 @@ let rec check_expr = function
     | Binop (e1, op, e2) -> Binop (check_expr e1, op, check_expr e2)
     | Unop (op, e) -> Unop (op, check_expr e)
     | Assign (n, e) -> Assign (n, check_expr e)
-| Literal l -> check_expr (UnkMatLit [[l]])
     | FloatMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | IntMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
-    | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking") (*TODO(Katon): Check if noexpr should be illegal in all circumstances. If so, can it be removed entirely from the AST?*)
+    | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking") 
 | GraphLit g -> GraphLit g
 | Selection _ ->  raise (Failure "Selection not implemented") (*TODO: Implement selection*)
 in
@@ -89,7 +88,7 @@ let rec check_stmt = function
     | Semiring ring -> (match List.mem_assoc ring Constants.rings with true -> Semiring ring | false -> raise (Failure ("Unkown semiring " ^ ring)))
     | Block bl -> 
         let rec check_stmt_list = function
-            [Return _ as s] -> [check_stmt s]
+            [Return _ as s]-> [check_stmt s]
             | Return _ :: _ -> raise (Failure "Unreachable statments after return")
             | Block sl :: ss -> check_stmt_list (sl @ ss)
             | s :: ss -> check_stmt s :: check_stmt_list ss
@@ -97,5 +96,5 @@ let rec check_stmt = function
         in Block(check_stmt_list bl)
     | If(p, b1, b2) -> If(p, check_stmt b1, check_stmt b2)
     | While(p, s) -> While(p, check_stmt s)
-    | Return e -> Return(e)
+    | Return e -> Return(check_expr e)
   in (List.map check_function funcs, List.map check_stmt stmts)
