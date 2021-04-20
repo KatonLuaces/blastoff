@@ -327,7 +327,7 @@ struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
 struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D)
 {
     struct matrix *R;
-    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols, R_nrows, R_ncols;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols;
     int i, j, v, w;
 
 
@@ -357,13 +357,58 @@ struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix 
         int Bj = matrix_getelem(B, j, 0);
         for (v = 0; v < cval; v++){
           for (w = 0; w < dval; w++){
-              matrix_setelem(R, matrix_getelem(M, Ai, Bj), i*cval+v, j*dval+w);
+              matrix_setelem(R, matrix_getelem(M, Ai+v, Bj+w), i*cval+v, j*dval+w);
           }
         }
       }
     }
 
     return R;
+}
+
+
+struct matrix *matrix_insert(struct matrix *M, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D, struct matrix *N)
+{
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols, N_nrows, N_ncols;
+    int i, j, v, w;
+
+
+    // verify that A, B, C, D are all integer matrices??
+
+    //veryify that A, B are column vectors and that C, D are 1x1
+
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+    GrB_size(C->mat, &C_nrows, &C_ncols);
+    GrB_size(D->mat, &D_nrows, &D_ncols);
+    GrB_size(N->mat, &N_nrows, &N_ncols);
+
+    if (A_ncols != 1 || B_ncols != 1 || C_ncols != 1 || C_nrows != 1 || D_nrows != 1 || D_ncols != 1)
+        die("matrix_extract bad dimensions");
+
+    int cval = matrix_getelem(C, 0, 0);
+    int dval = matrix_getelem(D, 0, 0);
+
+    if (N_nrows != cval | N_ncols != dval)
+        die("matrix_extract size mismatch");
+
+    //(A[i], B[j]) is top-left corner in form (cols, rows)
+    //(A[i]+v, B[j]+w) is what we iterate through
+    //(i*cval+v, j*dval+w) is where we store
+    int outi = 0;
+    for (i = 0; i < A_nrows; i++){
+      for (j = 0; j < B_nrows; j++){
+        int Ai = matrix_getelem(A, i, 0);
+        int Bj = matrix_getelem(B, j, 0);
+        for (v = 0; v < cval; v++){
+          for (w = 0; w < dval; w++){
+              matrix_setelem(M, matrix_getelem(N, v, w), Ai+v, Bj+w);
+          }
+        }
+      }
+    }
+
+    return N;
 }
 
 
