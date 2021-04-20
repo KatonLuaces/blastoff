@@ -1,6 +1,6 @@
 module L = Llvm
 
-let context = L.global_context () 
+let context = L.global_context ()
 let llmem = L.MemoryBuffer.of_file "graphblas.bc"
 let llm = Llvm_bitreader.parse_bitcode context llmem
 let blastoff_module = L.create_module context "BLAStoff"
@@ -51,3 +51,5 @@ let matrix_elmul_f = L.declare_function "matrix_elmul" matrix_elmul_t blastoff_m
 let matrix_eladd_t = L.function_type matrix_t [| matrix_t; matrix_t |]
 let matrix_eladd_f = L.declare_function "matrix_eladd" matrix_eladd_t blastoff_module
 
+let matrix_extract_t = L.function_type matrix_t [| matrix_t; matrix_t; matrix_t; matrix_t; matrix_t |]
+let matrix_extract_f = L.declare_function "matrix_extract" matrix_extract_t blastoff_module

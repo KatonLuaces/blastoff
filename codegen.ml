@@ -122,8 +122,11 @@ let translate (functions, statements) =
       | Noexpr -> raise (Failure "Noexpr in codegen")
       | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
       | Id v -> L.build_load (lookup v) v builder
-      | Selection _ -> raise (Failure "Selection not implemented")
-      | SelectAssign _ -> raise (Failure "Selection not implemented")
+      | Selection (e: Expr, args) ->
+        let e' = build_expr builder e
+        and args' = List.map (build_expr builder) (args) in
+          L.build_call matrix_extract_f (Array.of_list e'::args') "matrix_extract" builder
+      | SelectAssign _ -> raise (Failure "Selection assign not implemented")
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
