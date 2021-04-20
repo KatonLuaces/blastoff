@@ -1,6 +1,5 @@
 B = -4;
-B = B - 1;
-if (B) {
+while (B) {
   B = B + 1;
 }
 print(toString(B));
