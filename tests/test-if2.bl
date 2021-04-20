@@ -1,0 +1,7 @@
+A = 0;
+if (A) {
+  A = 0;
+} else {
+  A = 3;
+}
+print(toString(A));
