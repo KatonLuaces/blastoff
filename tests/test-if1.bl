@@ -1,5 +1,5 @@
-A = 3;
-if (A > 2) {
+A = 0;
+if (A) {
   A = 7;
 }
 print(toString(A));
