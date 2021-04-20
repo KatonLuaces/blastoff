@@ -76,8 +76,8 @@ let rec check_expr = function
     | IntMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking")
 | GraphLit g -> GraphLit g
-| Selection _ ->  raise (Failure "Selection not implemented")
-| SelectAssign _ ->  raise (Failure "Selection not implemented") (*TODO: Implement selection*)
+| Selection (e, args) -> Selection (check_expr e, List.map check_expr args)
+| SelectAssign (n, args, e) -> SelectAssign (n, List.map check_expr args, check_expr e)
 in
 let rec check_stmt = function
       Expr e -> Expr (check_expr e)

@@ -71,6 +71,17 @@ let translate (functions, statements) =
             ) (List.rev row)
           ) (List.rev m) ; mat
     in
+    let rec fill_select_args args =
+      let base = L.build_call matrix_create_f [|L.const_int i32_t 1 ; L.const_int i32_t 1|] "matrix_create" builder in
+      let zero = L.build_call matrix_setelem_f [|base; L.const_int i32_t 0 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder in
+      let one = L.build_call matrix_setelem_f [|base; L.const_int i32_t 1 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder in
+      match args with
+      | [a;b;c;d] -> ([a;b;c;d] )
+      | [a;b;c] -> fill_select_args ([a;b;c;one])
+      | [a;b] -> fill_select_args ([a;b;one])
+      | [a] -> fill_select_args ([a;zero])
+      | _ -> raise (Failure "Too many/few arguments to selection")
+    in
     let rec build_expr builder e = match e with
       | IntMatLit m -> build_int_matrix m
       | GraphLit _ -> raise (Failure "Graph Literal")
@@ -111,8 +122,8 @@ let translate (functions, statements) =
       | Noexpr -> raise (Failure "Noexpr in codegen")
       | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
       | Id v -> L.build_load (lookup v) v builder
-      | SelectAssign _ -> raise (Failure "Selection not implemented")
       | Selection _ -> raise (Failure "Selection not implemented")
+      | SelectAssign _ -> raise (Failure "Selection not implemented")
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
