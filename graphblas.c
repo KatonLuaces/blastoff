@@ -324,6 +324,18 @@ struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
     return C;
 }
 
+int matrix_bool(struct matrix *A)
+{
+    int32_t bool_val = 0;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    if (nrows != 1 || ncols != 1)
+        die("Hi Katon");
+
+    return matrix_getelem(A, 0, 0) > 0;
+}
+
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){

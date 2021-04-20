@@ -51,3 +51,6 @@ let matrix_elmul_f = L.declare_function "matrix_elmul" matrix_elmul_t blastoff_m
 let matrix_eladd_t = L.function_type matrix_t [| matrix_t; matrix_t |]
 let matrix_eladd_f = L.declare_function "matrix_eladd" matrix_eladd_t blastoff_module
 
+let matrix_bool_t = L.function_type i32_t [| matrix_t |]
+let matrix_bool_f = L.declare_function "matrix_bool" matrix_bool_t blastoff_module
+
