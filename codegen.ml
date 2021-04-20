@@ -6,8 +6,7 @@ module StringMap = Map.Make (String)
 
 let translate (functions, statements) =
   let main_fdecl = { fname = "main"; formals = []; body = List.rev statements } in
-  (* Define each function (arguments and return type) so we can 
-     call it even before we've created its body *)
+
   let function_decls : (L.llvalue * func_decl) StringMap.t =
     let function_decl m fdecl =
       let name = fdecl.fname
@@ -22,7 +21,6 @@ let translate (functions, statements) =
     ) decls 
   in
 
-  (* Fill in the body of the given function *)
   let build_function_body fdecl is_main =
     let func, _ = try StringMap.find fdecl.fname function_decls with Not_found -> raise (Failure ("Unknown function, " ^ fdecl.fname)) in
     let builder = L.builder_at_end context (L.entry_block func) in
