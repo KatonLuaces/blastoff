@@ -76,7 +76,7 @@ let translate (functions, statements) =
       let zero = L.build_call matrix_setelem_f [|base; L.const_int i32_t 0 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder in
       let one = L.build_call matrix_setelem_f [|base; L.const_int i32_t 1 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder in
       match args with
-      | [a;b;c;d] -> ([a;b;c;d] )
+      | [a;b;c;d] -> ([a;b;c;d])
       | [a;b;c] -> fill_select_args ([a;b;c;one])
       | [a;b] -> fill_select_args ([a;b;one])
       | [a] -> fill_select_args ([a;zero])

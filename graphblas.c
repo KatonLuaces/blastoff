@@ -87,7 +87,7 @@ int matrix_getelem(struct matrix *A, int row, int col)
 
     if (!GrB_ok(GrB_Matrix_extractElement(&elem, A->mat, row, col)))
         GrB_die("GrB_Matrix_extractElement", A->mat);
-    
+
     return elem;
 }
 
@@ -95,7 +95,7 @@ void matrix_setelem(struct matrix *A, int val, int row, int col)
 {
     // 0 is the implicit value; storing it explicitly would waste space
     int32_t unused;
-    if (val == 0 && 
+    if (val == 0 &&
             GrB_Matrix_extractElement(&unused, A->mat, row, col) == GrB_NO_VALUE)
         return;
 
@@ -166,7 +166,7 @@ struct matrix *matrix_create_range(struct matrix *range)
     i = 0;
     while (lo <= hi)
         matrix_setelem(A, lo++, i++, 0);
-    
+
     return A;
 }
 
@@ -215,7 +215,7 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
     struct matrix *C;
     GrB_Info info;
     GrB_Index nrows, ncols;
-    
+
     GrB_size(A->mat, &nrows, NULL);
     GrB_size(B->mat, NULL, &ncols);
 
@@ -231,7 +231,7 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
 
     if (!GrB_ok(info))
         GrB_die("GrB_mxm", A->mat);
-    
+
     return C;
 }
 
@@ -240,7 +240,7 @@ struct matrix *matrix_elmul(struct matrix *A, struct matrix *B)
     struct matrix *C;
     GrB_Info info;
     GrB_Index A_nrows, A_ncols, B_nrows, B_ncols;
-    
+
     GrB_size(A->mat, &A_nrows, &A_ncols);
     GrB_size(B->mat, &B_nrows, &B_ncols);
 
@@ -259,7 +259,7 @@ struct matrix *matrix_elmul(struct matrix *A, struct matrix *B)
 
     if (!GrB_ok(info))
         GrB_die("GrB_Matrix_eWiseMult_Semiring", A->mat);
-    
+
     return C;
 }
 
@@ -268,7 +268,7 @@ struct matrix *matrix_eladd(struct matrix *A, struct matrix *B)
     struct matrix *C;
     GrB_Info info;
     GrB_Index A_nrows, A_ncols, B_nrows, B_ncols;
-    
+
     GrB_size(A->mat, &A_nrows, &A_ncols);
     GrB_size(B->mat, &B_nrows, &B_ncols);
 
@@ -287,7 +287,7 @@ struct matrix *matrix_eladd(struct matrix *A, struct matrix *B)
 
     if (!GrB_ok(info))
         GrB_die("GrB_Matrix_eWiseAdd_Semiring", A->mat);
-    
+
     return C;
 }
 
@@ -313,7 +313,7 @@ struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
             sum = 0;
             for (v = 0; v < B_nrows; v++) {
                 for (w = 0; w < B_ncols; w++) {
-                    sum += matrix_getelem(B, v, w) 
+                    sum += matrix_getelem(B, v, w)
                            * matrix_getelem(A, i+v, j+w);
                 }
             }
@@ -324,11 +324,53 @@ struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
     return C;
 }
 
+struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D)
+{
+    struct matrix *R;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols, R_nrows, R_ncols;
+    int i, j, v, w;
+
+
+    // verify that A, B, C, D are all integer matrices??
+
+    //veryify that A, B are column vectors and that C, D are 1x1
+
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+    GrB_size(C->mat, &C_nrows, &C_ncols);
+    GrB_size(D->mat, &D_nrows, &D_ncols);
+
+    if (A_ncols != 1 || B_ncols != 1 || C_ncols != 1 || C_nrows != 1 || D_nrows != 1 || D_ncols != 1)
+        die("matrix_extract bad dimensions");
+
+    int cval = matrix_getelem(C, 0, 0);
+    int dval = matrix_getelem(D, 0, 0);
+    R = matrix_create(A_ncols*cval, B_ncols*dval);
+
+    //(A[i], B[j]) is top-left corner in form (cols, rows)
+    //(A[i]+v, B[j]+w) is what we iterate through
+    //(i*cval+v, j*dval+w) is where we store
+    int outi = 0;
+    for (i = 0; i < A_nrows; i++){
+      for (j = 0; j < B_nrows; j++){
+        int Ai = matrix_getelem(A, i, 0);
+        int Bj = matrix_getelem(B, j, 0);
+        for (v = 0; v < cval; v++){
+          for (w = 0; w < dval; w++){
+              matrix_setelem(R, matrix_getelem(M, Ai, Bj), i*cval+v, j*dval+w);
+          }
+        }
+      }
+    }
+
+    return R;
+}
+
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){
     struct matrix *A, *B, *C;
-    
+
     A = matrix_create(2, 1);
     matrix_setelem(A, 3, 0, 0);
     matrix_setelem(A, 6, 1, 0);
