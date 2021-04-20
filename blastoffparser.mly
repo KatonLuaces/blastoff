@@ -27,11 +27,11 @@ open Ast
 %left PLUS MINUS
 %left MATMUL ELMUL
 %left CONCAT CONV
-%left RAISE 
+%left RAISE
 %left EDGE
-%right PLUSREDUCE MULREDUCE 
+%right PLUSREDUCE MULREDUCE
 %left TRANSP
-%right NOT 
+%right NOT
 %%
 
 program:
@@ -77,7 +77,7 @@ expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
 
-      
+
 lit:
     INTLITERAL { IntLit($1) }
   | FLOATLITERAL { FloatLit($1) }
@@ -106,7 +106,8 @@ expr:
   | PLUSREDUCE expr  { Unop(Plusreduce, $2)   }
   | MULREDUCE expr   { Unop(Mulreduce, $2)    }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }
-  | expr ASSIGN expr   { Assign($1, $3)         }
+  | ID ASSIGN expr   { IdAssign($1, $3)         }
+  | ID LBRACK expr_list RBRACK ASSIGN expr { SelectAssign($1, $3, $6) }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }

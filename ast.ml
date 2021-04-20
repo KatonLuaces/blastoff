@@ -37,7 +37,8 @@ type expr =
   | Selection of expr * expr list
   | Binop of expr * op * expr
   | Unop of uop * expr
-  | Assign of expr * expr
+  | IdAssign of string * expr
+  | SelectAssign of string * expr list * expr
   | Call of string * expr list
   | Noexpr
 
@@ -76,7 +77,7 @@ let string_of_op = function
   | Exponent -> "^"
   | Concat -> ":"
 
-let string_of_mat print_lit m = 
+let string_of_mat print_lit m =
    let string_of_row row =
       List.fold_left (fun acc lit -> acc ^ print_lit lit ^ ",") "" row
     in
@@ -86,14 +87,15 @@ let rec string_of_expr = function
   | Id s -> s
   | Binop (e1, o, e2) -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop (o, e) -> string_of_e_with_uop e o
-  | Assign (e1, e2) -> string_of_expr e1 ^ " = " ^ string_of_expr e2
+  | IdAssign (s, e) -> s ^ " = " ^ string_of_expr e
   | Call (f, el) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
-  | UnkMatLit m -> string_of_mat (fun lit -> match lit with 
+  | UnkMatLit m -> string_of_mat (fun lit -> match lit with
         IntLit ilit -> string_of_int ilit| FloatLit flit -> string_of_float flit) m
   | IntMatLit m -> string_of_mat string_of_int m
   | FloatMatLit m -> string_of_mat string_of_float m
   | Noexpr -> ""
-  | Selection (e, args) -> (string_of_expr e) ^ "[" ^ String.concat " " (List.map string_of_expr args) ^ "]"
+  | Selection (e, args) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]"
+  | SelectAssign (s, args, e) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]" ^ " = " ^ string_of_expr e
 and string_of_e_with_uop e =
   let str_expr = string_of_expr e in
   function

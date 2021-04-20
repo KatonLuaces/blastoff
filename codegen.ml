@@ -18,7 +18,7 @@ let translate (functions, statements) =
     let decls = List.fold_left function_decl StringMap.empty functions in
     StringMap.add main_fdecl.fname (
       L.define_function main_fdecl.fname (L.function_type i32_t (Array.of_list [])) blastoff_module, main_fdecl
-    ) decls 
+    ) decls
   in
 
   let build_function_body fdecl is_main =
@@ -42,7 +42,7 @@ let translate (functions, statements) =
           fdecl.formals
           (Array.to_list (L.params func))
       in
-      let add_assignment lst = function Expr e -> (match e with Assign (v, _) -> (match v with Id id -> id :: lst | _ -> lst )
+      let add_assignment lst = function Expr e -> (match e with IdAssign (v, _) -> (match v with id -> id :: lst | _ -> lst )
                                                               | _ -> lst) | _ -> lst in
       let locals = List.fold_left add_assignment [] fdecl.body in
       List.fold_left add_local formals locals
@@ -53,8 +53,8 @@ let translate (functions, statements) =
       | Some _ -> ()
       | None -> ignore (instr builder)
     in
-    let build_int_matrix m  = 
-       let mat = L.build_call matrix_create_f [| 
+    let build_int_matrix m  =
+       let mat = L.build_call matrix_create_f [|
           L.const_int i32_t (List.length m) ;
           L.const_int i32_t (List.length (List.hd m))
         |] "matrix_create" builder
@@ -75,31 +75,31 @@ let translate (functions, statements) =
       | IntMatLit m -> build_int_matrix m
       | GraphLit _ -> raise (Failure "Graph Literal")
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
-      | Assign (v , e) -> let comp_e = build_expr builder e in
-        (match v with Id s-> ignore(L.build_store comp_e (lookup s) builder)); comp_e 
+      | IdAssign (v , e) -> let comp_e = build_expr builder e in
+        (match v with s -> ignore(L.build_store comp_e (lookup s) builder)); comp_e
       | Call(fname, exprs) ->
-        (match fname with 
-           "print" -> (match exprs with 
-              [e] -> L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder 
+        (match fname with
+           "print" -> (match exprs with
+              [e] -> L.build_call matrix_print_f [| (build_expr builder e) |] "matrix_print" builder
              | _ -> raise (Failure "Invalid list of expressions passed to print"))
-         | "toString" -> (match exprs with 
-              [e] -> L.build_call matrix_tostring_f [| (build_expr builder e) |] "matrix_tostring" builder 
+         | "toString" -> (match exprs with
+              [e] -> L.build_call matrix_tostring_f [| (build_expr builder e) |] "matrix_tostring" builder
              | _ -> raise (Failure "Invalid list of expressions passed to toString"))
-         | "I" -> (match exprs with 
-              [e] -> L.build_call matrix_identity_f [| (build_expr builder e) |] "matrix_identity" builder 
+         | "I" -> (match exprs with
+              [e] -> L.build_call matrix_identity_f [| (build_expr builder e) |] "matrix_identity" builder
              | _ -> raise (Failure "Invalid list of expressions passed to I"))
-         | "Zero" -> (match exprs with 
-              [e] -> L.build_call matrix_zero_f [| (build_expr builder e) |] "matrix_zero" builder 
+         | "Zero" -> (match exprs with
+              [e] -> L.build_call matrix_zero_f [| (build_expr builder e) |] "matrix_zero" builder
              | _ -> raise (Failure "Invalid list of expressions passed to Zero"))
-         | "range" -> (match exprs with 
-              [e] -> L.build_call matrix_range_f [| (build_expr builder e) |] "matrix_range" builder 
+         | "range" -> (match exprs with
+              [e] -> L.build_call matrix_range_f [| (build_expr builder e) |] "matrix_range" builder
              | _ -> raise (Failure "Invalid list of expressions passed to range"))
          | f -> let (fdef, fdecl) = (try StringMap.find f function_decls with Not_found -> raise (Failure ("Undeclared function, " ^ f ^ ", found in code generation"))) in
            let args = List.map (build_expr builder) (List.rev exprs) in
            L.build_call fdef (Array.of_list args) (fdecl.fname ^ "_result") builder)
       | Binop (e1, op, e2) ->
           let e1' = build_expr builder e1
-          and e2' = build_expr builder e2 in ( 
+          and e2' = build_expr builder e2 in (
             match op with
               A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
             | A.Conv   -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
@@ -111,6 +111,7 @@ let translate (functions, statements) =
       | Noexpr -> raise (Failure "Noexpr in codegen")
       | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
       | Id v -> L.build_load (lookup v) v builder
+      | SelectAssign _ -> raise (Failure "Selection not implemented")
       | Selection _ -> raise (Failure "Selection not implemented")
     in
     let rec build_stmt builder = function
