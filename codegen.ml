@@ -147,9 +147,7 @@ let translate (functions, statements) =
         L.builder_at_end context merge_bb
       | While (pred, body) ->
         let pred_bb = L.append_block context "while" func in
-          ignore(L.build_br pred_bb builder);
         let body_bb = L.append_block context "while_body" func in
-          add_terminal(build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
         let pred_builder = L.builder_at_end context pred_bb in
           let bool_val_uncast = L.build_call matrix_bool_f [| (build_expr pred_builder pred) |] "matrix_bool" builder in
             let bool_val = L.build_icmp L.Icmp.Eq bool_val_uncast (L.const_int i32_t 1) "i1_t" builder in
