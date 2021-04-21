@@ -53,23 +53,39 @@ let translate (functions, statements) =
       | Some _ -> ()
       | None -> ignore (instr builder)
     in
+    let build_graph_matrix m  =
+      let max2 a b c =  if a >= b && a >= c then a else if b >= c && b >= a then b else c in
+      let dim = 1 + List.fold_left (fun acc elem -> max3 acc (fst elem) (snd elem)) 0 m in
+      let mat = L.build_call matrix_create_f [| 
+        L.const_int i32_t dim ; 
+        L.const_int i32_t dim 
+      |] "matrix_create" builder in
+        List.iter (
+          fun elem -> (
+            ignore(L.build_call matrix_setelem_f [| mat;
+                                                    L.const_int i32_t 1;
+                                                    L.const_int i32_t (fst elem);
+                                                    L.const_int i32_t (snd elem) |] "matrix_setelem" builder)
+          ) 
+        ) m ; mat
+    in
     let build_int_matrix m  =
-       let mat = L.build_call matrix_create_f [|
-          L.const_int i32_t (List.length m) ;
-          L.const_int i32_t (List.length (List.hd m))
-        |] "matrix_create" builder
-          in
-          List.iteri (
-            fun i row -> (
-              List.iteri (
-                fun j elem ->
-                  ignore(L.build_call matrix_setelem_f [| mat;
-                                                          L.const_int i32_t elem;
-                                                          L.const_int i32_t i;
-                                                          L.const_int i32_t j |] "matrix_setelem" builder)
-              )
-            ) (List.rev row)
-          ) (List.rev m) ; mat
+      let mat = L.build_call matrix_create_f [|
+        L.const_int i32_t (List.length m) ;
+        L.const_int i32_t (List.length (List.hd m))
+      |] "matrix_create" builder
+        in
+        List.iteri (
+          fun i row -> (
+            List.iteri (
+              fun j elem ->
+                ignore(L.build_call matrix_setelem_f [| mat;
+                                                        L.const_int i32_t elem;
+                                                        L.const_int i32_t i;
+                                                        L.const_int i32_t j |] "matrix_setelem" builder)
+            )
+          ) (List.rev row)
+        ) (List.rev m) ; mat
     in
     let rec fill_select_args args =
       let zero = L.build_call matrix_create_f [|L.const_int i32_t 1 ; L.const_int i32_t 1|] "matrix_create" builder in
@@ -84,7 +100,7 @@ let translate (functions, statements) =
     in
     let rec build_expr builder e = match e with
       | IntMatLit m -> build_int_matrix m
-      | GraphLit _ -> raise (Failure "Graph Literal")
+      | GraphLit m -> build_graph_matrix m
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
       | IdAssign (v , e) -> let comp_e = build_expr builder e in
         (match v with s -> ignore(L.build_store comp_e (lookup s) builder)); comp_e

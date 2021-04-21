@@ -4,3 +4,4 @@ G = [
     1->2;
     4->17
 ];
+print(toString(G));
