@@ -1,0 +1,23 @@
+def prints(M) {
+    print(toString(M));
+    return;
+}
+
+a = 2;
+b = 3;
+c = 0;
+
+#arithmetic;
+prints(a + b);
+prints(a * b);
+prints(a * c);
+
+#logical;
+prints(a + b);
+prints(a * b);
+prints(a * c);
+
+#maxmin;
+prints(a + b);
+prints(a * b);
+prints(a * c);
