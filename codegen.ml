@@ -54,8 +54,8 @@ let translate (functions, statements) =
       | None -> ignore (instr builder)
     in
     let build_graph_matrix m  =
-      let max2 a b c =  if a >= b && a >= c then a else if b >= c && b >= a then b else c in
-      let dim = 1 + List.fold_left (fun acc elem -> max2 acc (fst elem) (snd elem)) 0 m in
+      let max3 a b c =  if a >= b && a >= c then a else if b >= c && b >= a then b else c in
+      let dim = 1 + List.fold_left (fun acc elem -> max3 acc (fst elem) (snd elem)) 0 m in
       let mat = L.build_call matrix_create_f [| 
         L.const_int i32_t dim ; 
         L.const_int i32_t dim 
