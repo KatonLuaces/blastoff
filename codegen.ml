@@ -146,6 +146,7 @@ let translate (functions, statements) =
         let e' = build_expr builder e in (
           match op with
             A.Size -> L.build_call matrix_size_f [| e' |] "matrix_size" builder
+            | A.Transp -> L.build_call matrix_transpose_f [| e' |] "matrix_transpose" builder
             | _ -> raise (Failure "Unbuilt unop call made")
         )
       | Id v -> L.build_load (lookup v) v builder

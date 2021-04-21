@@ -37,7 +37,7 @@ let built_in_defs: built_in list = [
 
 let create_fun_type fdef = L.function_type fdef.ret (Array.of_list fdef.args)
 
-let built_ins = List.map (fun fdef -> (fdef.name, create_fun_type fdef)) built_in_defs 
+let built_ins = List.map (fun fdef -> (fdef.name, create_fun_type fdef)) built_in_defs
 
 let matrix_create_t = L.function_type matrix_t [| i32_t; i32_t |]
 let matrix_create_f = L.declare_function "matrix_create" matrix_create_t blastoff_module
@@ -92,3 +92,6 @@ let matrix_bool_f = L.declare_function "matrix_bool" matrix_bool_t blastoff_modu
 
 let matrix_size_t = L.function_type matrix_t [| matrix_t |]
 let matrix_size_f = L.declare_function "matrix_size" matrix_size_t blastoff_module
+
+let matrix_transpose_t = L.function_type matrix_t [| matrix_t |]
+let matrix_transpose_f = L.declare_function "matrix_transpose" matrix_transpose_t blastoff_module

@@ -105,7 +105,7 @@ void ring_pop()
 
     if (!curr_ring)
         die("ring_change: curr_ring is NULL");
-    
+
     prev = curr_ring->prev;
     free(curr_ring);
     curr_ring = prev;
@@ -485,6 +485,18 @@ struct matrix *matrix_size(struct matrix *A)
     matrix_setelem(S, ncols, 1, 0);
 
     return S;
+}
+
+struct matrix *matrix_transpose(struct matrix *A)
+{
+    struct matrix *T;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    T = matrix_create(ncols, nrows);
+    GrB_transpose(T->mat, GrB_NULL, GrB_NULL, A->mat, GrB_NULL);
+
+    return T;
 }
 
 // end matrix_* functions //
