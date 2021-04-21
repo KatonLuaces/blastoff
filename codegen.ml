@@ -90,7 +90,7 @@ let translate (functions, statements) =
     let rec fill_select_args args =
       let zero = L.build_call matrix_create_f [|L.const_int i32_t 1 ; L.const_int i32_t 1|] "matrix_create" builder in
       let base = L.build_call matrix_create_f [|L.const_int i32_t 1 ; L.const_int i32_t 1|] "matrix_create" builder in
-      let one = L.build_call matrix_setelem_f [|base; L.const_int i32_t 1 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder ; base in
+      let one = ignore(L.build_call matrix_setelem_f [|base; L.const_int i32_t 1 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder) ; base in
       match args with
       | [_;_;_;_] as l -> (l)
       | [_;_;_] as l -> fill_select_args (one::l)
