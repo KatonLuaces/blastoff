@@ -135,7 +135,6 @@ let translate (functions, statements) =
             | A.Neq  -> L.build_fcmp L.Fcmp.One e1' e2' "fneq" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
-      | Noexpr -> raise (Failure "Noexpr in codegen")
       | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
       | Id v -> L.build_load (lookup v) v builder
       | Selection (e, args) ->
