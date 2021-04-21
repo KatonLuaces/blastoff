@@ -94,7 +94,7 @@ let rec string_of_expr = function
   | IntMatLit m -> string_of_mat string_of_int m
   | FloatMatLit m -> string_of_mat string_of_float m
   | Noexpr -> ""
-  | Selection (e, args) -> (string_of_expr e) ^ "SELECTION[" ^ String.concat ", " (List.map string_of_expr args) ^ "]"
+  | Selection (e, args) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]"
   | SelectAssign (s, args, e) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]" ^ " = " ^ string_of_expr e
 and string_of_e_with_uop e =
   let str_expr = string_of_expr e in
