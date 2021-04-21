@@ -326,6 +326,7 @@ struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
 
 struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D)
 {
+
     struct matrix *R;
     GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols;
     int i, j, v, w;
@@ -345,7 +346,7 @@ struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix 
 
     int cval = matrix_getelem(C, 0, 0);
     int dval = matrix_getelem(D, 0, 0);
-    R = matrix_create(A_ncols*cval, B_ncols*dval);
+    R = matrix_create(A_nrows*cval, B_nrows*dval);
 
     //(A[i], B[j]) is top-left corner in form (cols, rows)
     //(A[i]+v, B[j]+w) is what we iterate through
@@ -367,8 +368,9 @@ struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix 
 }
 
 
-struct matrix *matrix_insert(struct matrix *M, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D, struct matrix *N)
+struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D)
 {
+    //Syntax is like M[A,B,C,D] = N;
     GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols, N_nrows, N_ncols;
     int i, j, v, w;
 

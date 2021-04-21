@@ -53,3 +53,6 @@ let matrix_eladd_f = L.declare_function "matrix_eladd" matrix_eladd_t blastoff_m
 
 let matrix_extract_t = L.function_type matrix_t [| matrix_t; matrix_t; matrix_t; matrix_t; matrix_t |]
 let matrix_extract_f = L.declare_function "matrix_extract" matrix_extract_t blastoff_module
+
+let matrix_insert_t = L.function_type matrix_t [| matrix_t; matrix_t; matrix_t; matrix_t; matrix_t; matrix_t |]
+let matrix_insert_f = L.declare_function "matrix_insert" matrix_insert_t blastoff_module
