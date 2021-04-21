@@ -72,14 +72,14 @@ let translate (functions, statements) =
           ) (List.rev m) ; mat
     in
     let rec fill_select_args args =
+      let zero = L.build_call matrix_create_f [|L.const_int i32_t 1 ; L.const_int i32_t 1|] "matrix_create" builder in
       let base = L.build_call matrix_create_f [|L.const_int i32_t 1 ; L.const_int i32_t 1|] "matrix_create" builder in
-      let zero = L.build_call matrix_setelem_f [|base; L.const_int i32_t 0 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder in
-      let one = L.build_call matrix_setelem_f [|base; L.const_int i32_t 1 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder in
+      let one = L.build_call matrix_setelem_f [|base; L.const_int i32_t 1 ; L.const_int i32_t 0 ; L.const_int i32_t 0|] "matrix_setelem" builder ; base in
       match args with
-      | [a;b;c;d] -> ([a;b;c;d] )
-      | [a;b;c] -> fill_select_args ([a;b;c;one])
-      | [a;b] -> fill_select_args ([a;b;one])
-      | [a] -> fill_select_args ([a;zero])
+      | [_;_;_;_] as l -> (l)
+      | [_;_;_] as l -> fill_select_args (one::l)
+      | [_;_] as l -> fill_select_args (one::l)
+      | [_] as l -> fill_select_args (zero::l)
       | _ -> raise (Failure "Too many/few arguments to selection")
     in
     let rec build_expr builder e = match e with
@@ -122,8 +122,21 @@ let translate (functions, statements) =
       | Noexpr -> raise (Failure "Noexpr in codegen")
       | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
       | Id v -> L.build_load (lookup v) v builder
-      | Selection _ -> raise (Failure "Selection not implemented")
-      | SelectAssign _ -> raise (Failure "Selection not implemented")
+      | Selection (e, args) ->
+        let partialargs' = List.map (build_expr builder) args in
+        let filledargs' = fill_select_args partialargs' in
+        let revfilledargs' = List.rev filledargs' in
+        let e' = build_expr builder e in
+        let args' = e'::revfilledargs' in
+          L.build_call matrix_extract_f (Array.of_list args') "matrix_extract" builder
+      | SelectAssign (v, args, e) ->
+        let partialargs' = List.map (build_expr builder) args in
+        let filledargs' = fill_select_args partialargs' in
+        let revfilledargs' = List.rev filledargs' in
+        let e' = build_expr builder e in
+        let v' = L.build_load (lookup v) v builder in
+        let args' = v'::e'::revfilledargs' in
+          L.build_call matrix_insert_f (Array.of_list args') "matrix_insert" builder
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
