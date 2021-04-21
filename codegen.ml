@@ -56,9 +56,9 @@ let translate (functions, statements) =
     let build_graph_matrix m  =
       let max3 a b c =  if a >= b && a >= c then a else if b >= c && b >= a then b else c in
       let dim = 1 + List.fold_left (fun acc elem -> max3 acc (fst elem) (snd elem)) 0 m in
-      let mat = L.build_call matrix_create_f [| 
-        L.const_int i32_t dim ; 
-        L.const_int i32_t dim 
+      let mat = L.build_call matrix_create_f [|
+        L.const_int i32_t dim ;
+        L.const_int i32_t dim
       |] "matrix_create" builder in
         List.iter (
           fun elem -> (
@@ -66,7 +66,7 @@ let translate (functions, statements) =
                                                     L.const_int i32_t 1;
                                                     L.const_int i32_t (fst elem);
                                                     L.const_int i32_t (snd elem) |] "matrix_setelem" builder)
-          ) 
+          )
         ) m ; mat
     in
     let build_int_matrix m  =
@@ -141,8 +141,13 @@ let translate (functions, statements) =
             | A.Neq  -> L.build_fcmp L.Fcmp.One e1' e2' "fneq" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
-      | Noexpr -> raise (Failure "Noexpr in codegen")
-      | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
+      | Assign _ -> raise (Failure "Assign in codegen")
+      | Unop (op, e) ->
+        let e' = build_expr builder e in (
+          match op with
+            A.Size -> L.build_call matrix_size_f [| e' |] "matrix_size" builder
+            | _ -> raise (Failure "Unbuilt unop call made")
+        )
       | Id v -> L.build_load (lookup v) v builder
       | Selection (e, args) ->
         let partialargs' = List.map (build_expr builder) args in

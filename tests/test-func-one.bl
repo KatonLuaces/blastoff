@@ -1,0 +1,9 @@
+def One(size){
+    A = Zero(size);
+    oneSize = |A|;
+    A[range(oneSize[0]), range(oneSize[1])] = 1;
+    return A;
+}
+
+size = 3;
+print(toString(One(size)));

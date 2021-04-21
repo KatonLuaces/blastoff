@@ -67,14 +67,14 @@ stmt_list:
 stmt:
     expr SEMI                               { Expr $1               }
   | SEMIRING ID SEMI                        { Semiring $2           }
-  | RETURN expr_opt SEMI                    { Return $2             }
+  | RETURN ret_opt SEMI                     { Return $2             }
   | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
 
-expr_opt:
-    /* nothing */ { Noexpr }
+ret_opt:
+      /* nothing */ { UnkMatLit([[]]) }
   | expr          { $1 }
 
 
@@ -102,12 +102,11 @@ expr:
   | expr RAISE expr  { Binop($1, Exponent, $3) }
   | expr RAISE TRANSP { Unop(Transp, $1)      }
   | NOT  expr        { Unop(Neg, $2)   }
-  | expr LBRACK expr_list RBRACK   { Selection($1, $3)}
   | PLUSREDUCE expr  { Unop(Plusreduce, $2)   }
   | MULREDUCE expr   { Unop(Mulreduce, $2)    }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }
-  | ID ASSIGN expr   { IdAssign($1, $3)         }
-  | ID LBRACK expr_list RBRACK ASSIGN expr { SelectAssign($1, $3, $6) }
+  | expr LBRACK expr_list RBRACK   { Selection($1, $3)}
+  | expr ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }

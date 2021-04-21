@@ -217,9 +217,9 @@ struct matrix *matrix_create_range(struct matrix *range)
     if (lo > hi)
         return matrix_create(0, 1);
 
-    A = matrix_create(hi - lo + 1, 1);
+    A = matrix_create(hi - lo, 1);
     i = 0;
-    while (lo <= hi)
+    while (lo < hi)
         matrix_setelem(A, lo++, i++, 0);
 
     return A;
@@ -444,7 +444,7 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
 
     if (N_nrows != cval | N_ncols != dval)
         die("matrix_extract size mismatch");
-  
+
     int outi = 0;
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
@@ -471,6 +471,20 @@ int matrix_bool(struct matrix *A)
         die("Hi Katon");
 
     return matrix_getelem(A, 0, 0) > 0;
+}
+
+struct matrix *matrix_size(struct matrix *A)
+{
+    struct matrix *S;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    S = matrix_create(2,1);
+
+    matrix_setelem(S, nrows, 0, 0);
+    matrix_setelem(S, ncols, 1, 0);
+
+    return S;
 }
 
 // end matrix_* functions //
