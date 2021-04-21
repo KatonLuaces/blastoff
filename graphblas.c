@@ -326,11 +326,9 @@ struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
 
 struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D)
 {
-
     struct matrix *R;
     GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols;
     int i, j, v, w;
-
 
     // verify that A, B, C, D are all integer matrices??
 
@@ -374,7 +372,6 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols, D_nrows, D_ncols, N_nrows, N_ncols;
     int i, j, v, w;
 
-
     // verify that A, B, C, D are all integer matrices??
 
     //veryify that A, B are column vectors and that C, D are 1x1
@@ -393,10 +390,7 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
 
     if (N_nrows != cval | N_ncols != dval)
         die("matrix_extract size mismatch");
-
-    //(A[i], B[j]) is top-left corner in form (cols, rows)
-    //(A[i]+v, B[j]+w) is what we iterate through
-    //(i*cval+v, j*dval+w) is where we store
+  
     int outi = 0;
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
@@ -411,6 +405,17 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     }
 
     return N;
+}
+int matrix_bool(struct matrix *A)
+{
+    int32_t bool_val = 0;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    if (nrows != 1 || ncols != 1)
+        die("Hi Katon");
+
+    return matrix_getelem(A, 0, 0) > 0;
 }
 
 

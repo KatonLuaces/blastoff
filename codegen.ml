@@ -148,7 +148,8 @@ let translate (functions, statements) =
         ignore (L.build_ret (build_expr builder e) builder);
         builder
       | If (pred, thn, els) ->
-        let bool_val = build_expr builder pred in
+        let bool_val_uncast = L.build_call matrix_bool_f [| (build_expr builder pred) |] "matrix_bool" builder in
+        let bool_val = L.build_icmp L.Icmp.Eq bool_val_uncast (L.const_int i32_t 1) "i1_t" builder in
         let merge_bb = L.append_block context "merge" func in
         let build_br_merge = L.build_br merge_bb in
         let then_bb = L.append_block context "then" func in
@@ -159,13 +160,13 @@ let translate (functions, statements) =
         L.builder_at_end context merge_bb
       | While (pred, body) ->
         let pred_bb = L.append_block context "while" func in
-          ignore(L.build_br pred_bb builder);
         let body_bb = L.append_block context "while_body" func in
-          add_terminal(build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
         let pred_builder = L.builder_at_end context pred_bb in
-          let bool_val = build_expr pred_builder pred in
+          let bool_val_uncast = L.build_call matrix_bool_f [| (build_expr pred_builder pred) |] "matrix_bool" builder in
+            let bool_val = L.build_icmp L.Icmp.Eq bool_val_uncast (L.const_int i32_t 1) "i1_t" builder in
             let merge_bb = L.append_block context "merge" func in
-            ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
+            let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
+            add_terminal (build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
             L.builder_at_end context merge_bb
       (*| For (e1, e2, e3, body) ->
         build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] ) *)
