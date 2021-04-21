@@ -81,6 +81,60 @@ void matrix_lib_finalize(void)
 
 /* BELOW: Functions used externally */
 
+// begin ring_* functions //
+
+// stack of rings, implemented as intrusive linked list
+struct ring {
+    GrB_Semiring ring;
+    struct ring *prev;
+};
+
+struct ring *curr_ring = NULL;
+
+void ring_push()
+{
+    struct ring *r = malloc(sizeof(*r));
+    r->ring = GrB_PLUS_TIMES_SEMIRING_INT32;
+    r->prev = curr_ring;
+    curr_ring = r;
+}
+
+void ring_pop()
+{
+    struct ring *prev;
+
+    if (!curr_ring)
+        die("ring_change: curr_ring is NULL");
+    
+    prev = curr_ring->prev;
+    free(curr_ring);
+    curr_ring = prev;
+}
+
+void ring_change(int which)
+{
+    if (!curr_ring)
+        die("ring_change: curr_ring is NULL");
+
+    if (which == 0) {
+        if (!curr_ring->prev)
+            die("ring_change to #_ but curr_ring->prev is NULL");
+        curr_ring->ring = curr_ring->prev->ring;
+    } else if (which == 1) {
+        curr_ring->ring = GrB_PLUS_TIMES_SEMIRING_INT32;
+    } else if (which == 2) {
+        curr_ring->ring = GrB_LAND_LOR_SEMIRING_BOOL;
+    } else if (which == 3) {
+        curr_ring->ring = GrB_MAX_MIN_SEMIRING_INT32;
+    } else {
+        die("ring_change: unknown semiring");
+    }
+}
+
+// end ring_* functions //
+
+// begin matrix_* functions //
+
 int matrix_getelem(struct matrix *A, int row, int col)
 {
     int32_t elem = 0;
@@ -102,6 +156,7 @@ void matrix_setelem(struct matrix *A, int val, int row, int col)
     if (!GrB_ok(GrB_Matrix_setElement(A->mat, val, row, col)))
         GrB_die("GrB_Matrix_setElement", A->mat);
 }
+
 
 struct matrix *matrix_create(int nrows, int ncols)
 {
@@ -224,7 +279,7 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
     info = GrB_mxm(C->mat,
                    GrB_NULL,
                    GrB_NULL,
-                   GrB_PLUS_TIMES_SEMIRING_INT32,
+                   curr_ring->ring,
                    A->mat,
                    B->mat,
                    GrB_NULL);
@@ -252,7 +307,7 @@ struct matrix *matrix_elmul(struct matrix *A, struct matrix *B)
     info = GrB_Matrix_eWiseMult_Semiring(C->mat,
                                          GrB_NULL,
                                          GrB_NULL,
-                                         GrB_PLUS_TIMES_SEMIRING_INT32,
+                                         curr_ring->ring,
                                          A->mat,
                                          B->mat,
                                          GrB_NULL);
@@ -280,7 +335,7 @@ struct matrix *matrix_eladd(struct matrix *A, struct matrix *B)
     info = GrB_Matrix_eWiseAdd_Semiring(C->mat,
                                         GrB_NULL,
                                         GrB_NULL,
-                                        GrB_PLUS_TIMES_SEMIRING_INT32,
+                                        curr_ring->ring,
                                         A->mat,
                                         B->mat,
                                         GrB_NULL);
@@ -417,6 +472,8 @@ int matrix_bool(struct matrix *A)
 
     return matrix_getelem(A, 0, 0) > 0;
 }
+
+// end matrix_* functions //
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){

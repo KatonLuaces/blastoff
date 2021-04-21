@@ -5,7 +5,7 @@ let llmem = L.MemoryBuffer.of_file "graphblas.bc"
 let llm = Llvm_bitreader.parse_bitcode context llmem
 let blastoff_module = L.create_module context "BLAStoff"
 
-let rings  = [("arith", 0) ; ("logic", 1); ("maxmin", 2)]
+let rings  = [("_", 0) ; ("arithmetic", 1) ; ("logical", 2); ("maxmin", 3)]
 let functions = [("I", ["n"]); ("Zero", ["d"]); ("range", ["n"]); ("print", ["e"]); ("toString", ["e"])]
 
 let i32_t = L.i32_type context
@@ -33,8 +33,14 @@ let matrix_print_f = L.declare_function "matrix_print" matrix_print_t blastoff_m
 let matrix_tostring_t = L.function_type matrix_t [| matrix_t |]
 let matrix_tostring_f = L.declare_function "matrix_tostring" matrix_tostring_t blastoff_module
 
-let change_ring_t = L.function_type i32_t [| i32_t |]
-let change_ring_f = L.declare_function "change_ring" change_ring_t blastoff_module
+let ring_push_t = L.function_type i32_t [| |]
+let ring_push_f = L.declare_function "ring_push" ring_push_t blastoff_module
+
+let ring_pop_t = L.function_type i32_t [| |]
+let ring_pop_f = L.declare_function "ring_pop" ring_pop_t blastoff_module
+
+let ring_change_t = L.function_type i32_t [| i32_t |]
+let ring_change_f = L.declare_function "ring_change" ring_change_t blastoff_module
 
 let matrix_setelem_t = L.function_type i32_t [| matrix_t; i32_t; i32_t; i32_t |]
 let matrix_setelem_f = L.declare_function "matrix_setelem" matrix_setelem_t blastoff_module

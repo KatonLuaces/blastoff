@@ -121,6 +121,12 @@ let translate (functions, statements) =
          | "range" -> (match exprs with
               [e] -> L.build_call matrix_range_f [| (build_expr builder e) |] "matrix_range" builder
              | _ -> raise (Failure "Invalid list of expressions passed to range"))
+         | "__ring_push" -> (match exprs with
+              [] -> L.build_call ring_push_f [| |] "__ring_push" builder
+             | _ -> raise (Failure "Invalid list of expressions passed to __ring_push"))
+         | "__ring_pop" -> (match exprs with
+              [] -> L.build_call ring_pop_f [| |] "__ring_pop" builder
+             | _ -> raise (Failure "Invalid list of expressions passed to __ring_pop"))
          | f -> let (fdef, fdecl) = (try StringMap.find f function_decls with Not_found -> raise (Failure ("Undeclared function, " ^ f ^ ", found in code generation"))) in
            let args = List.map (build_expr builder) (List.rev exprs) in
            L.build_call fdef (Array.of_list args) (fdecl.fname ^ "_result") builder)
@@ -156,11 +162,12 @@ let translate (functions, statements) =
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
-      | Semiring ring -> ignore (L.build_call change_ring_f [| L.const_int i32_t (List.assoc ring Definitions.rings) |] "ring_change" builder); builder
+      | Semiring ring -> ignore (L.build_call ring_change_f [| L.const_int i32_t (List.assoc ring Definitions.rings) |] "ring_change" builder); builder
       | Expr e ->
         ignore (build_expr builder e);
         builder
       | Return e ->
+        ignore (build_expr builder (Call("__ring_pop", [])));
         ignore (L.build_ret (build_expr builder e) builder);
         builder
       | If (pred, thn, els) ->
@@ -187,8 +194,10 @@ let translate (functions, statements) =
       (*| For (e1, e2, e3, body) ->
         build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] ) *)
     in
-    let builder = build_stmt builder (Block fdecl.body) in
-    add_terminal builder (L.build_ret (L.const_int (if is_main then i32_t else matrix_t) 0))
+    let body = Expr(Call("__ring_push", [])) :: fdecl.body in
+    let builder = build_stmt builder (Block body) in
+    (* ignore( L.build_call ring_pop_f [| |] "ring_push" builder ); *)
+    add_terminal builder (L.build_ret (L.const_int (if is_main then i32_t else matrix_t) 0)) ;
   in
   build_function_body main_fdecl true;
   List.iter2  build_function_body  functions  (List.map (fun (_) -> false) functions);
