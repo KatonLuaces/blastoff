@@ -8,12 +8,34 @@ let blastoff_module = L.create_module context "BLAStoff"
 let rings  = [("arith", 0) ; ("logic", 1); ("maxmin", 2)]
 let functions = [("I", ["n"]); ("Zero", ["d"]); ("range", ["n"]); ("print", ["e"]); ("toString", ["e"])]
 
+type built_in = {name: string; args: L.lltype list}
+
 let i32_t = L.i32_type context
 let matrix_t =
   L.pointer_type
     (match L.type_by_name llm "struct.matrix" with
     | None-> raise (Failure "matrix type implementation not found")
     | Some t -> t)
+
+let built_ins: built_in list = [
+  {name="matrix_create"; args=[matrix_t]};
+  {name="matrix_create_identity";args=[matrix_t]};
+  {name="matrix_create_zero";args=[matrix_t]};
+  {name="matrix_create_range";args=[matrix_t]};
+  {name="matrix_print";args=[matrix_t]};
+  {name="matrix_tostring";args=[matrix_t]};
+  {name="change_ring";args=[i32_t]};
+  {name="matrix_setelem";args=[matrix_t; i32_t; i32_t; i32_t]};
+  {name="matrix_mul";args=[matrix_t; matrix_t]};
+  {name="matrix_conv";args=[matrix_t; matrix_t]};
+  {name="matrix_elmul";args=[matrix_t; matrix_t]};
+  {name="matrix_eladd";args=[matrix_t; matrix_t]};
+  {name="matrix_extract";args=[matrix_t; matrix_t; matrix_t; matrix_t; matrix_t;]};
+  {name="matrix_insert";args=[matrix_t; matrix_t; matrix_t; matrix_t; matrix_t; matrix_t;]};
+  {name="matrix_bool";args=[matrix_t]}
+]
+
+(*let builtin_fun_types : (L.llvalue * func_decl) StringMap.t =*)
 
 let matrix_create_t = L.function_type matrix_t [| i32_t; i32_t |]
 let matrix_create_f = L.declare_function "matrix_create" matrix_create_t blastoff_module
