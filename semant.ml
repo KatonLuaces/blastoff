@@ -71,13 +71,20 @@ let rec check_expr = function
     | Id n -> Id n
     | Binop (e1, op, e2) -> Binop (check_expr e1, op, check_expr e2)
     | Unop (op, e) -> Unop (op, check_expr e)
-    | IdAssign (n, e) -> IdAssign (n, check_expr e)
     | FloatMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | IntMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking")
 | GraphLit g -> GraphLit g
 | Selection (e, args) -> Selection (check_expr e, List.map check_expr args)
+
+| IdAssign (n, e) -> IdAssign (n, check_expr e)
 | SelectAssign (n, args, e) -> SelectAssign (n, List.map check_expr args, check_expr e)
+| Assign(e1, e2) ->
+  let fix_assign = function
+    | (Id i, e) -> check_expr (IdAssign(i, e))
+    | (Selection(Id n, args), e) -> check_expr (SelectAssign(n, args, e))
+    | _ -> raise (Failure "Bad left side of assignment, expected ID or ID[...]")
+  in fix_assign (e1, e2)
 in
 let rec check_stmt = function
       Expr e -> Expr (check_expr e)
