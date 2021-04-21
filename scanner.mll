@@ -52,7 +52,7 @@ rule token = parse
 | "||"     { OR }
 | "!"      { NOT }
 | '#'      { SEMIRING }
-| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
+| ['a'-'z' 'A'-'Z' '_']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
   { (*print_endline "find lxm: ";
       print_endline lxm;*)
     try
