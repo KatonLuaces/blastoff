@@ -100,9 +100,13 @@ let rec check_stmt = function
       | s :: ss -> check_stmt s :: check_stmt_list ss
       | [] -> []
   in
+  let add_return body = match List.rev body with
+    Return _ :: _ -> body
+    | _ as l -> List.rev (Return(UnkMatLit([[]])) :: l)
+  in
   let check_function func =
     (* Make sure no formals or locals are void or duplicates *)
     let _ = check_vars "body" func.body in
-    let checked_body = check_stmt_list func.body in
+    let checked_body = check_stmt_list (add_return func.body) in
     {fname = func.fname; formals = func.formals; body = checked_body}
 in (List.map check_function funcs, List.map check_stmt stmts)
