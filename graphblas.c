@@ -365,7 +365,6 @@ struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix 
     return R;
 }
 
-
 struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D)
 {
     //Syntax is like M[A,B,C,D] = N;
@@ -406,6 +405,7 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
 
     return N;
 }
+
 int matrix_bool(struct matrix *A)
 {
     int32_t bool_val = 0;
@@ -417,7 +417,6 @@ int matrix_bool(struct matrix *A)
 
     return matrix_getelem(A, 0, 0) > 0;
 }
-
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){
