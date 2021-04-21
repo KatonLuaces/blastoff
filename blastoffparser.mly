@@ -102,12 +102,11 @@ expr:
   | expr RAISE expr  { Binop($1, Exponent, $3) }
   | expr RAISE TRANSP { Unop(Transp, $1)      }
   | NOT  expr        { Unop(Neg, $2)   }
-  | expr LBRACK expr_list RBRACK   { Selection($1, $3)}
   | PLUSREDUCE expr  { Unop(Plusreduce, $2)   }
   | MULREDUCE expr   { Unop(Mulreduce, $2)    }
   | MINUS expr %prec NOT { Unop(Neg, $2)      }
-  | ID ASSIGN expr   { IdAssign($1, $3)         }
-  | ID LBRACK expr_list RBRACK ASSIGN expr { SelectAssign($1, $3, $6) }
+  | expr LBRACK expr_list RBRACK   { Selection($1, $3)}
+  | expr ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
   | VLINE expr VLINE   { Unop(Size, $2)       }

@@ -34,11 +34,12 @@ type expr =
   | IntMatLit of int list list
   | FloatMatLit of float list list
   | Id of string
-  | Selection of expr * expr list
   | Binop of expr * op * expr
   | Unop of uop * expr
+  | Assign of expr * expr
   | IdAssign of string * expr
   | SelectAssign of string * expr list * expr
+  | Selection of expr * expr list
   | Call of string * expr list
 
 type stmt =
@@ -86,6 +87,7 @@ let rec string_of_expr = function
   | Id s -> s
   | Binop (e1, o, e2) -> string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop (o, e) -> string_of_e_with_uop e o
+  | Assign (e1, e2) -> string_of_expr e1 ^ " = " ^ string_of_expr e2
   | IdAssign (s, e) -> s ^ " = " ^ string_of_expr e
   | Call (f, el) -> f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | UnkMatLit m -> string_of_mat (fun lit -> match lit with
@@ -93,7 +95,7 @@ let rec string_of_expr = function
   | IntMatLit m -> string_of_mat string_of_int m
   | FloatMatLit m -> string_of_mat string_of_float m
   | Selection (e, args) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]"
-  | SelectAssign (s, args, e) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]" ^ " = " ^ string_of_expr e
+  | SelectAssign (s, args, e) -> s ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]" ^ " = " ^ string_of_expr e
 and string_of_e_with_uop e =
   let str_expr = string_of_expr e in
   function

@@ -162,9 +162,9 @@ struct matrix *matrix_create_range(struct matrix *range)
     if (lo > hi)
         return matrix_create(0, 1);
 
-    A = matrix_create(hi - lo + 1, 1);
+    A = matrix_create(hi - lo, 1);
     i = 0;
-    while (lo <= hi)
+    while (lo < hi)
         matrix_setelem(A, lo++, i++, 0);
 
     return A;
@@ -389,7 +389,7 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
 
     if (N_nrows != cval | N_ncols != dval)
         die("matrix_extract size mismatch");
-  
+
     int outi = 0;
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
