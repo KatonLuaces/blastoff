@@ -41,7 +41,6 @@ type expr =
   | SelectAssign of string * expr list * expr
   | Selection of expr * expr list
   | Call of string * expr list
-  | Noexpr
 
 type stmt =
   | Semiring of string
@@ -95,7 +94,6 @@ let rec string_of_expr = function
         IntLit ilit -> string_of_int ilit| FloatLit flit -> string_of_float flit) m
   | IntMatLit m -> string_of_mat string_of_int m
   | FloatMatLit m -> string_of_mat string_of_float m
-  | Noexpr -> ""
   | Selection (e, args) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]"
   | SelectAssign (s, args, e) -> s ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]" ^ " = " ^ string_of_expr e
 and string_of_e_with_uop e =

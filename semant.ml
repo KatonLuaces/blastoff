@@ -73,7 +73,6 @@ let rec check_expr = function
     | Unop (op, e) -> Unop (op, check_expr e)
     | FloatMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
     | IntMatLit _ -> raise (Failure "Unexpected float matrix in semant checking")
-    | Noexpr -> raise (Failure "Unexpected Noexpr in semant checking")
 | GraphLit g -> GraphLit g
 | Selection (e, args) -> Selection (check_expr e, List.map check_expr args)
 

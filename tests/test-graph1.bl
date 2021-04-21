@@ -1,3 +1,4 @@
 G = [
   0->1
 ];
+print(toString(G));

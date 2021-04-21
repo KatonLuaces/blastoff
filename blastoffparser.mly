@@ -67,14 +67,14 @@ stmt_list:
 stmt:
     expr SEMI                               { Expr $1               }
   | SEMIRING ID SEMI                           { Semiring $2           }
-  | RETURN expr_opt SEMI                    { Return $2             }
+  | RETURN ret_opt SEMI                    { Return $2             }
   | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
 
-expr_opt:
-    /* nothing */ { Noexpr }
+ret_opt:
+      /* nothing */ { UnkMatLit([[]]) }
   | expr          { $1 }
 
 
