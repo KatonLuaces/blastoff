@@ -136,7 +136,12 @@ let translate (functions, statements) =
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Assign _ -> raise (Failure "Assign in codegen")
-      | Unop (op, e1) -> let _ = build_expr builder e1 in (match op with A.Size -> raise (Failure "Unop call made"))
+      | Unop (op, e) ->
+        let e' = build_expr builder e in (
+          match op with
+            A.Size -> L.build_call matrix_size_f [| e' |] "matrix_size" builder
+            | _ -> raise (Failure "Unbuilt unop call made")
+        )
       | Id v -> L.build_load (lookup v) v builder
       | Selection (e, args) ->
         let partialargs' = List.map (build_expr builder) args in

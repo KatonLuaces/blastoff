@@ -1,7 +1,7 @@
 def One(size){
     A = Zero(size);
-    m = size[0];
-    A[range(size[0]), range(size[1])] = 1;
+    oneSize = |A|;
+    A[range(oneSize[0]), range(oneSize[1])] = 1;
     return A;
 }
 
