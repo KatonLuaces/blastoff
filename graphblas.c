@@ -418,6 +418,20 @@ int matrix_bool(struct matrix *A)
     return matrix_getelem(A, 0, 0) > 0;
 }
 
+struct matrix *matrix_size(struct matrix *A)
+{
+    struct matrix *S;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    S = matrix_create(2,1);
+
+    matrix_setelem(S, nrows, 0, 0);
+    matrix_setelem(S, ncols, 1, 0);
+
+    return S;
+}
+
 #ifdef RUN_TEST
 int main(int argc, char** argv){
     struct matrix *A, *B, *C;

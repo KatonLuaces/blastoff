@@ -59,3 +59,6 @@ let matrix_insert_f = L.declare_function "matrix_insert" matrix_insert_t blastof
 
 let matrix_bool_t = L.function_type i32_t [| matrix_t |]
 let matrix_bool_f = L.declare_function "matrix_bool" matrix_bool_t blastoff_module
+
+let matrix_size_t = L.function_type matrix_t [| matrix_t |]
+let matrix_size_f = L.declare_function "matrix_size" matrix_size_t blastoff_module
