@@ -1,3 +1,3 @@
 M = [1, 3];
 N = [2, 4];
-print(toString(M @ N));
+print(toString(M + N));
