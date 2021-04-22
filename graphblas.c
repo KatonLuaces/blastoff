@@ -463,18 +463,6 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     return N;
 }
 
-// Truthiness/falsiness of matrix
-int matrix_bool(struct matrix *A)
-{
-    GrB_Index nrows, ncols;
-    GrB_size(A->mat, &nrows, &ncols);
-
-    if (nrows != 1 || ncols != 1)
-        die("Hi Katon");
-
-    return matrix_getelem(A, 0, 0) > 0;
-}
-
 struct matrix *matrix_size(struct matrix *A)
 {
     struct matrix *S;
