@@ -486,14 +486,17 @@ struct matrix *matrix_transpose(struct matrix *A)
 }
 
 // Comparison operators
-int matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
+struct matrix *matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
 {
+    struct matrix *C;
     int i, j;
     int a, b, comp_val;
 
     GrB_Index nrows, ncols, nrowsB, ncolsB;
     GrB_size(A->mat, &nrows, &ncols);
     GrB_size(B->mat, &nrowsB, &ncolsB);
+
+    C = matrix_create(1, 1);
 
     if (nrows != nrowsB || ncols != ncolsB)
         die("Can't compare two matrices that are different dimensions");
@@ -511,19 +514,19 @@ int matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
                 case 5: comp_val = a > b; break;
                 default: die("Unknown comparison operator");
             }
-            if (!comp_val) return 0;
+            if (!comp_val) return C;
         }
     }
-
-    return 1;
+    matrix_setelem(C, 1, 0, 0);
+    return C;
 }
 
-int matrix_eq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 0); }
-int matrix_neq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 1); }
-int matrix_leq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 2); }
-int matrix_less(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 3); }
-int matrix_geq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 4); }
-int matrix_greater(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 5); }
+struct matrix *matrix_eq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 0); }
+struct matrix *matrix_neq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 1); }
+struct matrix *matrix_leq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 2); }
+struct matrix *matrix_less(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 3); }
+struct matrix *matrix_geq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 4); }
+struct matrix *matrix_greater(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 5); }
 
 // end matrix_* functions //
 
