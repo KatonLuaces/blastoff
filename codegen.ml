@@ -182,7 +182,9 @@ let translate (functions, statements) =
         ignore (L.build_ret (build_expr builder e) builder);
         builder
       | If (pred, thn, els) ->
-        let bool_val = L.build_icmp L.Icmp.Eq (build_expr builder pred) (L.const_int i32_t 1) "i1_t" builder in
+        let pred_expr = build_expr builder pred in
+          let mat_truthiness = L.build_call matrix_truthy_f [| pred_expr |] "matrix_truthy" builder in
+            let bool_val = L.build_icmp L.Icmp.Eq mat_truthiness (L.const_int i32_t 1) "i1_t" builder in
         let merge_bb = L.append_block context "merge" func in
         let build_br_merge = L.build_br merge_bb in
         let then_bb = L.append_block context "then" func in

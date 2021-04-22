@@ -95,6 +95,11 @@ let matrix_transpose_f = L.declare_function "matrix_transpose" matrix_transpose_
 
 (* Comparison operators *)
 
+let matrix_truthy_t = L.function_type i32_t [| matrix_t |]
+let matrix_truthy_f = L.declare_function "matrix_truthy" matrix_truthy_t blastoff_module
+
+(* Comparison operators return a matrix. matrix_truthy returns an i32 so we can
+evaluate the bool value in the If statement. *)
 let matrix_comp_t = L.function_type matrix_t [| matrix_t; matrix_t |]
 let matrix_equal_f = L.declare_function "matrix_equal" matrix_comp_t blastoff_module
 let matrix_neq_f = L.declare_function "matrix_neq" matrix_comp_t blastoff_module

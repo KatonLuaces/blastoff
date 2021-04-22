@@ -486,6 +486,11 @@ struct matrix *matrix_transpose(struct matrix *A)
 }
 
 // Comparison operators
+int matrix_truthy(struct matrix *A)
+{
+    return matrix_getelem(A, 0, 0) > 0;
+}
+
 struct matrix *matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
 {
     struct matrix *C;
