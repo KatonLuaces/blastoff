@@ -487,12 +487,6 @@ struct matrix *matrix_transpose(struct matrix *A)
 
 // Comparison operators
 
-// "The truth value of an expr is equivalent to expr > 0" (Jake, 2021)
-int matrix_truthy(struct matrix *A)
-{
-    return matrix_getelem(A, 0, 0) > 0;
-}
-
 struct matrix *matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
 {
     struct matrix *C;
@@ -535,18 +529,29 @@ struct matrix *matrix_less(struct matrix *A, struct matrix *B) { return matrix_e
 struct matrix *matrix_geq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 4); }
 struct matrix *matrix_greater(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 5); }
 
+// "The truth value of an expr is equivalent to expr > 0" (Jake, 2021)
+int matrix_truthy(struct matrix *A)
+{
+    struct matrix *C;
+    struct matrix *B;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    B = matrix_create(nrows, ncols);
+    C = matrix_greater(A, B);
+
+    return matrix_getelem(C, 0, 0) > 0;
+}
+
 // end matrix_* functions //
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){
-    struct matrix *A, *C;
+    struct matrix *A;
 
     A = matrix_create(2, 1);
-    matrix_setelem(A, 3, 0, 0);
-    matrix_setelem(A, 6, 1, 0);
-    C = matrix_create(2, 1);
-    matrix_setelem(C, 3, 0, 0);
-    matrix_setelem(C, 7, 1, 0);
-    printf("comp: %d\n", matrix_geq(C, A));
+    matrix_setelem(A, 1, 0, 0);
+    matrix_setelem(A, 1, 1, 0);
+    printf("truthiness: %d\n", matrix_truthy(A));
 }
 #endif
