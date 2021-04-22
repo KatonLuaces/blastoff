@@ -53,27 +53,27 @@ let translate (functions, statements) =
       | Some _ -> ()
       | None -> ignore (instr builder)
     in
-    let build_graph_matrix m  =
+    let build_graph_matrix jasons_builder m  =
       let max3 a b c =  if a >= b && a >= c then a else if b >= c && b >= a then b else c in
       let dim = 1 + List.fold_left (fun acc elem -> max3 acc (fst elem) (snd elem)) 0 m in
       let mat = L.build_call matrix_create_f [|
-        L.const_int i32_t dim ;
-        L.const_int i32_t dim
-      |] "matrix_create" builder in
+        L.const_int i32_t dim ; 
+        L.const_int i32_t dim 
+      |] "matrix_create" jasons_builder in
         List.iter (
           fun elem -> (
             ignore(L.build_call matrix_setelem_f [| mat;
                                                     L.const_int i32_t 1;
                                                     L.const_int i32_t (fst elem);
-                                                    L.const_int i32_t (snd elem) |] "matrix_setelem" builder)
+                                                    L.const_int i32_t (snd elem) |] "matrix_setelem" jasons_builder)
           )
         ) m ; mat
     in
-    let build_int_matrix m  =
+    let build_int_matrix jasons_builder m  =
       let mat = L.build_call matrix_create_f [|
         L.const_int i32_t (List.length m) ;
         L.const_int i32_t (List.length (List.hd m))
-      |] "matrix_create" builder
+      |] "matrix_create" jasons_builder
         in
         List.iteri (
           fun i row -> (
@@ -82,7 +82,7 @@ let translate (functions, statements) =
                 ignore(L.build_call matrix_setelem_f [| mat;
                                                         L.const_int i32_t elem;
                                                         L.const_int i32_t i;
-                                                        L.const_int i32_t j |] "matrix_setelem" builder)
+                                                        L.const_int i32_t j |] "matrix_setelem" jasons_builder)
             )
           ) (List.rev row)
         ) (List.rev m) ; mat
@@ -99,8 +99,8 @@ let translate (functions, statements) =
       | _ -> raise (Failure "Too many/few arguments to selection")
     in
     let rec build_expr builder e = match e with
-      | IntMatLit m -> build_int_matrix m
-      | GraphLit m -> build_graph_matrix m
+      | IntMatLit m -> build_int_matrix builder m
+      | GraphLit m -> build_graph_matrix builder m
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
       | IdAssign (v , e) -> let comp_e = build_expr builder e in
         (match v with s -> ignore(L.build_store comp_e (lookup s) builder)); comp_e
@@ -193,14 +193,17 @@ let translate (functions, statements) =
         L.builder_at_end context merge_bb
       | While (pred, body) ->
         let pred_bb = L.append_block context "while" func in
-        let bool_val = L.build_icmp L.Icmp.Eq (build_expr builder pred) (L.const_int i32_t 1) "i1_t" builder in
+          let pred_builder = L.builder_at_end context pred_bb in
+          let bool_val = L.build_icmp L.Icmp.Eq (build_expr pred_builder pred) (L.const_int i32_t 1) "i1_t" pred_builder in
+          ignore(L.build_br pred_bb builder) (* builds branch to while from entry *);
 
-        let pred_builder = L.builder_at_end context pred_bb in
-        let body_bb = L.append_block context "while_body" func in add_terminal (build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
-        ignore(L.build_br pred_bb builder);
+        let body_bb = L.append_block context "while_body" func in
+          let body_builder = L.builder_at_end context body_bb in
+          ignore(build_stmt body_builder body);
 
-          let merge_bb = L.append_block context "merge" func in
-            ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
+        add_terminal body_builder (L.build_br pred_bb);
+        let merge_bb = L.append_block context "merge" func in
+        ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
         L.builder_at_end context merge_bb
       (*| For (e1, e2, e3, body) ->
         build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] ) *)

@@ -444,10 +444,6 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     if ((N_nrows != cval) | (N_ncols != dval))
         die("matrix_extract size mismatch");
 
-<<<<<<< HEAD
-    int outi = 0;
-=======
->>>>>>> e9d4900 (element-wise comparison operators between matrices)
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
         int Ai = matrix_getelem(A, i, 0);

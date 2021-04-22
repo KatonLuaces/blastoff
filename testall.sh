@@ -97,7 +97,7 @@ Check() {
     Run "$BLASTOFF" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     Run "$CC" "-o" "${basename}.exe" "${basename}.s" "graphblas.o" "-lgraphblas" &&
-    Run "./${basename}.exe" &&
+    Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.dif
 
     # Report the status and clean up the generated files
@@ -241,7 +241,7 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/test-while1.bl"
+    files="tests/test-*.bl"
 fi
 
 for file in $files

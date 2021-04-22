@@ -1,5 +1,11 @@
 A = 1;
-B = 2;
+B = 10;
 while (A < B) {
   A = A + 1;
+  print(toString(A));
+}
+C = 4;
+while (C < B) {
+  print(toString(C));
+  C = C + 1;
 }
