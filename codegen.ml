@@ -134,11 +134,16 @@ let translate (functions, statements) =
           let e1' = build_expr builder e1
           and e2' = build_expr builder e2 in (
             match op with
-              A.Matmul -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
-            | A.Conv   -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
-            | A.Elmul  -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
-            | A.Add    -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
-            | A.Neq  -> L.build_fcmp L.Fcmp.One e1' e2' "fneq" builder
+              A.Matmul  -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
+            | A.Conv    -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
+            | A.Elmul   -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
+            | A.Add     -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
+            | A.Equal   -> L.build_call matrix_equal_f [| e1'; e2'|] "matrix_equal" builder
+            | A.Neq     -> L.build_call matrix_neq_f [| e1'; e2'|] "matrix_neq" builder
+            | A.Leq     -> L.build_call matrix_leq_f [| e1'; e2'|] "matrix_leq" builder
+            | A.Less    -> L.build_call matrix_less_f [| e1'; e2'|] "matrix_less" builder
+            | A.Geq     -> L.build_call matrix_geq_f [| e1'; e2'|] "matrix_geq" builder
+            | A.Greater -> L.build_call matrix_greater_f [| e1'; e2'|] "matrix_greater" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Assign _ -> raise (Failure "Assign in codegen")
@@ -177,8 +182,7 @@ let translate (functions, statements) =
         ignore (L.build_ret (build_expr builder e) builder);
         builder
       | If (pred, thn, els) ->
-        let bool_val_uncast = L.build_call matrix_bool_f [| (build_expr builder pred) |] "matrix_bool" builder in
-        let bool_val = L.build_icmp L.Icmp.Eq bool_val_uncast (L.const_int i32_t 1) "i1_t" builder in
+        let bool_val = L.build_icmp L.Icmp.Eq (build_expr builder pred) (L.const_int i32_t 1) "i1_t" builder in
         let merge_bb = L.append_block context "merge" func in
         let build_br_merge = L.build_br merge_bb in
         let then_bb = L.append_block context "then" func in
@@ -191,8 +195,7 @@ let translate (functions, statements) =
         let pred_bb = L.append_block context "while" func in
         let body_bb = L.append_block context "while_body" func in
         let pred_builder = L.builder_at_end context pred_bb in
-          let bool_val_uncast = L.build_call matrix_bool_f [| (build_expr pred_builder pred) |] "matrix_bool" builder in
-            let bool_val = L.build_icmp L.Icmp.Eq bool_val_uncast (L.const_int i32_t 1) "i1_t" builder in
+          let bool_val = L.build_icmp L.Icmp.Eq (build_expr builder pred) (L.const_int i32_t 1) "i1_t" builder in
             let merge_bb = L.append_block context "merge" func in
             let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
             add_terminal (build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);

@@ -404,7 +404,6 @@ struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix 
     //(A[i], B[j]) is top-left corner in form (cols, rows)
     //(A[i]+v, B[j]+w) is what we iterate through
     //(i*cval+v, j*dval+w) is where we store
-    int outi = 0;
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
         int Ai = matrix_getelem(A, i, 0);
@@ -442,10 +441,13 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     int cval = matrix_getelem(C, 0, 0);
     int dval = matrix_getelem(D, 0, 0);
 
-    if (N_nrows != cval | N_ncols != dval)
+    if ((N_nrows != cval) | (N_ncols != dval))
         die("matrix_extract size mismatch");
 
+<<<<<<< HEAD
     int outi = 0;
+=======
+>>>>>>> e9d4900 (element-wise comparison operators between matrices)
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
         int Ai = matrix_getelem(A, i, 0);
@@ -461,9 +463,9 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     return N;
 }
 
+// Truthiness/falsiness of matrix
 int matrix_bool(struct matrix *A)
 {
-    int32_t bool_val = 0;
     GrB_Index nrows, ncols;
     GrB_size(A->mat, &nrows, &ncols);
 
@@ -499,22 +501,58 @@ struct matrix *matrix_transpose(struct matrix *A)
     return T;
 }
 
+// Comparison operators
+int matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
+{
+    int i, j;
+    int a, b, comp_val;
+
+    GrB_Index nrows, ncols, nrowsB, ncolsB;
+    GrB_size(A->mat, &nrows, &ncols);
+    GrB_size(B->mat, &nrowsB, &ncolsB);
+
+    if (nrows != nrowsB || ncols != ncolsB)
+        die("Can't compare two matrices that are different dimensions");
+
+    for (i = 0; i < nrows; i++) {
+        for (j = 0; j < ncols; j++) {
+            a = matrix_getelem(A, i, j);
+            b = matrix_getelem(B, i, j);
+            switch (op_index) {
+                case 0: comp_val = a == b; break;
+                case 1: comp_val = a != b; break;
+                case 2: comp_val = a <= b; break;
+                case 3: comp_val = a < b; break;
+                case 4: comp_val = a >= b; break;
+                case 5: comp_val = a > b; break;
+                default: die("Unknown comparison operator");
+            }
+            if (!comp_val) return 0;
+        }
+    }
+
+    return 1;
+}
+
+int matrix_eq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 0); }
+int matrix_neq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 1); }
+int matrix_leq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 2); }
+int matrix_less(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 3); }
+int matrix_geq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 4); }
+int matrix_greater(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 5); }
+
 // end matrix_* functions //
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){
-    struct matrix *A, *B, *C;
+    struct matrix *A, *C;
 
     A = matrix_create(2, 1);
     matrix_setelem(A, 3, 0, 0);
     matrix_setelem(A, 6, 1, 0);
-
-    matrix_print(matrix_tostring(A));
-    printf("\n");
-
-    B = matrix_create_range(A);
-
-    matrix_print(matrix_tostring(B));
-    printf("\n");
+    C = matrix_create(2, 1);
+    matrix_setelem(C, 3, 0, 0);
+    matrix_setelem(C, 7, 1, 0);
+    printf("comp: %d\n", matrix_geq(C, A));
 }
 #endif
