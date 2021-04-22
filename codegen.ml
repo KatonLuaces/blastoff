@@ -196,7 +196,9 @@ let translate (functions, statements) =
       | While (pred, body) ->
         let pred_bb = L.append_block context "while" func in
           let pred_builder = L.builder_at_end context pred_bb in
-          let bool_val = L.build_icmp L.Icmp.Eq (build_expr pred_builder pred) (L.const_int i32_t 1) "i1_t" pred_builder in
+            let pred_expr = build_expr pred_builder pred in
+            let mat_truthiness = L.build_call matrix_truthy_f [| pred_expr |] "matrix_truthy" pred_builder in
+            let bool_val = L.build_icmp L.Icmp.Eq mat_truthiness (L.const_int i32_t 1) "i1_t" pred_builder in
           ignore(L.build_br pred_bb builder) (* builds branch to while from entry *);
 
         let body_bb = L.append_block context "while_body" func in
