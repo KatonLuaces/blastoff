@@ -89,8 +89,8 @@ let rec check_stmt = function
       Expr e -> Expr (check_expr e)
     | Semiring ring -> (match List.mem_assoc ring Definitions.rings with true -> Semiring ring | false -> raise (Failure ("Unknown semiring " ^ ring)))
     | Block bl -> Block(check_stmt_list bl)
-    | If(p, b1, b2) -> If(p, check_stmt b1, check_stmt b2)
-    | While(p, s) -> While(p, check_stmt s)
+    | If(p, b1, b2) -> If(check_expr p, check_stmt b1, check_stmt b2)
+    | While(p, s) -> While(check_expr p, check_stmt s)
     | Return e -> Return(check_expr e)
   and
     check_stmt_list = function

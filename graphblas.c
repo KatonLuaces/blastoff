@@ -486,6 +486,8 @@ struct matrix *matrix_transpose(struct matrix *A)
 }
 
 // Comparison operators
+
+// "The truth value of an expr is equivalent to expr > 0" (Jake, 2021)
 int matrix_truthy(struct matrix *A)
 {
     return matrix_getelem(A, 0, 0) > 0;
