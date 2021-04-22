@@ -95,15 +95,10 @@ let matrix_transpose_f = L.declare_function "matrix_transpose" matrix_transpose_
 
 (* Comparison operators *)
 
-let matrix_equal_t = L.function_type i32_t [| matrix_t; matrix_t |]
-let matrix_equal_f = L.declare_function "matrix_equal" matrix_equal_t blastoff_module
-let matrix_neq_t = L.function_type i32_t [| matrix_t; matrix_t |]
-let matrix_neq_f = L.declare_function "matrix_neq" matrix_neq_t blastoff_module
-let matrix_leq_t = L.function_type i32_t [| matrix_t; matrix_t |]
-let matrix_leq_f = L.declare_function "matrix_leq" matrix_leq_t blastoff_module
-let matrix_less_t = L.function_type i32_t [| matrix_t; matrix_t |]
-let matrix_less_f = L.declare_function "matrix_less" matrix_less_t blastoff_module
-let matrix_geq_t = L.function_type i32_t [| matrix_t; matrix_t |]
-let matrix_geq_f = L.declare_function "matrix_geq" matrix_geq_t blastoff_module
-let matrix_greater_t = L.function_type i32_t [| matrix_t; matrix_t |]
-let matrix_greater_f = L.declare_function "matrix_greater" matrix_greater_t blastoff_module
+let matrix_comp_t = L.function_type i32_t [| matrix_t; matrix_t |]
+let matrix_equal_f = L.declare_function "matrix_equal" matrix_comp_t blastoff_module
+let matrix_neq_f = L.declare_function "matrix_neq" matrix_comp_t blastoff_module
+let matrix_leq_f = L.declare_function "matrix_leq" matrix_comp_t blastoff_module
+let matrix_less_f = L.declare_function "matrix_less" matrix_comp_t blastoff_module
+let matrix_geq_f = L.declare_function "matrix_geq" matrix_comp_t blastoff_module
+let matrix_greater_f = L.declare_function "matrix_greater" matrix_comp_t blastoff_module
