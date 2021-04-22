@@ -193,13 +193,15 @@ let translate (functions, statements) =
         L.builder_at_end context merge_bb
       | While (pred, body) ->
         let pred_bb = L.append_block context "while" func in
-        let body_bb = L.append_block context "while_body" func in
+        let bool_val = L.build_icmp L.Icmp.Eq (build_expr builder pred) (L.const_int i32_t 1) "i1_t" builder in
+
         let pred_builder = L.builder_at_end context pred_bb in
-          let bool_val = L.build_icmp L.Icmp.Eq (build_expr builder pred) (L.const_int i32_t 1) "i1_t" builder in
-            let merge_bb = L.append_block context "merge" func in
-            let _ = L.build_cond_br bool_val body_bb merge_bb pred_builder in
-            add_terminal (build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
-            L.builder_at_end context merge_bb
+        let body_bb = L.append_block context "while_body" func in add_terminal (build_stmt (L.builder_at_end context body_bb) body) (L.build_br pred_bb);
+        ignore(L.build_br pred_bb builder);
+
+          let merge_bb = L.append_block context "merge" func in
+            ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
+        L.builder_at_end context merge_bb
       (*| For (e1, e2, e3, body) ->
         build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] ) *)
     in
