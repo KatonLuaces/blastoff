@@ -480,6 +480,23 @@ struct matrix *matrix_transpose(struct matrix *A)
     return T;
 }
 
+struct matrix *matrix_negate(struct matrix *A)
+{
+    struct matrix *R;
+    GrB_Index nrows, ncols;
+    int i,j;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    R = matrix_create(ncols, nrows);
+
+    for (i = 0; i < nrows; i++) {
+        for (j = 0; j < ncols; j++) {
+          matrix_setelem(R, matrix_getelem(A, i, j) == 0, i, j);
+        }
+    }
+
+    return R;
+}
 
 struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
 {
