@@ -513,6 +513,56 @@ struct matrix *matrix_transpose(struct matrix *A)
     return T;
 }
 
+struct matrix *matrix_concat(struct matrix *A, struct matrix *B)
+{
+    struct matrix *C;
+    GrB_Info info;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols;
+    int i;
+
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+
+    if (A_ncols != B_ncols)
+        die("matrix_concat bad dimensions");
+
+    GrB_Index *A_row_indices, *B_row_indices, *col_indices;
+    if (!(A_row_indices = malloc(A_nrows * sizeof(int)))) die("malloc failed");
+    if (!(B_row_indices = malloc(B_nrows * sizeof(int)))) die("malloc failed");
+    if (!(col_indices = malloc(A_ncols * sizeof(int)))) die("malloc failed");
+
+    for (i = 0; i < A_nrows; i++) A_row_indices[i] = i;
+    for (i = A_nrows; i < A_nrows + B_nrows; i++) B_row_indices[i - A_nrows] = i;
+    for (i = 0; i < A_ncols; i++) col_indices[i] = i;
+
+    C = matrix_create(A_nrows + B_nrows, A_ncols);
+
+    info = GrB_assign(C->mat,
+                      GrB_NULL,
+                      GrB_NULL,
+                      A->mat,
+                      A_row_indices,
+                      A_nrows,
+                      GrB_ALL,
+                      A_ncols,
+                      GrB_NULL);
+
+    info = GrB_assign(C->mat,
+                      GrB_NULL,
+                      GrB_NULL,
+                      B->mat,
+                      B_row_indices,
+                      B_nrows,
+                      GrB_ALL,
+                      B_ncols,
+                      GrB_NULL);
+
+    if (!GrB_ok(info))
+        GrB_die("GrB_Matrix_eWiseAdd_Semiring", A->mat);
+
+    return C;
+}
+
 // Comparison operators
 
 struct matrix *matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
@@ -575,11 +625,16 @@ int matrix_truthy(struct matrix *A)
 
 #ifdef RUN_TEST
 int main(int argc, char** argv){
-    struct matrix *A;
+    struct matrix *A, *B, *C;
 
     A = matrix_create(2, 1);
     matrix_setelem(A, 1, 0, 0);
     matrix_setelem(A, 1, 1, 0);
-    printf("truthiness: %d\n", matrix_truthy(A));
+    B = matrix_create(2, 1);
+    matrix_setelem(B, 2, 0, 0);
+    matrix_setelem(B, 2, 1, 0);
+
+    C = matrix_concat(A, B);
+    matrix_print(matrix_tostring(C));
 }
 #endif

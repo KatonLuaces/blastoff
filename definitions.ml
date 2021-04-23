@@ -96,6 +96,9 @@ let matrix_transpose_f = L.declare_function "matrix_transpose" matrix_transpose_
 let matrix_reduce_t = L.function_type matrix_t [| matrix_t ; i32_t|]
 let matrix_reduce_f = L.declare_function "matrix_reduce" matrix_reduce_t blastoff_module
 
+let matrix_concat_t = L.function_type matrix_t [| matrix_t; matrix_t |]
+let matrix_concat_f = L.declare_function "matrix_concat" matrix_concat_t blastoff_module
+
 (* Comparison operators *)
 
 let matrix_truthy_t = L.function_type i32_t [| matrix_t |]
