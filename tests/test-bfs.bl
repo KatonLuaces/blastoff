@@ -11,8 +11,10 @@ def rangeFromVector(v){
     u = Zero(1:n);
     j = 0;
     i = 0;
-    while ( i < |v|[0] ) {
-        if (v[i]) {
+
+    m = |v|[0];
+    while ( i < m ) {
+        if (v[i] > 0) {
             u[j] = i;
             j = j + 1;
         }
@@ -39,7 +41,7 @@ def BFS(G, frontier){
         depth = depth + 1;
         #logical;
         levels[rangeFromVector(frontier)] = depth;
-        mask = !(frontier^T)[Zero(N), 0, 1, N];
+        mask = !(frontier^T)[0, Zero(N:1), 1, N];
         maskedGT = maskedGT @ mask;
         frontier = maskedGT*frontier;
     }
@@ -47,6 +49,11 @@ def BFS(G, frontier){
     return levels + (One(|levels|)~(-1));
 }
 
-G = [0,0,1; 1,0,0; 0,1,0];
-frontier = [1,0,0];
-BFS(G, frontier);
+G = [
+    0->1;
+    0->2;
+    2->3
+];
+
+frontier = [1;0;0;0];
+print(toString(BFS(G, frontier)));
