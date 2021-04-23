@@ -72,6 +72,9 @@ let matrix_setelem_f = L.declare_function "matrix_setelem" matrix_setelem_t blas
 let matrix_mul_t = L.function_type matrix_t [| matrix_t; matrix_t |]
 let matrix_mul_f = L.declare_function "matrix_mul" matrix_mul_t blastoff_module
 
+let matrix_exp_t = L.function_type matrix_t [| matrix_t; matrix_t |]
+let matrix_exp_f = L.declare_function "matrix_exp" matrix_exp_t blastoff_module
+
 let matrix_conv_t = L.function_type matrix_t [| matrix_t; matrix_t |]
 let matrix_conv_f = L.declare_function "matrix_conv" matrix_conv_t blastoff_module
 

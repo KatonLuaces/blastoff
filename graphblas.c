@@ -269,10 +269,12 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
 {
     struct matrix *C;
     GrB_Info info;
-    GrB_Index nrows, ncols;
+    GrB_Index nrows, ncols, eq1, eq2;
 
-    GrB_size(A->mat, &nrows, NULL);
-    GrB_size(B->mat, NULL, &ncols);
+    GrB_size(A->mat, &nrows, &eq1);
+    GrB_size(B->mat, &eq2, &ncols);
+    if (eq1 != eq2)
+        die("matrix_mul bad dimensions");
 
     C = matrix_create(nrows, ncols);
 
@@ -288,6 +290,28 @@ struct matrix *matrix_mul(struct matrix *A, struct matrix *B)
         GrB_die("GrB_mxm", A->mat);
 
     return C;
+}
+
+struct matrix *matrix_exp(struct matrix *A, struct matrix *N_scalar)
+{
+    struct matrix *B;
+    int n;
+    GrB_Index i, nrows, ncols;
+
+    GrB_size(A->mat, &nrows, &ncols);
+    if (nrows != ncols)
+        die("matrix_exp mat not square");
+
+    n = GrB_scalar(N_scalar->mat);
+    if (n < 1)
+        die("matrix_exp needs positive exponent");
+    
+    B = A;
+    for (i = 0; i < n - 1; i++) {
+        B = matrix_mul(A, B);
+    }
+
+    return B;
 }
 
 struct matrix *matrix_elmul(struct matrix *A, struct matrix *B)
@@ -443,7 +467,7 @@ struct matrix *matrix_size(struct matrix *A)
 struct matrix *matrix_reduce(struct matrix *A, int mult_flag)
 {
     struct matrix *R;
-    GrB_Index nrows, ncols;
+    GrB_Index nrows;
     GrB_size(A->mat, &nrows, NULL);
 
     GrB_Vector v;
@@ -663,17 +687,26 @@ int matrix_truthy(struct matrix *A)
 // end matrix_* functions //
 
 #ifdef RUN_TEST
-int main(int argc, char** argv){
+int main(int argc, char **argv){
     struct matrix *A, *B, *C;
 
-    A = matrix_create(2, 1);
-    matrix_setelem(A, 1, 0, 0);
-    matrix_setelem(A, 1, 1, 0);
-    B = matrix_create(2, 1);
-    matrix_setelem(B, 2, 0, 0);
-    matrix_setelem(B, 2, 1, 0);
+    ring_push();
 
-    C = matrix_concat(A, B);
+    A = matrix_create(2, 2);
+    B = matrix_create(2, 2);
+    // B = matrix_create(1, 1);
+    matrix_setelem(A, 2, 0, 0);
+    matrix_setelem(A, 2, 0, 1);
+    matrix_setelem(A, 2, 1, 0);
+    matrix_setelem(A, 2, 1, 1);
+    matrix_setelem(B, 2, 0, 0);
+    matrix_setelem(B, 2, 0, 1);
+    matrix_setelem(B, 2, 1, 0);
+    matrix_setelem(B, 2, 1, 1);
+    matrix_print(matrix_tostring(A));
+    matrix_print(matrix_tostring(B));
+
+    C = matrix_mul(A, B);
     matrix_print(matrix_tostring(C));
 }
 #endif

@@ -134,17 +134,18 @@ let translate (functions, statements) =
           let e1' = build_expr builder e1
           and e2' = build_expr builder e2 in (
             match op with
-              A.Matmul  -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
-            | A.Conv    -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
-            | A.Elmul   -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
-            | A.Add     -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
-            | A.Concat  -> L.build_call matrix_concat_f [| e1'; e2'|] "matrix_concat" builder
-            | A.Equal   -> L.build_call matrix_equal_f [| e1'; e2'|] "matrix_equal" builder
-            | A.Neq     -> L.build_call matrix_neq_f [| e1'; e2'|] "matrix_neq" builder
-            | A.Leq     -> L.build_call matrix_leq_f [| e1'; e2'|] "matrix_leq" builder
-            | A.Less    -> L.build_call matrix_less_f [| e1'; e2'|] "matrix_less" builder
-            | A.Geq     -> L.build_call matrix_geq_f [| e1'; e2'|] "matrix_geq" builder
-            | A.Greater -> L.build_call matrix_greater_f [| e1'; e2'|] "matrix_greater" builder
+              A.Matmul   -> L.build_call matrix_mul_f [| e1'; e2'|] "matrix_mul" builder
+            | A.Exponent -> L.build_call matrix_exp_f [| e1'; e2'|] "matrix_mul" builder
+            | A.Conv     -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
+            | A.Elmul    -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
+            | A.Add      -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
+            | A.Concat   -> L.build_call matrix_concat_f [| e1'; e2'|] "matrix_concat" builder
+            | A.Equal    -> L.build_call matrix_equal_f [| e1'; e2'|] "matrix_equal" builder
+            | A.Neq      -> L.build_call matrix_neq_f [| e1'; e2'|] "matrix_neq" builder
+            | A.Leq      -> L.build_call matrix_leq_f [| e1'; e2'|] "matrix_leq" builder
+            | A.Less     -> L.build_call matrix_less_f [| e1'; e2'|] "matrix_less" builder
+            | A.Geq      -> L.build_call matrix_geq_f [| e1'; e2'|] "matrix_geq" builder
+            | A.Greater  -> L.build_call matrix_greater_f [| e1'; e2'|] "matrix_greater" builder
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Assign _ -> raise (Failure "Assign in codegen")
