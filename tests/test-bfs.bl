@@ -31,7 +31,7 @@ def One(size){
 def BFS(G, frontier){
     #logical;
     N = |G|[0];
-    levels = Zero(N, 1);
+    levels = Zero(N : 1);
     maskedGT = G^T;
     depth = 0;
     while (plusColumnReduce(frontier)) {
