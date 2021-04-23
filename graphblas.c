@@ -361,7 +361,7 @@ struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix 
     GrB_size(C->mat, &C_nrows, &C_ncols);
     GrB_size(D->mat, &D_nrows, &D_ncols);
 
-    if (A_ncols != 1 || B_ncols != 1 || C_ncols != 1 || C_nrows != 1 || D_nrows != 1 || D_ncols != 1)
+    if (A_ncols != 1 || B_ncols != 1 || C_nrows != 1 || C_ncols != 1 || D_nrows != 1 || D_ncols != 1)
         die("matrix_extract bad dimensions");
 
     int cval = matrix_getelem(C, 0, 0);
