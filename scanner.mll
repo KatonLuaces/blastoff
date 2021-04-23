@@ -35,7 +35,6 @@ rule token = parse
 | ';'      { SEMI }
 | ','      { COMMA }
 | '+'      { PLUS }
-| '-'      { MINUS }
 | '*'      { MATMUL }
 | '='      { ASSIGN }
 | arrow     { EDGE }
@@ -48,9 +47,7 @@ rule token = parse
 | ">"      { GT }
 | ">="     { GEQ }
 | "^"      { RAISE }
-| "&&"     { AND }
-| "||"     { OR }
-| "!"      { NOT }
+| '!'      { NOT }
 | '#'      { SEMIRING }
 | ['a'-'z' 'A'-'Z' '_']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
   { (*print_endline "find lxm: ";

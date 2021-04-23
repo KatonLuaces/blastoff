@@ -2,7 +2,6 @@
 
 type op =
   | Add
-  | Sub
   | Matmul
   | Elmul
   | Conv
@@ -12,8 +11,6 @@ type op =
   | Leq
   | Greater
   | Geq
-  | And
-  | Or
   | Concat
   | Exponent
 
@@ -62,7 +59,6 @@ type program = func_decl list * stmt list
 
 let string_of_op = function
   | Add -> "+"
-  | Sub -> "-"
   | Matmul -> "*"
   | Elmul -> "@"
   | Conv -> "~"
@@ -72,8 +68,6 @@ let string_of_op = function
   | Leq -> "<="
   | Greater -> ">"
   | Geq -> ">="
-  | And -> "&&"
-  | Or -> "||"
   | Exponent -> "^"
   | Concat -> ":"
 

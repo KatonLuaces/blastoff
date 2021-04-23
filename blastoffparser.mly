@@ -5,8 +5,8 @@ open Ast
 %}
 
 %token SEMI LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK COMMA SEMIRING EDGE
-%token MATMUL ELMUL ASSIGN FDECL RANGEMAT CONV PLUS MINUS RAISE PLUSREDUCE MULREDUCE
-%token NOT EQ NEQ LT LEQ GT GEQ AND OR IMAT ELMAT TRANSP VLINE SEMIRING CONCAT ZEROMAT
+%token MATMUL ELMUL ASSIGN FDECL RANGEMAT CONV PLUS RAISE PLUSREDUCE MULREDUCE
+%token NOT EQ NEQ LT LEQ GT GEQ IMAT ELMAT TRANSP VLINE SEMIRING CONCAT ZEROMAT
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
 %token <int> INTLITERAL
 %token <float> FLOATLITERAL
@@ -19,12 +19,10 @@ open Ast
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
-%left OR
-%left AND
 %right LBRACK RBRACK
 %left EQ NEQ
 %left LT GT LEQ GEQ
-%left PLUS MINUS
+%left PLUS
 %left MATMUL ELMUL
 %left CONCAT CONV
 %left RAISE
@@ -86,7 +84,6 @@ expr:
       lit          { UnkMatLit([[$1]])            }
   | ID               { Id($1)                 }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
-  | expr MINUS  expr { Binop($1, Sub,   $3)   }
   | expr MATMUL  expr { Binop($1, Matmul,  $3)   }
   | expr ELMUL  expr { Binop($1, Elmul,  $3)   }
   | expr EQ     expr { Binop($1, Equal, $3)   }
@@ -95,16 +92,13 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3)   }
   | expr GT     expr { Binop($1, Greater, $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3)   }
-  | expr AND    expr { Binop($1, And,   $3)   }
-  | expr OR     expr { Binop($1, Or,    $3)   }
   | expr CONV   expr { Binop($1, Conv,  $3)   }
   | expr CONCAT   expr { Binop($1, Concat,  $3)}
   | expr RAISE expr  { Binop($1, Exponent, $3) }
   | expr RAISE TRANSP { Unop(Transp, $1)      }
-  | NOT  expr        { Unop(Neg, $2)   }
+  | NOT expr        { Unop(Neg, $2)   }
   | PLUSREDUCE expr  { Unop(Plusreduce, $2)   }
   | MULREDUCE expr   { Unop(Mulreduce, $2)    }
-  | MINUS expr %prec NOT { Unop(Neg, $2)      }
   | expr LBRACK expr_list RBRACK   { Selection($1, $3)}
   | expr ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
