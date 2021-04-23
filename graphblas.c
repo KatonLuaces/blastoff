@@ -575,6 +575,13 @@ struct matrix *matrix_elcompare(struct matrix *A, struct matrix *B, int op_index
     GrB_size(A->mat, &nrows, &ncols);
     GrB_size(B->mat, &nrowsB, &ncolsB);
 
+    /*
+    printf("dims of A: %d %d\n", (int) nrows, (int) ncols);
+    matrix_print(matrix_tostring(A));
+    printf("dims of B: %d %d\n", (int) nrowsB, (int) ncolsB);
+    matrix_print(matrix_tostring(B));
+    */
+
     C = matrix_create(1, 1);
 
     if (nrows != nrowsB || ncols != ncolsB)
