@@ -487,7 +487,7 @@ struct matrix *matrix_negate(struct matrix *A)
     int i,j;
     GrB_size(A->mat, &nrows, &ncols);
 
-    R = matrix_create(ncols, nrows);
+    R = matrix_create(nrows, ncols);
 
     for (i = 0; i < nrows; i++) {
         for (j = 0; j < ncols; j++) {
