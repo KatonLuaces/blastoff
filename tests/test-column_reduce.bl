@@ -1,0 +1,12 @@
+def plusColumnReduce(A){
+    #_;
+    return (+%(A^T))^T;
+}
+
+def timesColumnReduce(A){
+    #_;
+    return (*%(A^T))^T;
+}
+A = [3;2];
+print(toString(plusColumnReduce(A)));
+print(toString(timesColumnReduce(A)));
