@@ -1,0 +1,12 @@
+def test(frontier, G){
+    G = G + 1;
+    while (+%frontier < 20 ) {
+        frontier[0] = frontier[0] + 1;
+    }
+    return(frontier[0]);
+}
+G = 1;
+frontier = [1,0,0,0];
+
+
+print(toString(test(frontier, G)));
