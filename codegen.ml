@@ -138,6 +138,7 @@ let translate (functions, statements) =
             | A.Conv    -> L.build_call matrix_conv_f [| e1'; e2'|] "matrix_conv" builder
             | A.Elmul   -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
             | A.Add     -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
+            | A.Concat  -> L.build_call matrix_concat_f [| e1'; e2'|] "matrix_concat" builder
             | A.Equal   -> L.build_call matrix_equal_f [| e1'; e2'|] "matrix_equal" builder
             | A.Neq     -> L.build_call matrix_neq_f [| e1'; e2'|] "matrix_neq" builder
             | A.Leq     -> L.build_call matrix_leq_f [| e1'; e2'|] "matrix_leq" builder
