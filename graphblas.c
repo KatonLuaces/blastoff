@@ -346,39 +346,6 @@ struct matrix *matrix_eladd(struct matrix *A, struct matrix *B)
     return C;
 }
 
-struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
-{
-    struct matrix *C;
-    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols;
-    int32_t sum;
-    int i, j, v, w;
-
-    GrB_size(A->mat, &A_nrows, &A_ncols);
-    GrB_size(B->mat, &B_nrows, &B_ncols);
-
-    if (A_nrows < B_nrows || A_ncols < B_ncols)
-        die("matrix_conv bad dimensions");
-
-    C_nrows = A_nrows - B_nrows + 1;
-    C_ncols = A_ncols - B_ncols + 1;
-    C = matrix_create(C_nrows, C_ncols);
-
-    for (i = 0; i < C_nrows; i++) {
-        for (j = 0; j < C_ncols; j++) {
-            sum = 0;
-            for (v = 0; v < B_nrows; v++) {
-                for (w = 0; w < B_ncols; w++) {
-                    sum += matrix_getelem(B, v, w)
-                           * matrix_getelem(A, i+v, j+w);
-                }
-            }
-            matrix_setelem(C, sum, i, j);
-        }
-    }
-
-    return C;
-}
-
 struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix *B, struct matrix *C, struct matrix *D)
 {
     struct matrix *R;
@@ -511,6 +478,54 @@ struct matrix *matrix_transpose(struct matrix *A)
     GrB_transpose(T->mat, GrB_NULL, GrB_NULL, A->mat, GrB_NULL);
 
     return T;
+}
+
+
+struct matrix *matrix_conv(struct matrix *A, struct matrix *B)
+{
+    struct matrix *C;
+    struct matrix *E;
+    struct matrix *f;
+    struct matrix *g;
+    struct matrix *h;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols, C_nrows, C_ncols;
+    int i, j;
+
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+
+    if (A_nrows < B_nrows || A_ncols < B_ncols)
+        die("matrix_conv bad dimensions");
+
+    // lots of memory leaked here!
+
+    GrB_Index *row_indices, *col_indices;
+    if (!(row_indices = malloc(B_nrows * sizeof(int)))) die("malloc failed");
+    if (!(col_indices = malloc(B_ncols * sizeof(int)))) die("malloc failed");
+
+    C_nrows = A_nrows - B_nrows + 1;
+    C_ncols = A_ncols - B_ncols + 1;
+    C = matrix_create(C_nrows, C_ncols);
+    E = matrix_create(B_nrows, B_ncols);
+    f = matrix_create(B_nrows, 1);
+    g = matrix_create(1, B_nrows);
+    h = matrix_create(1, 1);
+
+    for (i = 0; i < C_nrows; i++) {
+        for (j = 0; j < C_ncols; j++) {
+          int k;
+          for (k = 0; k < B_nrows; k++) row_indices[k] = i+k;
+          for (k = 0; k < B_ncols; k++) col_indices[k] = j+k;
+          GrB_extract(E->mat, GrB_NULL, GrB_NULL, A->mat, row_indices, B_nrows, col_indices, B_ncols, GrB_NULL);
+          E = matrix_elmul(E, B);
+          f = matrix_reduce(E, 0);
+          g = matrix_transpose(f);
+          h = matrix_reduce(g, 0);
+          matrix_setelem(C, matrix_getelem(h, 0, 0), i, j);
+        }
+    }
+
+    return C;
 }
 
 struct matrix *matrix_concat(struct matrix *A, struct matrix *B)
