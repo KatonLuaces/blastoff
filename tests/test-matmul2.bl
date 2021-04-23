@@ -1,0 +1,6 @@
+#logical;
+print(toString(5 * 0));
+print(toString(5 * 3));
+#maxmin;
+print(toString(5 * 0));
+print(toString(5 * 3));

@@ -1,0 +1,6 @@
+#logical;
+A = [1,2,3;
+    4,0,6;
+    0,8,9];
+C = A~1;
+print(toString(C));
