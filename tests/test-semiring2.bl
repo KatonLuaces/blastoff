@@ -1,0 +1,52 @@
+def prints(M) {
+    print(toString(M));
+    print([10]);
+    return;
+}
+
+def g1(A, B) {
+    #maxmin;
+    prints(A * B);
+    return;
+}
+
+def g2(A, B) {
+    prints(A * B);
+    return;
+}
+
+def g3(A, B) {
+    #_;
+    prints(A * B);
+    return;
+}
+
+def f(A, B) {
+    #maxmin;
+    prints(A * B);
+    #logical;
+    g1(A, B);
+    g2(A, B);
+    g3(A, B);
+    return;
+}
+
+A = [0,1;
+     2,3;
+     4,5];
+
+B = [0,0,5;
+     3,4,0];
+
+prints(A * B);
+
+f(A, B);
+
+/*
+    Should be:
+        1) arithmetic
+        2) maxmin
+        3) maxmin
+        4) arithmetic
+        5) logical
+*/

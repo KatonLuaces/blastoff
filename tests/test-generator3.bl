@@ -1,2 +1,2 @@
 print(toString(range(3)));
-print(toString(range(-2, 2)));
+print(toString(range([-2; 2])));

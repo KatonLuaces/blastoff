@@ -1,0 +1,11 @@
+def doubler(A) {
+  i = 0;
+  B = 1;
+  while (i < A) {
+    B = B @ 2;
+    i = i + 1;
+  }
+  return B;
+}
+
+print(toString(doubler(4)));

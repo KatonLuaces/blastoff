@@ -4,4 +4,9 @@ if (A) {
 } else {
   A = 3;
 }
+if (A) {
+  A = 1;
+} else {
+  A = 3;
+}
 print(toString(A));

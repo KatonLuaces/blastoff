@@ -1,5 +1,6 @@
-A = 1;
-if (A) {
-  A = 7;
+A = [0; 1];
+if (A + [1; 1] > [1; 1]) {
+  print(toString(A + [1; 2]));
+} else {
+  print(toString(A + [3; 4]));
 }
-print(toString(A));

@@ -250,9 +250,9 @@ do
 	*test-*)
 	    Check $file 2>> $globallog
 	    ;;
-	*syntax-*)
-	    CheckSyntax $file 2>> $globallog
-	    ;;
+	# *syntax-*)
+	#     CheckSyntax $file 2>> $globallog
+	#     ;;
 	# *fail-*)
 	#     CheckFail $file 2>> $globallog
 	#     ;;

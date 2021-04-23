@@ -105,7 +105,7 @@ void ring_pop()
 
     if (!curr_ring)
         die("ring_change: curr_ring is NULL");
-    
+
     prev = curr_ring->prev;
     free(curr_ring);
     curr_ring = prev;
@@ -404,7 +404,6 @@ struct matrix *matrix_extract(struct matrix *M, struct matrix *A, struct matrix 
     //(A[i], B[j]) is top-left corner in form (cols, rows)
     //(A[i]+v, B[j]+w) is what we iterate through
     //(i*cval+v, j*dval+w) is where we store
-    int outi = 0;
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
         int Ai = matrix_getelem(A, i, 0);
@@ -442,10 +441,9 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     int cval = matrix_getelem(C, 0, 0);
     int dval = matrix_getelem(D, 0, 0);
 
-    if (N_nrows != cval | N_ncols != dval)
+    if ((N_nrows != cval) | (N_ncols != dval))
         die("matrix_extract size mismatch");
 
-    int outi = 0;
     for (i = 0; i < A_nrows; i++){
       for (j = 0; j < B_nrows; j++){
         int Ai = matrix_getelem(A, i, 0);
@@ -459,18 +457,6 @@ struct matrix *matrix_insert(struct matrix *M, struct matrix *N, struct matrix *
     }
 
     return N;
-}
-
-int matrix_bool(struct matrix *A)
-{
-    int32_t bool_val = 0;
-    GrB_Index nrows, ncols;
-    GrB_size(A->mat, &nrows, &ncols);
-
-    if (nrows != 1 || ncols != 1)
-        die("Hi Katon");
-
-    return matrix_getelem(A, 0, 0) > 0;
 }
 
 struct matrix *matrix_size(struct matrix *A)
@@ -487,6 +473,154 @@ struct matrix *matrix_size(struct matrix *A)
     return S;
 }
 
+struct matrix *matrix_reduce(struct matrix *A, int mult_flag)
+{
+    struct matrix *R;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, NULL);
+
+    GrB_Vector v;
+    GrB_Vector_new(&v, GrB_INT32, nrows) ;
+
+    GrB_Monoid op;
+
+    if(mult_flag){
+      GrB_BinaryOp mult;
+      GxB_Semiring_multiply(&mult, curr_ring->ring);
+      // TODO: Find a better way of doing empty product
+      GrB_Monoid_new_INT32(&op, mult, 1);
+    } else {
+      GxB_Semiring_add(&op, curr_ring->ring);
+    }
+
+    GrB_Matrix_reduce_Monoid(v, GrB_NULL, GrB_NULL, op, A->mat, GrB_NULL);
+
+    R = matrix_create(nrows,1);
+    GrB_Col_assign(R->mat, GrB_NULL, GrB_NULL, v, GrB_ALL, nrows, 0, GrB_NULL);
+
+    return R;
+}
+
+struct matrix *matrix_transpose(struct matrix *A)
+{
+    struct matrix *T;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    T = matrix_create(ncols, nrows);
+    GrB_transpose(T->mat, GrB_NULL, GrB_NULL, A->mat, GrB_NULL);
+
+    return T;
+}
+
+struct matrix *matrix_concat(struct matrix *A, struct matrix *B)
+{
+    struct matrix *C;
+    GrB_Info info;
+    GrB_Index A_nrows, A_ncols, B_nrows, B_ncols;
+    int i;
+
+    GrB_size(A->mat, &A_nrows, &A_ncols);
+    GrB_size(B->mat, &B_nrows, &B_ncols);
+
+    if (A_ncols != B_ncols)
+        die("matrix_concat bad dimensions");
+
+    GrB_Index *A_row_indices, *B_row_indices, *col_indices;
+    if (!(A_row_indices = malloc(A_nrows * sizeof(int)))) die("malloc failed");
+    if (!(B_row_indices = malloc(B_nrows * sizeof(int)))) die("malloc failed");
+    if (!(col_indices = malloc(A_ncols * sizeof(int)))) die("malloc failed");
+
+    for (i = 0; i < A_nrows; i++) A_row_indices[i] = i;
+    for (i = A_nrows; i < A_nrows + B_nrows; i++) B_row_indices[i - A_nrows] = i;
+    for (i = 0; i < A_ncols; i++) col_indices[i] = i;
+
+    C = matrix_create(A_nrows + B_nrows, A_ncols);
+
+    info = GrB_assign(C->mat,
+                      GrB_NULL,
+                      GrB_NULL,
+                      A->mat,
+                      A_row_indices,
+                      A_nrows,
+                      GrB_ALL,
+                      A_ncols,
+                      GrB_NULL);
+
+    info = GrB_assign(C->mat,
+                      GrB_NULL,
+                      GrB_NULL,
+                      B->mat,
+                      B_row_indices,
+                      B_nrows,
+                      GrB_ALL,
+                      B_ncols,
+                      GrB_NULL);
+
+    if (!GrB_ok(info))
+        GrB_die("GrB_Matrix_eWiseAdd_Semiring", A->mat);
+
+    return C;
+}
+
+// Comparison operators
+
+struct matrix *matrix_elcompare(struct matrix *A, struct matrix *B, int op_index)
+{
+    struct matrix *C;
+    int i, j;
+    int a, b, comp_val;
+
+    GrB_Index nrows, ncols, nrowsB, ncolsB;
+    GrB_size(A->mat, &nrows, &ncols);
+    GrB_size(B->mat, &nrowsB, &ncolsB);
+
+    C = matrix_create(1, 1);
+
+    if (nrows != nrowsB || ncols != ncolsB)
+        die("Can't compare two matrices that are different dimensions");
+
+    for (i = 0; i < nrows; i++) {
+        for (j = 0; j < ncols; j++) {
+            a = matrix_getelem(A, i, j);
+            b = matrix_getelem(B, i, j);
+            switch (op_index) {
+                case 0: comp_val = a == b; break;
+                case 1: comp_val = a != b; break;
+                case 2: comp_val = a <= b; break;
+                case 3: comp_val = a < b; break;
+                case 4: comp_val = a >= b; break;
+                case 5: comp_val = a > b; break;
+                default: die("Unknown comparison operator");
+            }
+            if (!comp_val) return C;
+        }
+    }
+    matrix_setelem(C, 1, 0, 0);
+    return C;
+}
+
+struct matrix *matrix_eq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 0); }
+struct matrix *matrix_neq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 1); }
+struct matrix *matrix_leq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 2); }
+struct matrix *matrix_less(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 3); }
+struct matrix *matrix_geq(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 4); }
+struct matrix *matrix_greater(struct matrix *A, struct matrix *B) { return matrix_elcompare(A, B, 5); }
+
+// "The truth value of an expr is equivalent to expr > 0" (Jake, 2021)
+int matrix_truthy(struct matrix *A)
+{
+    struct matrix *C;
+    struct matrix *B;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, &ncols);
+
+    B = matrix_create(nrows, ncols);
+    C = matrix_greater(A, B);
+
+    return matrix_getelem(C, 0, 0) > 0;
+}
+
 // end matrix_* functions //
 
 #ifdef RUN_TEST
@@ -494,15 +628,13 @@ int main(int argc, char** argv){
     struct matrix *A, *B, *C;
 
     A = matrix_create(2, 1);
-    matrix_setelem(A, 3, 0, 0);
-    matrix_setelem(A, 6, 1, 0);
+    matrix_setelem(A, 1, 0, 0);
+    matrix_setelem(A, 1, 1, 0);
+    B = matrix_create(2, 1);
+    matrix_setelem(B, 2, 0, 0);
+    matrix_setelem(B, 2, 1, 0);
 
-    matrix_print(matrix_tostring(A));
-    printf("\n");
-
-    B = matrix_create_range(A);
-
-    matrix_print(matrix_tostring(B));
-    printf("\n");
+    C = matrix_concat(A, B);
+    matrix_print(matrix_tostring(C));
 }
 #endif

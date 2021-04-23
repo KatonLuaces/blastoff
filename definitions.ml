@@ -37,7 +37,7 @@ let built_in_defs: built_in list = [
 
 let create_fun_type fdef = L.function_type fdef.ret (Array.of_list fdef.args)
 
-let built_ins = List.map (fun fdef -> (fdef.name, create_fun_type fdef)) built_in_defs 
+let built_ins = List.map (fun fdef -> (fdef.name, create_fun_type fdef)) built_in_defs
 
 let matrix_create_t = L.function_type matrix_t [| i32_t; i32_t |]
 let matrix_create_f = L.declare_function "matrix_create" matrix_create_t blastoff_module
@@ -87,8 +87,29 @@ let matrix_extract_f = L.declare_function "matrix_extract" matrix_extract_t blas
 let matrix_insert_t = L.function_type matrix_t [| matrix_t; matrix_t; matrix_t; matrix_t; matrix_t; matrix_t |]
 let matrix_insert_f = L.declare_function "matrix_insert" matrix_insert_t blastoff_module
 
-let matrix_bool_t = L.function_type i32_t [| matrix_t |]
-let matrix_bool_f = L.declare_function "matrix_bool" matrix_bool_t blastoff_module
-
 let matrix_size_t = L.function_type matrix_t [| matrix_t |]
 let matrix_size_f = L.declare_function "matrix_size" matrix_size_t blastoff_module
+
+let matrix_transpose_t = L.function_type matrix_t [| matrix_t |]
+let matrix_transpose_f = L.declare_function "matrix_transpose" matrix_transpose_t blastoff_module
+
+let matrix_reduce_t = L.function_type matrix_t [| matrix_t ; i32_t|]
+let matrix_reduce_f = L.declare_function "matrix_reduce" matrix_reduce_t blastoff_module
+
+let matrix_concat_t = L.function_type matrix_t [| matrix_t; matrix_t |]
+let matrix_concat_f = L.declare_function "matrix_concat" matrix_concat_t blastoff_module
+
+(* Comparison operators *)
+
+let matrix_truthy_t = L.function_type i32_t [| matrix_t |]
+let matrix_truthy_f = L.declare_function "matrix_truthy" matrix_truthy_t blastoff_module
+
+(* Comparison operators return a matrix. matrix_truthy returns an i32 so we can
+evaluate the bool value in the If statement. *)
+let matrix_comp_t = L.function_type matrix_t [| matrix_t; matrix_t |]
+let matrix_equal_f = L.declare_function "matrix_equal" matrix_comp_t blastoff_module
+let matrix_neq_f = L.declare_function "matrix_neq" matrix_comp_t blastoff_module
+let matrix_leq_f = L.declare_function "matrix_leq" matrix_comp_t blastoff_module
+let matrix_less_f = L.declare_function "matrix_less" matrix_comp_t blastoff_module
+let matrix_geq_f = L.declare_function "matrix_geq" matrix_comp_t blastoff_module
+let matrix_greater_f = L.declare_function "matrix_greater" matrix_comp_t blastoff_module

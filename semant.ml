@@ -89,8 +89,8 @@ let rec check_stmt = function
       Expr e -> Expr (check_expr e)
     | Semiring ring -> (match List.mem_assoc ring Definitions.rings with true -> Semiring ring | false -> raise (Failure ("Unknown semiring " ^ ring)))
     | Block bl -> Block(check_stmt_list bl)
-    | If(p, b1, b2) -> If(p, check_stmt b1, check_stmt b2)
-    | While(p, s) -> While(p, check_stmt s)
+    | If(p, b1, b2) -> If(check_expr p, check_stmt b1, check_stmt b2)
+    | While(p, s) -> While(check_expr p, check_stmt s)
     | Return e -> Return(check_expr e)
   and
     check_stmt_list = function
@@ -100,9 +100,13 @@ let rec check_stmt = function
       | s :: ss -> check_stmt s :: check_stmt_list ss
       | [] -> []
   in
+  let add_return body = match List.rev body with
+    Return _ :: _ -> body
+    | _ as l -> List.rev (Return(UnkMatLit([[]])) :: l)
+  in
   let check_function func =
     (* Make sure no formals or locals are void or duplicates *)
     let _ = check_vars "body" func.body in
-    let checked_body = check_stmt_list func.body in
+    let checked_body = check_stmt_list (add_return func.body) in
     {fname = func.fname; formals = func.formals; body = checked_body}
 in (List.map check_function funcs, List.map check_stmt stmts)
