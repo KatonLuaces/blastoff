@@ -93,6 +93,9 @@ let matrix_size_f = L.declare_function "matrix_size" matrix_size_t blastoff_modu
 let matrix_transpose_t = L.function_type matrix_t [| matrix_t |]
 let matrix_transpose_f = L.declare_function "matrix_transpose" matrix_transpose_t blastoff_module
 
+let matrix_negate_t = L.function_type matrix_t [| matrix_t |]
+let matrix_negate_f = L.declare_function "matrix_negate" matrix_negate_t blastoff_module
+
 let matrix_reduce_t = L.function_type matrix_t [| matrix_t ; i32_t|]
 let matrix_reduce_f = L.declare_function "matrix_reduce" matrix_reduce_t blastoff_module
 

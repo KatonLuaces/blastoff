@@ -155,7 +155,7 @@ let translate (functions, statements) =
             | A.Transp -> L.build_call matrix_transpose_f [| e' |] "matrix_transpose" builder
             | A.Plusreduce -> L.build_call matrix_reduce_f [| e' ; L.const_int i32_t 0|] "matrix_reduce" builder
             | A.Mulreduce -> L.build_call matrix_reduce_f [| e' ; L.const_int i32_t 1|] "matrix_reduce" builder
-            | _ -> raise (Failure "Unbuilt unop call made")
+            | A.Neg -> L.build_call matrix_negate_f [| e' |] "matrix_negate" builder
         )
       | Id v -> L.build_load (lookup v) v builder
       | Selection (e, args) ->
