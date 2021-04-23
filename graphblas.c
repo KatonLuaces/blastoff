@@ -473,6 +473,34 @@ struct matrix *matrix_size(struct matrix *A)
     return S;
 }
 
+struct matrix *matrix_reduce(struct matrix *A, int mult_flag)
+{
+    struct matrix *R;
+    GrB_Index nrows, ncols;
+    GrB_size(A->mat, &nrows, NULL);
+
+    GrB_Vector v;
+    GrB_Vector_new(&v, GrB_INT32, nrows) ;
+
+    GrB_Monoid op;
+
+    if(mult_flag){
+      GrB_BinaryOp mult;
+      GxB_Semiring_multiply(&mult, curr_ring->ring);
+      // TODO: Find a better way of doing empty product
+      GrB_Monoid_new_INT32(&op, mult, 1);
+    } else {
+      GxB_Semiring_add(&op, curr_ring->ring);
+    }
+
+    GrB_Matrix_reduce_Monoid(v, GrB_NULL, GrB_NULL, op, A->mat, GrB_NULL);
+
+    R = matrix_create(nrows,1);
+    GrB_Col_assign(R->mat, GrB_NULL, GrB_NULL, v, GrB_ALL, nrows, 0, GrB_NULL);
+
+    return R;
+}
+
 struct matrix *matrix_transpose(struct matrix *A)
 {
     struct matrix *T;
