@@ -33,7 +33,7 @@ open Ast
 %%
 
 program:
-  units EOF { $1 }
+  units EOF { (List.rev (fst $1), snd $1) }
 
 units:
     /* empty */ { ([], []) }

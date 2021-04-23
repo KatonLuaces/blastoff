@@ -71,11 +71,11 @@ let string_of_op = function
   | Exponent -> "^"
   | Concat -> ":"
 
-let string_of_mat print_lit m =
+let string_of_mat lit_to_string m =
    let string_of_row row =
-      List.fold_left (fun acc lit -> acc ^ print_lit lit ^ ",") "" row
+     String.concat "," (List.fold_left (fun acc lit ->  (lit_to_string lit) :: acc) [] row)
     in
-    List.fold_left (fun str row -> str ^ string_of_row row ^ ";\n") "[" m ^ "]"
+    "[" ^ (String.concat ";" (List.fold_left (fun acc row -> (string_of_row row) :: acc) []  m)) ^ "]"
 
 let rec string_of_expr = function
   | Id s -> s
@@ -93,7 +93,7 @@ let rec string_of_expr = function
 and string_of_e_with_uop e =
   let str_expr = string_of_expr e in
   function
-  | Neg -> "-" ^ str_expr
+  | Neg -> "!" ^ str_expr
   | Size -> "|" ^ str_expr ^ "|"
   | Transp -> str_expr ^ "^T"
   | Plusreduce -> "+%" ^ str_expr
