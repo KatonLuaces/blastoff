@@ -1,4 +1,3 @@
-module L = Llvm
 module A = Ast
 open Ast
 open Definitions
@@ -42,11 +41,10 @@ let translate (functions, statements) =
           fdecl.formals
           (Array.to_list (L.params func))
       in
-      let rec add_assignment lst = function Expr e -> (match e with IdAssign (v, _) -> (match v with id -> id :: lst | _ -> lst )
-                                                              | _ -> lst) 
+      let rec add_assignment lst = function Expr e -> (match e with IdAssign (id, _) -> id :: lst | _ -> lst)
                                             | Block stmts -> List.fold_left add_assignment lst stmts
-                                            | If (p, s1, s2) -> add_assignment (add_assignment lst s1) s2
-                                            | While (p, s) -> add_assignment lst s
+                                            | If (_, s1, s2) -> add_assignment (add_assignment lst s1) s2
+                                            | While (_, s) -> add_assignment lst s
                                             | _ -> lst in 
       let locals = List.fold_left add_assignment [] fdecl.body in
       List.fold_left add_local formals locals
