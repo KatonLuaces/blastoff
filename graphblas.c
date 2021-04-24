@@ -305,7 +305,7 @@ struct matrix *matrix_exp(struct matrix *A, struct matrix *N_scalar)
     n = GrB_scalar(N_scalar->mat);
     if (n < 1)
         die("matrix_exp needs positive exponent");
-    
+
     B = A;
     for (i = 0; i < n - 1; i++) {
         B = matrix_mul(A, B);
@@ -478,8 +478,8 @@ struct matrix *matrix_reduce(struct matrix *A, int mult_flag)
     if(mult_flag){
       GrB_BinaryOp mult;
       GxB_Semiring_multiply(&mult, curr_ring->ring);
-      // TODO: Find a better way of doing empty product
-      GrB_Monoid_new_INT32(&op, mult, 1);
+      // TODO: Find a better way of doing mutliplicative identity
+      GrB_Monoid_new_INT32(&op, mult, 0);
     } else {
       GxB_Semiring_add(&op, curr_ring->ring);
     }
