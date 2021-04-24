@@ -27,7 +27,7 @@ graphblas : graphblas.c
 	cc -g -Wall -o graphblas -DRUN_TEST graphblas.c -lgraphblas
 
 graphblas.bc : graphblas.c
-	clang -emit-llvm -o graphblas.bc -c graphblas.c -Wno-varargs
+	clang -g -emit-llvm -o graphblas.bc -c graphblas.c -Wno-varargs
 
 # "make clean" removes all generated files
 

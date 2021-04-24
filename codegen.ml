@@ -31,8 +31,10 @@ let translate (functions, statements) =
         StringMap.add n local m
       in
       let add_local m n =
-        let local_var = L.build_alloca matrix_t n builder in
-        StringMap.add n local_var m
+        if StringMap.mem n m then m 
+        else 
+          let local_var = L.build_alloca matrix_t n builder in
+          StringMap.add n local_var m
       in
       let formals =
         List.fold_left2
