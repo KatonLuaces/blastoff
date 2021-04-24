@@ -176,30 +176,28 @@ let translate (functions, statements) =
         | "toString" ->
           (match exprs with
           | [ e ] ->
-            L.build_call
-              matrix_tostring_f
-              [| build_expr builder e |]
+            build_call
               "matrix_tostring"
+              [| build_expr builder e |]
               builder
           | _ -> raise (Failure "Invalid list of expressions passed to toString"))
         | "I" ->
           (match exprs with
           | [ e ] ->
-            L.build_call
-              matrix_identity_f
+            build_call
+              "matrix_create_identity"
               [| build_expr builder e |]
-              "matrix_identity"
               builder
           | _ -> raise (Failure "Invalid list of expressions passed to I"))
         | "Zero" ->
           (match exprs with
           | [ e ] ->
-            L.build_call matrix_zero_f [| build_expr builder e |] "matrix_zero" builder
+            build_call "matrix_create_zero" [| build_expr builder e |] builder
           | _ -> raise (Failure "Invalid list of expressions passed to Zero"))
         | "range" ->
           (match exprs with
           | [ e ] ->
-            L.build_call matrix_range_f [| build_expr builder e |] "matrix_range" builder
+            build_call "matrix_create_range" [| build_expr builder e |] builder
           | _ -> raise (Failure "Invalid list of expressions passed to range"))
         | "__ring_push" ->
           (match exprs with
@@ -221,11 +219,11 @@ let translate (functions, statements) =
         let e1' = build_expr builder e1
         and e2' = build_expr builder e2 in
         (match op with
-        | A.Matmul -> L.build_call matrix_mul_f [| e1'; e2' |] "matrix_mul" builder
+        | A.Matmul -> build_call "matrix_mul" [| e1'; e2' |] builder
         | A.Exponent -> L.build_call matrix_exp_f [| e1'; e2' |] "matrix_mul" builder
-        | A.Conv -> L.build_call matrix_conv_f [| e1'; e2' |] "matrix_conv" builder
-        | A.Elmul -> L.build_call matrix_elmul_f [| e1'; e2' |] "matrix_elmul" builder
-        | A.Add -> L.build_call matrix_eladd_f [| e1'; e2' |] "matrix_eladd" builder
+        | A.Conv -> build_call "matrix_conv" [| e1'; e2' |] builder
+        | A.Elmul -> build_call "matrix_elmul" [| e1'; e2' |] builder
+        | A.Add -> build_call "matrix_eladd" [| e1'; e2' |]  builder
         | A.Concat -> L.build_call matrix_concat_f [| e1'; e2' |] "matrix_concat" builder
         | A.Equal -> L.build_call matrix_equal_f [| e1'; e2' |] "matrix_eq" builder
         | A.Neq -> L.build_call matrix_neq_f [| e1'; e2' |] "matrix_neq" builder
@@ -322,12 +320,9 @@ let translate (functions, statements) =
         let merge_bb = L.append_block context "merge" func in
         ignore (L.build_cond_br bool_val body_bb merge_bb pred_builder);
         L.builder_at_end context merge_bb
-      (*| For (e1, e2, e3, body) ->
-        build_stmt builder ( Block [Expr e1 ; While (e2, Block [body ; Expr e3])] ) *)
     in
     let body = Expr (Call ("__ring_push", [])) :: fdecl.body in
     let builder = build_stmt builder (Block body) in
-    (* ignore( L.build_call ring_pop_f [| |] "ring_push" builder ); *)
     add_terminal
       builder
       (L.build_ret (L.const_int (if is_main then i32_t else matrix_t) 0))
