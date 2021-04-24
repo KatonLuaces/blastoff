@@ -98,7 +98,7 @@ let translate (functions, statements) =
         m;
       mat
     in
-    let build_int_matrix jasons_builder m =
+    let build_matrix typ jasons_builder m =
       let mat =
         L.build_call
           matrix_create_f
@@ -115,7 +115,7 @@ let translate (functions, statements) =
                  (L.build_call
                     matrix_setelem_f
                     [| mat
-                     ; L.const_int i32_t elem
+                     ; typ elem
                      ; L.const_int i32_t i
                      ; L.const_int i32_t j
                     |]
@@ -158,7 +158,7 @@ let translate (functions, statements) =
     in
     let rec build_expr builder e =
       match e with
-      | IntMatLit m -> build_int_matrix builder m
+      | IntMatLit m -> build_matrix (fun el -> L.const_int i32_t el) builder m
       | GraphLit m -> build_graph_matrix builder m
       | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
       | IdAssign (v, e) ->
