@@ -8,6 +8,7 @@ open Ast
 %token MATMUL ELMUL ASSIGN FDECL RANGEMAT CONV PLUS RAISE PLUSREDUCE MULREDUCE
 %token NOT EQ NEQ LT LEQ GT GEQ IMAT ELMAT TRANSP VLINE SEMIRING CONCAT ZEROMAT
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
+%token PLUSASSIGN ELMULASSIGN CONVASSIGN MATMULASSIGN CONCATASSIGN RAISEASSIGN
 %token <int> INTLITERAL
 %token <float> FLOATLITERAL
 %token <string> STRINGLITERAL
@@ -19,7 +20,7 @@ open Ast
 
 %nonassoc NOELSE
 %nonassoc ELSE
-%right ASSIGN
+%right ASSIGN PLUSASSIGN ELMULASSIGN CONVASSIGN MATMULASSIGN CONCATASSIGN RAISEASSIGN
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %right LBRACK RBRACK
@@ -86,8 +87,11 @@ expr:
   | STRINGLITERAL { StringLit($1) }
   | ID               { Id($1)                 }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
+  | ID PLUSASSIGN expr { IdAssign($1, Binop(Id($1), Add, $3))   }
   | expr MATMUL  expr { Binop($1, Matmul,  $3)   }
+  | ID MATMULASSIGN expr { IdAssign($1, Binop(Id($1), Matmul, $3))   }
   | expr ELMUL  expr { Binop($1, Elmul,  $3)   }
+  | ID ELMULASSIGN expr { IdAssign($1, Binop(Id($1), Elmul, $3))   }
   | expr EQ     expr { Binop($1, Equal, $3)   }
   | expr NEQ    expr { Binop($1, Neq,   $3)   }
   | expr LT     expr { Binop($1, Less,  $3)   }
@@ -95,8 +99,11 @@ expr:
   | expr GT     expr { Binop($1, Greater, $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3)   }
   | expr CONV   expr { Binop($1, Conv,  $3)   }
+  | ID CONVASSIGN expr { IdAssign($1, Binop(Id($1), Conv, $3))   }
   | expr CONCAT   expr { Binop($1, Concat,  $3)}
+  | ID CONCATASSIGN expr { IdAssign($1, Binop(Id($1), Concat, $3))   }
   | expr RAISE expr  { Binop($1, Exponent, $3) }
+  | ID RAISEASSIGN expr { IdAssign($1, Binop(Id($1), Exponent, $3))   }
   | expr RAISE TRANSP { Unop(Transp, $1)      }
   | NOT expr        { Unop(Neg, $2)   }
   | PLUSREDUCE expr  { Unop(Plusreduce, $2)   }

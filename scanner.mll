@@ -32,12 +32,17 @@ rule token = parse
 | '}'      { RBRACE }
 | '\''[^'\'']*'\'' as str { STRINGLITERAL(String.sub str 1 ((String.length str) - 2)) }
 | '@'      { ELMUL   }
+| "@="     { ELMULASSIGN }
 | '~'      { CONV }
+| "~="     { CONVASSIGN }
 | ':'      { CONCAT }
+| ":="     { CONCATASSIGN }
 | ';'      { SEMI }
 | ','      { COMMA }
 | '+'      { PLUS }
+| "+="     { PLUSASSIGN }
 | '*'      { MATMUL }
+| "*="     { MATMULASSIGN }
 | '='      { ASSIGN }
 | arrow     { EDGE }
 | ['+']['%']     { PLUSREDUCE }
@@ -48,7 +53,8 @@ rule token = parse
 | "<="     { LEQ }
 | ">"      { GT }
 | ">="     { GEQ }
-| "^"      { RAISE }
+| '^'      { RAISE }
+| "^="     { RAISEASSIGN }
 | '!'      { NOT }
 | '#'      { SEMIRING }
 | ['a'-'z' 'A'-'Z' '_']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm
@@ -65,5 +71,5 @@ and comment = parse
       "*/" { token lexbuf }
   | _    { comment lexbuf }
 and single_line_comment = parse
-  '\n' { token lexbuf } 
+  '\n' { token lexbuf }
   | _ { single_line_comment lexbuf }

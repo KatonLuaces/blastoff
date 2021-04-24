@@ -1,0 +1,14 @@
+A = 1;
+print(toString(A));
+A*=2;
+print(toString(A));
+A~=2;
+print(toString(A));
+A@=2;
+print(toString(A));
+A+=1;
+print(toString(A));
+A^=2;
+print(toString(A));
+A:=A;
+print(toString(A));
