@@ -67,7 +67,7 @@ int32_t GrB_scalar(GrB_Matrix mat)
 /* automatically called before main() */
 __attribute__((constructor))
 static void matrix_lib_init(void) {
-    if (!GrB_ok(GrB_init(GrB_BLOCKING)))
+    if (!GrB_ok(GrB_init(GrB_NONBLOCKING)))
         die("GrB_init");
 }
 
