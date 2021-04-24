@@ -1,7 +1,7 @@
 #maxmin;
 A = [3,6;
     2,4;
-    1,2];
+    -1,2];
 B = +%A;
 C = *%A;
 print(toString(B));
