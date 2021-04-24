@@ -10,6 +10,7 @@ open Ast
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
 %token <int> INTLITERAL
 %token <float> FLOATLITERAL
+%token <string> STRINGLITERAL
 %token <string> ID
 %token EOF
 
@@ -81,7 +82,8 @@ lit:
   | FLOATLITERAL { FloatLit($1) }
 
 expr:
-      lit          { UnkMatLit([[$1]])            }
+   lit          { UnkMatLit([[$1]]) }
+  | STRINGLITERAL { StringLit($1) }
   | ID               { Id($1)                 }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
   | expr MATMUL  expr { Binop($1, Matmul,  $3)   }

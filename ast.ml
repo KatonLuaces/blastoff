@@ -38,6 +38,7 @@ type expr =
   | SelectAssign of string * expr list * expr
   | Selection of expr * expr list
   | Call of string * expr list
+  | StringLit of string
 
 type stmt =
   | Semiring of string
