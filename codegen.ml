@@ -71,7 +71,7 @@ let translate (functions, statements) =
       | Some _ -> ()
       | None -> ignore (instr builder)
     in
-    let build_graph_matrix jasons_builder m =
+    let build_graph_matrix builder m =
       let max3 a b c =
         if a >= b && a >= c then a else if b >= c && b >= a then b else c
       in
@@ -81,7 +81,7 @@ let translate (functions, statements) =
           matrix_create_f
           [| L.const_int i32_t dim; L.const_int i32_t dim |]
           "matrix_create"
-          jasons_builder
+          builder
       in
       List.iter
         (fun elem ->
@@ -94,11 +94,11 @@ let translate (functions, statements) =
                 ; L.const_int i32_t (snd elem)
                |]
                "matrix_setelem"
-               jasons_builder))
+               builder))
         m;
       mat
     in
-    let build_matrix typ jasons_builder m =
+    let build_matrix typ builder m =
       let mat =
         L.build_call
           matrix_create_f
@@ -106,7 +106,7 @@ let translate (functions, statements) =
            ; L.const_int i32_t (List.length (List.hd m))
           |]
           "matrix_create"
-          jasons_builder
+          builder
       in
       List.iteri
         (fun i row ->
@@ -120,7 +120,7 @@ let translate (functions, statements) =
                      ; L.const_int i32_t j
                     |]
                     "matrix_setelem"
-                    jasons_builder)))
+                    builder)))
             (List.rev row))
         (List.rev m);
       mat
