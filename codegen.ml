@@ -160,7 +160,7 @@ let translate (functions, statements) =
       match e with
       | IntMatLit m -> build_matrix (fun el -> L.const_int i32_t el) builder m
       | GraphLit m -> build_graph_matrix builder m
-      | FloatMatLit _ -> raise (Failure "Float Matrix Literal")
+      | FloatMatLit m -> build_matrix (fun el -> L.const_float float_t el) builder m
       | IdAssign (v, e) ->
         let comp_e = build_expr builder e in
         (match v with

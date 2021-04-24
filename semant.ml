@@ -80,7 +80,16 @@ let check (funcs, stmts) =
     | UnkMatLit m ->
       let has_float = contains_float m in
       (match has_float with
-      | true -> raise (Failure "Matrix contains float")
+      | true -> 
+        FloatMatLit 
+          (List.map
+             (fun row ->
+               List.map
+                 (function
+                   | IntLit lit -> float_of_int lit
+                   | FloatLit lit -> lit)
+                 row
+             ) m)
       | false ->
         IntMatLit
           (List.map

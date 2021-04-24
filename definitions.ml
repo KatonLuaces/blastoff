@@ -22,6 +22,7 @@ type built_in =
   }
 
 let i32_t = L.i32_type context
+let float_t = L.double_type context
 
 let matrix_t =
   L.pointer_type
