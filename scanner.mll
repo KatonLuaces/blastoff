@@ -20,8 +20,9 @@ let arrow = ['-']['>']
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
+| "//"     { single_line_comment lexbuf }
 | '-'?digit* as lxm { INTLITERAL(int_of_string lxm) }
-          | ['-']?digit*['.']digit* as lxm { FLOATLITERAL(float_of_string lxm) }
+| ['-']?digit*['.']digit* as lxm { FLOATLITERAL(float_of_string lxm) }
 | '|'      { VLINE }
 | '['      { LBRACK }
 | ']'      { RBRACK }
@@ -29,6 +30,7 @@ rule token = parse
 | ')'      { RPAREN }
 | '{'      { LBRACE }
 | '}'      { RBRACE }
+| '\''[^'\'']*'\'' as str { STRINGLITERAL(String.sub str 1 ((String.length str) - 2)) }
 | '@'      { ELMUL   }
 | '~'      { CONV }
 | ':'      { CONCAT }
@@ -62,3 +64,6 @@ rule token = parse
 and comment = parse
       "*/" { token lexbuf }
   | _    { comment lexbuf }
+and single_line_comment = parse
+  '\n' { token lexbuf } 
+  | _ { single_line_comment lexbuf }
