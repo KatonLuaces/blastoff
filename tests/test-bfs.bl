@@ -29,7 +29,7 @@ def One(size){
     return A;
 }
 
-def BFS(frontier, G){
+def BFS(G, frontier){
     #logical;
     N = |G|[0];
     levels = Zero(N : 1);
