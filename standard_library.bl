@@ -27,3 +27,8 @@ def One(size){
     A[range(oneSize[0]), range(oneSize[1])] = 1;
     return A;
 }
+
+def printM(M){
+    print(toString(M));
+    return M;
+}
