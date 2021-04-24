@@ -1,0 +1,8 @@
+// This is a comment
+print(toString(4));
+/* So is this
+print(toString(3));
+Nah, we ain't finished yet!
+*/
+// Now we're done!
+print(toString(2));
