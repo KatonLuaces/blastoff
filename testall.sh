@@ -239,7 +239,7 @@ which "$LLI" >> $globallog || LLIFail
 
 if [ $# -ge 1 ]
 then
-    files=$@
+    files="tests/$@*.bl"
 else
     files="tests/test-*.bl"
 fi
