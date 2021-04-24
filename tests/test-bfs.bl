@@ -7,14 +7,13 @@ def rangeFromVector(v){
     #logical;
     vlogic = v~1;
     #arithmetic;
-    n = plusColumnReduce(v);
-    u = Zero(1:n);
+    n = plusColumnReduce(vlogic);
+    u = Zero(n:1);
     j = 0;
     i = 0;
-
     m = |v|[0];
-    while ( i < m ) {
-        if (v[i] > 0) {
+    while ( i < m) {
+        if (v[i]) {
             u[j] = i;
             j = j + 1;
         }
@@ -30,7 +29,7 @@ def One(size){
     return A;
 }
 
-def BFS(G, frontier){
+def BFS(frontier, G){
     #logical;
     N = |G|[0];
     levels = Zero(N : 1);
@@ -41,19 +40,37 @@ def BFS(G, frontier){
         depth = depth + 1;
         #logical;
         levels[rangeFromVector(frontier)] = depth;
-        mask = !(frontier^T)[0, Zero(N:1), 1, N];
+        mask = !(levels)[0, Zero(N:1), N, 1];
         maskedGT = maskedGT @ mask;
         frontier = maskedGT*frontier;
     }
     #arithmetic;
-    return levels + (One(|levels|)~(-1));
+    return levels + One(|levels|)~(-1);
 }
 
-G = [
-    0->1;
-    0->2;
-    2->3
-];
 
-frontier = [1;0;0;0];
+/*Graph is from Algorithms, Christos Papadimitriou, Sanjoy Dasgupta, and Umesh Vazirani, Figure 3.9.a*/
+G = [
+  0->1;
+  1->2;
+  1->3;
+  1->4;
+  2->5;
+  4->1;
+  4->5;
+  4->6;
+  5->2;
+  5->7;
+  6->7;
+  6->9;
+  7->10;
+  8->6;
+  9->8;
+  10->11;
+  11->9;
+  12->0
+];
+frontier = Zero(|G|[0] : 1);
+frontier[0] = 1;
+
 print(toString(BFS(G, frontier)));
