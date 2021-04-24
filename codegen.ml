@@ -266,7 +266,7 @@ let translate (functions, statements) =
         let e' = build_expr builder e in
         let v' = L.build_load (lookup v) v builder in
         let args' = v' :: e' :: revfilledargs' in
-        L.build_call matrix_insert_f (Array.of_list args') "matrix_insert" builder
+        build_call "matrix_insert" (Array.of_list args') builder
     in
     let rec build_stmt builder = function
       | Block sl -> List.fold_left build_stmt builder sl
