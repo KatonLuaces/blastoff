@@ -36,7 +36,7 @@ let built_in_defs : built_in list =
   ; { name = "matrix_create_identity"; ret = matrix_t; args = [ matrix_t ] }
   ; { name = "matrix_create_zero"; ret = matrix_t; args = [ matrix_t ] }
   ; { name = "matrix_create_range"; ret = matrix_t; args = [ matrix_t ] }
-  ; { name = "matrix_print"; ret = i32_t; args = [ matrix_t ] }
+  ; { name = "matrix_print"; ret = matrix_t; args = [ matrix_t ] }
   ; { name = "matrix_tostring"; ret = matrix_t; args = [ matrix_t ] }
   ; { name = "change_ring"; ret = i32_t; args = [ i32_t ] }
   ; { name = "matrix_setelem"; ret = i32_t; args = [ matrix_t; i32_t; i32_t; i32_t ] }
@@ -69,10 +69,10 @@ let built_in_defs : built_in list =
   ;{ name = "matrix_truthy"; ret = matrix_t; args = [ matrix_t ] }
   ]
 ;;
- 
+
 let matrix_truthy_t = L.function_type i32_t [| matrix_t |]
 let matrix_truthy_f = L.declare_function "matrix_truthy" matrix_truthy_t blastoff_module
- 
+
 
 let matrix_exp_t = L.function_type matrix_t [| matrix_t; matrix_t |]
 let matrix_exp_f = L.declare_function "matrix_exp" matrix_exp_t blastoff_module
