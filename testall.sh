@@ -253,9 +253,9 @@ do
 	# *syntax-*)
 	#     CheckSyntax $file 2>> $globallog
 	#     ;;
-	# *fail-*)
-	#     CheckFail $file 2>> $globallog
-	#     ;;
+	*fail-*)
+	    CheckFail $file 2>> $globallog
+	    ;;
 	*)
 	    echo "unknown file type $file"
 	    #globalerror=1
