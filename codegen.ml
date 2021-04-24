@@ -224,35 +224,33 @@ let translate (functions, statements) =
         | A.Conv -> build_call "matrix_conv" [| e1'; e2' |] builder
         | A.Elmul -> build_call "matrix_elmul" [| e1'; e2' |] builder
         | A.Add -> build_call "matrix_eladd" [| e1'; e2' |]  builder
-        | A.Concat -> L.build_call matrix_concat_f [| e1'; e2' |] "matrix_concat" builder
-        | A.Equal -> L.build_call matrix_equal_f [| e1'; e2' |] "matrix_eq" builder
-        | A.Neq -> L.build_call matrix_neq_f [| e1'; e2' |] "matrix_neq" builder
-        | A.Leq -> L.build_call matrix_leq_f [| e1'; e2' |] "matrix_leq" builder
-        | A.Less -> L.build_call matrix_less_f [| e1'; e2' |] "matrix_less" builder
-        | A.Geq -> L.build_call matrix_geq_f [| e1'; e2' |] "matrix_geq" builder
+        | A.Concat -> build_call "matrix_concat" [| e1'; e2' |] builder
+        | A.Equal -> build_call "matrix_eq" [| e1'; e2' |] builder
+        | A.Neq -> build_call "matrix_neq" [| e1'; e2' |] builder
+        | A.Leq -> build_call "matrix_leq" [| e1'; e2' |] builder
+        | A.Less -> build_call "matrix_less" [| e1'; e2' |] builder
+        | A.Geq -> build_call "matrix_geq" [| e1'; e2' |] builder
         | A.Greater ->
-          L.build_call matrix_greater_f [| e1'; e2' |] "matrix_greater" builder)
+          build_call "matrix_greater" [| e1'; e2' |] builder)
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Assign _ -> raise (Failure "Assign in codegen")
       | StringLit _ -> raise (Failure "StringLit in codegen")
       | Unop (op, e) ->
         let e' = build_expr builder e in
         (match op with
-        | A.Size -> L.build_call matrix_size_f [| e' |] "matrix_size" builder
-        | A.Transp -> L.build_call matrix_transpose_f [| e' |] "matrix_transpose" builder
+        | A.Size -> build_call "matrix_size"  [| e' |] builder
+        | A.Transp -> build_call "matrix_transpose" [| e' |] builder
         | A.Plusreduce ->
-          L.build_call
-            matrix_reduce_f
-            [| e'; L.const_int i32_t 0 |]
+          build_call
             "matrix_reduce"
+            [| e'; L.const_int i32_t 0 |]
             builder
         | A.Mulreduce ->
-          L.build_call
-            matrix_reduce_f
-            [| e'; L.const_int i32_t 1 |]
+          build_call
             "matrix_reduce"
+            [| e'; L.const_int i32_t 1 |]
             builder
-        | A.Neg -> L.build_call matrix_negate_f [| e' |] "matrix_negate" builder)
+        | A.Neg -> build_call "matrix_negate" [| e' |] builder)
       | Id v -> L.build_load (lookup v) v builder
       | Selection (e, args) ->
         let partialargs' = List.map (build_expr builder) args in
