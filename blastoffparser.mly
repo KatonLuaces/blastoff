@@ -20,9 +20,9 @@ open Ast
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
-%right LBRACK RBRACK
 %left EQ NEQ
 %left LT GT LEQ GEQ
+%right LBRACK RBRACK
 %left PLUS
 %left MATMUL ELMUL
 %left CONCAT CONV

@@ -3,7 +3,6 @@ def plusColumnReduce(A){
     return (+%(A^T))^T;
 }
 
-
 def rangeFromVector(v){
     #logical;
     vlogic = v~1;
@@ -12,8 +11,7 @@ def rangeFromVector(v){
     u = Zero(n:1);
     j = 0;
     i = 0;
-    m = |v|[0];
-    while ( i < m) {
+    while (i < |v|[0]) {
         if (v[i]) {
             u[j] = i;
             j = j + 1;

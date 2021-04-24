@@ -11,8 +11,7 @@ def rangeFromVector(v){
     u = Zero(n:1);
     j = 0;
     i = 0;
-    m = |v|[0];
-    while ( i < m) {
+    while (i < |v|[0]) {
         if (v[i]) {
             u[j] = i;
             j = j + 1;
@@ -49,7 +48,7 @@ def BFS(G, frontier){
 }
 
 
-/*Graph is from Algorithms, Christos Papadimitriou, Sanjoy Dasgupta, and Umesh Vazirani, Figure 3.9.a*/
+// Graph is from Algorithms,  Papadimitriou et al., Figure 3.9.a
 G = [
   0->1;
   1->2;
