@@ -45,7 +45,7 @@ let translate (functions, statements) =
                                             | Block stmts -> List.fold_left add_assignment lst stmts
                                             | If (_, s1, s2) -> add_assignment (add_assignment lst s1) s2
                                             | While (_, s) -> add_assignment lst s
-                                            | _ -> lst in 
+                                            | _ -> lst in
       let locals = List.fold_left add_assignment [] fdecl.body in
       List.fold_left add_local formals locals
     in
@@ -142,7 +142,7 @@ let translate (functions, statements) =
             | A.Elmul    -> L.build_call matrix_elmul_f [| e1'; e2'|] "matrix_elmul" builder
             | A.Add      -> L.build_call matrix_eladd_f [| e1'; e2'|] "matrix_eladd" builder
             | A.Concat   -> L.build_call matrix_concat_f [| e1'; e2'|] "matrix_concat" builder
-            | A.Equal    -> L.build_call matrix_equal_f [| e1'; e2'|] "matrix_equal" builder
+            | A.Equal    -> L.build_call matrix_equal_f [| e1'; e2'|] "matrix_eq" builder
             | A.Neq      -> L.build_call matrix_neq_f [| e1'; e2'|] "matrix_neq" builder
             | A.Leq      -> L.build_call matrix_leq_f [| e1'; e2'|] "matrix_leq" builder
             | A.Less     -> L.build_call matrix_less_f [| e1'; e2'|] "matrix_less" builder

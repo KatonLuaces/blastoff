@@ -113,7 +113,7 @@ let matrix_truthy_f = L.declare_function "matrix_truthy" matrix_truthy_t blastof
 (* Comparison operators return a matrix. matrix_truthy returns an i32 so we can
 evaluate the bool value in the If statement. *)
 let matrix_comp_t = L.function_type matrix_t [| matrix_t; matrix_t |]
-let matrix_equal_f = L.declare_function "matrix_equal" matrix_comp_t blastoff_module
+let matrix_equal_f = L.declare_function "matrix_eq" matrix_comp_t blastoff_module
 let matrix_neq_f = L.declare_function "matrix_neq" matrix_comp_t blastoff_module
 let matrix_leq_f = L.declare_function "matrix_leq" matrix_comp_t blastoff_module
 let matrix_less_f = L.declare_function "matrix_less" matrix_comp_t blastoff_module
