@@ -51,7 +51,7 @@ let matrix_zero_f = L.declare_function "matrix_create_zero" matrix_zero_t blasto
 let matrix_range_t = L.function_type matrix_t [| matrix_t |]
 let matrix_range_f = L.declare_function "matrix_create_range" matrix_range_t blastoff_module
 
-let matrix_print_t = L.function_type i32_t [| matrix_t |]
+let matrix_print_t = L.function_type matrix_t [| matrix_t |]
 let matrix_print_f = L.declare_function "matrix_print" matrix_print_t blastoff_module
 
 let matrix_tostring_t = L.function_type matrix_t [| matrix_t |]

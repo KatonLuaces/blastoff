@@ -225,7 +225,7 @@ struct matrix *matrix_create_range(struct matrix *range)
     return A;
 }
 
-void matrix_print(struct matrix *A)
+struct matrix *matrix_print(struct matrix *A)
 {
     GrB_Index nrows, ncols, i;
     int elem;
@@ -236,6 +236,9 @@ void matrix_print(struct matrix *A)
 
     for (i = 0; i < nrows && (elem = matrix_getelem(A, i, 0)) != 0; i++)
         putchar(elem);
+
+    struct matrix *R = matrix_create(0, 0);
+    return R;
 }
 
 struct matrix *matrix_tostring(struct matrix *A)
