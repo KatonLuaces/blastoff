@@ -1,0 +1,23 @@
+def printm(M) {
+    print(toString(M));
+    print(10);
+}
+
+def addThree(A, B, C) {
+    #logical;
+    sum = A + B + C;
+    return sum;
+}
+
+def f(A, B, C) {
+    #maxmin;
+    printm(addThree(A, B, C));
+    printm(A + B + C);
+}
+
+A = 1;
+B = 2;
+C = 3;
+
+printm(A + B + C);
+f(A, B, C);
