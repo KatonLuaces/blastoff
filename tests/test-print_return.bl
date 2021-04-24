@@ -1,0 +1,1 @@
+A = print(toString(5));
