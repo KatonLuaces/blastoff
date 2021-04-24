@@ -171,7 +171,7 @@ let translate (functions, statements) =
         | "print" ->
           (match exprs with
           | [ e ] ->
-            L.build_call matrix_print_f [| build_expr builder e |] "matrix_print" builder
+              build_call "matrix_print" [| build_expr builder e |] builder
           | _ -> raise (Failure "Invalid list of expressions passed to print"))
         | "toString" ->
           (match exprs with
