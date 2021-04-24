@@ -23,8 +23,7 @@ def rangeFromVector(v){
 
 def One(size){
     A = Zero(size);
-    oneSize = |A|;
-    A[range(oneSize[0]), range(oneSize[1])] = 1;
+    A[range(size[0]), range(size[1])] = 1;
     return A;
 }
 
@@ -48,7 +47,7 @@ def BFS(G, frontier){
 }
 
 
-// Graph is from Algorithms,  Papadimitriou et al., Figure 3.9.a
+// Graph is from Algorithms, Papadimitriou et al., Figure 3.9.a
 G = [
   0->1;
   1->2;
