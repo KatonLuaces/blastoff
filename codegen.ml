@@ -151,6 +151,7 @@ let translate (functions, statements) =
           )
       | UnkMatLit _ -> raise (Failure "Type of matrix is unknown")
       | Assign _ -> raise (Failure "Assign in codegen")
+      | StringLit _ -> raise (Failure "StringLit in codegen")
       | Unop (op, e) ->
         let e' = build_expr builder e in (
           match op with

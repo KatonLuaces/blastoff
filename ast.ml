@@ -80,7 +80,7 @@ let string_of_mat lit_to_string m =
 
 let string_of_graph g =
    let string_of_edge (v1,v2) = (string_of_int v1) ^ "->" ^ (string_of_int v2) in
-   "[" ^ (String.concat ";" (List.map string_of_edge g)) ^ "]" 
+   "[" ^ (String.concat ";" (List.map string_of_edge g)) ^ "]"
 
 let rec string_of_expr = function
   | Id s -> s
@@ -93,6 +93,7 @@ let rec string_of_expr = function
         IntLit ilit -> string_of_int ilit| FloatLit flit -> string_of_float flit) m
   | IntMatLit m -> string_of_mat string_of_int m
   | GraphLit g -> string_of_graph g
+  | StringLit s -> "\"" ^ s ^ "\""
   | FloatMatLit m -> string_of_mat string_of_float m
   | Selection (e, args) -> (string_of_expr e) ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]"
   | SelectAssign (s, args, e) -> s ^ "[" ^ String.concat ", " (List.map string_of_expr args) ^ "]" ^ " = " ^ string_of_expr e
