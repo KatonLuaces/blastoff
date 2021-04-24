@@ -65,14 +65,14 @@ stmt_list:
   | stmt_list stmt { $2 :: $1 }
 
 stmt:
-    expr SEMI                                       { Expr $1               }
-  | SEMIRING ID SEMI                                { Semiring $2           }
-  | RETURN ret_opt SEMI                             { Return $2             }
-  | LBRACE stmt_list RBRACE                         { Block(List.rev $2)    }
-  | IF LPAREN expr RPAREN stmt %prec NOELSE         { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN stmt ELSE stmt            { If($3, $5, $7)        }
-  | WHILE LPAREN expr RPAREN stmt                   { While($3, $5)         }
-  | FOR LPAREN stmt SEMI expr stmt RPAREN stmt { Block([$3 ; While($5, Block([$8 ; $6]))])}
+    expr SEMI                                   { Expr $1                                        }
+  | SEMIRING ID SEMI                            { Semiring $2                                    }
+  | RETURN ret_opt SEMI                         { Return $2                                      }
+  | LBRACE stmt_list RBRACE                     { Block(List.rev $2)                             }
+  | IF LPAREN expr RPAREN stmt %prec NOELSE     { If($3, $5, Block([]))                          }
+  | IF LPAREN expr RPAREN stmt ELSE stmt        { If($3, $5, $7)                                 }
+  | WHILE LPAREN expr RPAREN stmt               { While($3, $5)                                  }
+  | FOR LPAREN stmt expr SEMI expr RPAREN stmt  { Block([$3 ; While($4, Block([$8 ; Expr($6)]))])}
 
 ret_opt:
       /* nothing */ { UnkMatLit([[]]) }
