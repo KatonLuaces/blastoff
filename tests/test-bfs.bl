@@ -36,7 +36,7 @@ def BFS(G, frontier){
         depth = depth + 1;
         #logical;
         levels[rangeFromVector(frontier)] = depth;
-        mask = !(levels)[0, Zero(N:1), N, 1];
+        mask = !(frontier)[0, Zero(N:1), N, 1];
         maskedGT = maskedGT @ mask;
         frontier = maskedGT*frontier;
     }

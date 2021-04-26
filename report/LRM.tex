@@ -702,7 +702,7 @@ Below is the precedence table for operators, from highest to lowest:
 \subsubsection{Keywords}
 BLAStoff reserves the following keywords:
 \begin{verbatim}
-I, Zero, range, def, return, if, else, for, while, T, print, inf
+I, Zero, range, def, return, if, else, for, while, T, print, toString
 \end{verbatim}
 
 \subsection{More Language Details}
@@ -773,14 +773,13 @@ As we have discussed, we intend to provide a standard library that should have i
 \begin{lstlisting}
 def One(size){
     A = Zero(size);
-    m = size[0];
     A[range(size[0]), range(size[1])] = 1;
     return A;
 }
 \end{lstlisting}
 
 \paragraph{Horizontal Concatenation}
-As we said, we don't include this as an operator because it is quite easy to write as a function using vertical concatentation and transpose:
+We don't include this as an operator because it is quite easy to write as a function using vertical concatentation and transpose:
 \begin{lstlisting}
 def horizontalConcat(A, B){
     return (A^T:B^T)^T;
@@ -792,12 +791,12 @@ Column reduction follows similarly:
 \begin{lstlisting}
 def plusColumnReduce(A){
     #_;
-    return ((+%A)^T)^T;
+    return (+%(A^T))^T;
 }
 
 def timesColumnReduce(A){
     #_;
-    return ((*%A)^T)^T;
+    return (*%(A^T))^T;
 }
 \end{lstlisting}
 
@@ -831,15 +830,16 @@ def rangeFromVector(v){
     #logical;
     vlogic = v~1;
     #arithmetic;
-    n = plusColumnReduce(v); // the number of non-zero values
-    u = Zero(n, 1);
+    n = plusColumnReduce(vlogic);
+    u = Zero(n:1);
     j = 0;
     for (i = 0; i < |v|[0]; i += 1) {
         if (v[i]) {
             u[j] = i;
-            j++;
+            j = j + 1;
         }
     }
+    return u;
 }
 \end{lstlisting}
 
@@ -853,43 +853,42 @@ Our code for BFS looks like the following:
 def BFS(G, frontier){
     #logical;
     N = |G|[0];
-    levels = Zero(N, 1);
+    levels = Zero(N : 1);
     maskedGT = G^T;
     depth = 0;
-    while (sum(frontier)) {
+    while (plusColumnReduce(frontier)) {
         #arithmetic;
-        depth += 1;
+        depth = depth + 1;
         #logical;
         levels[rangeFromVector(frontier)] = depth;
-        mask = !(frontier^T)[Zero(N), 0, 1, N];
-        maskedGT @= mask;
+        mask = !(frontier)[0, Zero(N:1), N, 1];
+        maskedGT = maskedGT @ mask;
         frontier = maskedGT*frontier;
     }
     #arithmetic;
-    return levels + (One(|levels|~(-1));
+    return levels + One(|levels|)~(-1);
 }
 \end{lstlisting}
 Let's look at how this code works.  It takes in an $n\times n$ adjacency matrix $G$ and a column vector $frontier$ of height $n$ as well, where each entry is 0 or a true value, to denote whether that vertex is in the starting list.  On line 4, we then create $levels$, a vector of the same size as $frontier$.  This will be our output vector, as it $levels[i]$ will contain the closest distance from vertex $i$ to a vertex in frontiers, or $-1$ if its unreachable.   You'll notice that we initialize $levels$ with 0s as we will decrement on line 17.  We then make a new variable $maskedGT$ on line 5, which is just the transpose of $G$.  We do this because we are going to be modifying this matrix, but we don't want to change the original $G$.  We take the transpose because that's what allows for part of the algorithm, which I'll explain in a second, and we don't want to do that on every iteration. We then set a variable $depth$ to 0 on 6.  This will keep track of our iterations.
 
 Then we start the while loop, which keeps going as long as there is one non-zero value in $frontier$; that is, we still have vertices we want to look at.  We then increment depth on line 9, switching quickly to arithmetic for this one line, as otherwise depth would never go above 1.  Using our range-from-vector function defined in the standard library, line 11 essentially sets $levels[i]$ equal to the current depth if $frontier[i]$ is non-zero.  That way, all the vertices that we're currently searching for have their distance in levels as the current iteration in our while loop.  This will be one more than the level, but we're going to decrement on line 17.   The key portion of this code is line 14, which mutilates $maskedGT\cdot frontier$.  Because of the way the adjacency matrix is constructed, this will give us a vector in the same format as $frontier$, only now with the vertices reachable from the vertices in the original $frontier$, and we will overwrite $frontier$ with this new frontier.  With all that I've explained so far, the algorithm would be give you the correct reachable nodes, but would run over paths to vertices for which we've already found a closer path, so depths would be wrong.
 
-To account for this, on lines 12 and 13 we remove all the edges to the nodes in frontier, so that as we continue in BFS, we add a previously visited node.  We generate a mask by taking our frontier, transposing it, concatenating it down $N$ times, and negating it.  Here's an example:
+To account for this, on lines 12 and 13 we remove all the edges to the nodes in frontier, so that as we continue in BFS, we add a previously visited node.  We generate a mask by taking our frontier, concatenating it across $N$ times, and negating it.  Here's an example:
 $$frontier = \begin{bmatrix}0 \\1\\1\\0\\0\\1\end{bmatrix}$$
-$$\begin{bmatrix}0&1&1&0&0&1\end{bmatrix}$$
 $$\begin{bmatrix}
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1
+0&0&0&0&0&0\\
+1&1&1&1&1&1\\
+1&1&1&1&1&1\\
+0&0&0&0&0&0\\
+0&0&0&0&0&0\\
+1&1&1&1&1&1
 \end{bmatrix}$$
 $$\begin{bmatrix}
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0
+1&1&1&1&1&1\\
+0&0&0&0&0&0\\
+0&0&0&0&0&0\\
+1&1&1&1&1&1\\
+1&1&1&1&1&1\\
+0&0&0&0&0&0
 \end{bmatrix}$$
 In this map, all the ones denote edges not to items in frontier, and thus edges we can keep.  So, if we do element-wise multiplication between this mask matrix and our ongoing, masked, $G^T$, we will keep removing those edges and ensure we never revisit!
