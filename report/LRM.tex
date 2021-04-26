@@ -484,13 +484,6 @@ $$C=\begin{bmatrix}
 5&6
 \end{bmatrix}$$
 
-\paragraph{A note on horizontal concatenation}
-\label{sec:2.6.8.1}
-We do not have horizontal concatenation operator.  Why is this?  Do we hate the horizontal direction?  No, it is because you can easily write an efficient function for horizontal concatenation using vertical concatenation, and we will show that function below.  In general, any potential operator that can be written as a function, but doesn't employ for loops heavily, that is just as effective as implementing a primitive, we do not use an operator for, and instead put it in our standard library, discussed below.
-
-(It is also worth noting that you can construct an efficient function for vertical concatenation using horizontal concatenation, but we have to choose one of them, and vertical is preferable as BLAStoff uses column vectors more often than row vectors).
-
-
 \paragraph{Reduce Rows}
 The reduce rows operator \verb=%=,  looks like the following:
 \begin{lstlisting}
@@ -543,8 +536,6 @@ $$C=\begin{bmatrix}
 30\\
 \end{bmatrix}$$
 
-\paragraph{A note on reduce columns}
-See \hyperref[sec:2.6.8.1]{2.6.8.1}.
 
 \paragraph{Assignment operators}
 The operator \verb|*=|, used as follows:
@@ -766,7 +757,7 @@ OUTPUT:
 \subsection{Sample Code}
 
 \subsubsection{Some Standard Library Functions}
-As we have discussed, we intend to provide a standard library that should have include a good number of the other linear algebra operations that aren't primitives.  Here are some examples:
+We intend to provide a standard library that should have include a good number of the other linear algebra operations that aren't primitives.  Here are some examples:
 
 \paragraph{One}
 \verb=One= works exactly like \verb=Zero=, but has all 1s in the matrix:
