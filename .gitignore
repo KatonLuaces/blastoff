@@ -61,3 +61,5 @@ backend
 .vscode
 
 libgraphblas.so.4.0.3
+
+testlocal.sh
