@@ -21,6 +21,7 @@ report/*.fls
 report/*.fdb_latexmk
 report/*.bbl
 report/*.bcf
+report/*.cpt
 
 # ocamlbuild working directory
 _build/
