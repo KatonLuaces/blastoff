@@ -1,7 +1,7 @@
 module L = Llvm
 
 let context = L.global_context ()
-let llmem = L.MemoryBuffer.of_file "graphblas.bc"
+let llmem = L.MemoryBuffer.of_file "backend.bc"
 let llm = Llvm_bitreader.parse_bitcode context llmem
 let blastoff_module = L.create_module context "BLAStoff"
 let rings = [ "_", 0; "arithmetic", 1; "logical", 2; "maxmin", 3 ]

@@ -55,8 +55,8 @@ parser.output
 parser.ml
 parser.mli
 
-graphblas.bc
-graphblas
+backend.bc
+backend
 
 .vscode
 

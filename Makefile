@@ -1,13 +1,9 @@
-# "make test" compiles everything and runs the regression tests
-
 .PHONY : test
 test : all testall.sh
 	./testall.sh
 
-# "make all" builds the executable
-
 .PHONY : all
-all : blastoff.native graphblas.o
+all : blastoff.native backend.o
 
 # "make blastoff.native" compiles the compiler
 #
@@ -16,27 +12,24 @@ all : blastoff.native graphblas.o
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native : blastoff.ml ast.ml parser.mly scanner.mll codegen.ml graphblas.bc
+blastoff.native : blastoff.ml ast.ml parser.mly scanner.mll codegen.ml backend.bc
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native -pkgs llvm.bitreader
 
-#build graphblas operations file
+# backend.c tester
+backend : backend.c
+	cc -g -Wall -o backend -DRUN_TEST backend.c -lgraphblas
 
-# tester
-graphblas : graphblas.c
-	cc -g -Wall -o graphblas -DRUN_TEST graphblas.c -lgraphblas
-
-graphblas.bc : graphblas.c
-	clang -g -emit-llvm -o graphblas.bc -c graphblas.c -Wno-varargs
+backend.bc : backend.c
+	clang -g -emit-llvm -o backend.bc -c backend.c -Wno-varargs
 
 # "make clean" removes all generated files
-
 .PHONY : clean
 clean :
 	ocamlbuild -clean
 	rm -rf testall.log ocamlllvm *.diff *.ll *.s *.o *.exe *.out *.err \
 		parser.ml parser.mli blastoff.native \
-		graphblas graphblas.o graphblas.bc \
+		backend backend.o backend.bc \
 
 .PHONY : fresh
 fresh : clean test
