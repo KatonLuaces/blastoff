@@ -1,6 +1,6 @@
 (* Ocamllex scanner for BLAStoff *)
 
-{ open Blastoffparser
+{ open Parser
 
 (* http://caml.inria.fr/pub/docs/manual-ocaml-4.00/manual026.html#toc111 *)
 let keyword_table = Hashtbl.create 97

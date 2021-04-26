@@ -28,7 +28,7 @@ let () =
     let tok = Scanner.token lb in
     tok
   in
-  let ast = Blastoffparser.program scanner_token_wrapper lexbuf in
+  let ast = Parser.program scanner_token_wrapper lexbuf in
   match !action with
   | Ast -> print_string (Ast.string_of_program ast)
   | _ ->

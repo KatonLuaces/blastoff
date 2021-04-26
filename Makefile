@@ -16,7 +16,7 @@ all : blastoff.native graphblas.o
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native : blastoff.ml ast.ml blastoffparser.mly scanner.mll codegen.ml graphblas.bc
+blastoff.native : blastoff.ml ast.ml parser.mly scanner.mll codegen.ml graphblas.bc
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native -pkgs llvm.bitreader
 
@@ -35,7 +35,7 @@ graphblas.bc : graphblas.c
 clean :
 	ocamlbuild -clean
 	rm -rf testall.log ocamlllvm *.diff *.ll *.s *.o *.exe *.out *.err \
-		blastoffparser.ml blastoffparser.mli blastoff.native \
+		parser.ml parser.mli blastoff.native \
 		graphblas graphblas.o graphblas.bc \
 
 .PHONY : fresh
@@ -52,7 +52,7 @@ FAILS = \
 TESTFILES = $(TESTS:%=test-%.bl) $(TESTS:%=test-%.out) \
 	    $(FAILS:%=fail-%.bl) $(FAILS:%=fail-%.out)
 
-TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml blastoffparser.mly \
+TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml parser.mly \
 	README scanner.mll semant.ml testall.sh \
 	arcade-font.pbm font2c \
 	Dockerfile \

@@ -50,10 +50,10 @@ _opam/
 # custom
 testall.log
 .devcontainer/
-blastoffparser.output
+parser.output
 
-blastoffparser.ml
-blastoffparser.mli
+parser.ml
+parser.mli
 
 graphblas.bc
 graphblas
