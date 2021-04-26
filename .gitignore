@@ -9,6 +9,19 @@
 *.cmxa
 *.ll
 
+# LaTeX output
+report/*.aux
+report/*.blg
+report/*.xml
+report/*.log
+report/*.gz
+report/*.toc
+report/*.out
+report/*.fls
+report/*.fdb_latexmk
+report/*.bbl
+report/*.bcf
+
 # ocamlbuild working directory
 _build/
 

@@ -1,0 +1,74 @@
+\documentclass[titlepage]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{cprotect}
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\usepackage{hyperref}
+
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{references.bib}
+
+
+\title{BLAStoff Report}
+\author{Katon Luaces, Michael Jan, Jake Fisher, Jason Kao\\
+\{knl2119, mj2886, jf3148, jk4248\}@columbia.edu}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\input{intro}
+
+\input{tutorial}
+
+\input{LRM}
+
+\input{projectplan}
+
+\input{test}
+
+\input{lessons}
+
+\input{appendix}
+
+\end{document}
