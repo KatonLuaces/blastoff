@@ -1,4 +1,4 @@
-
+\section{Language Reference Manual}
 \subsection{Lexical Conventions}
 
 \subsubsection{Assignment}
@@ -122,7 +122,7 @@ $$A = \begin{bmatrix}66 \\ 76 \\ 65 \\ 83\end{bmatrix}$$
 It will be apparent later how this is useful.
 
 \subsubsection{Comments}
-There are two types of comments in BLASToff.  Single-line comments are denoted by \verb=//=.  Multi-line comments begin with  \verb=/*= and end with \verb=*/=.  For example:
+There are two types of comments in BLAStoff.  Single-line comments are denoted by \verb=//=.  Multi-line comments begin with  \verb=/*= and end with \verb=*/=.  For example:
 \begin{lstlisting}
 A = 6; // I'm a comment!
 B = 5; /* I'm a comment also but
@@ -132,7 +132,8 @@ I'm longer!*/
 \end{lstlisting}
 
 \subsubsection{Functions}
-Functions in BLAStoff are defined as follows:\begin{lstlisting}
+Functions in BLAStoff are defined as follows:
+\begin{lstlisting}
 def id(id, id, ...) {
     stmnt;
     stmnt;
@@ -203,8 +204,8 @@ Operations are where BLAStoff gets more interesting.
 
 We aim to implement a large subset of the basic primitives described in \cite{Gilbert} (several of which can be combined) as well as a few essential semirings.\\\\
 \label{sec:semirings}
-\includegraphics[scale=0.3]{figures/common Semirings.png}\\Do we
-\includegraphics[scale=0.3]{figures/BLAS primitives.png}\\
+\includegraphics[scale=0.3]{figures/semirings}\\
+\includegraphics[scale=0.3]{figures/primitives}\\
 
 This is how we implement these operators and some more:
 
@@ -222,7 +223,7 @@ M[A];
 \end{lstlisting}
 where $A,B$ are column vectors of non-negative integers ($n\times 1$ matrices) and $c,d$ are $1 \times 1$ non-negative matrices.  $c,d$ are optional and have a default value of $\begin{bmatrix}1\end{bmatrix}$. $B$ is also optional and its default value is $\begin{bmatrix}0\end{bmatrix}$.  Abstractly, the way this operator works is by taking the Cartesian product of $A,B$, $R=A\times B$, and for each $(j,i)\in R$, we select all the sub-matrices in $M$ with a top-left corner at row $j$, column $i$, height of $c$, and width of $d$.  (BLAStoff is 0-indexed.)  This Cartesian makes the select operator a very powerful operator that can do things like change a specific of indices, while also being general enough to allow for simple indexing.  Take the following code example:
 \begin{lstlisting}
-M = Zero(4)
+M = Zero(4);
 M[[0;2], [0;2]] = 1;
 \end{lstlisting}
 
@@ -255,7 +256,7 @@ u[[0;2]] = 2;
 \end{lstlisting}
 This would result in:
 $$v=\begin{bmatrix}1\\2\\1\end{bmatrix}$$
-$$u=\begin{bmatrix}2\\1\\1\end{bmatrix}$$
+$$u=\begin{bmatrix}2\\1\\2\end{bmatrix}$$
 Now, perhaps it is clear why we included the \verb=range= generator function.  Example:
 \begin{lstlisting}
 v = Zero([5;1]);
@@ -294,9 +295,9 @@ Do something about intersecting selections
 \paragraph{Matrix Multiplication}
 We now define a number of binary operators.  The grammars for these operators all look like
 \begin{lstlisting}
-expr % expr
+expr ? expr
 \end{lstlisting}
-where \verb=%= is the given operator.
+where \verb=?= is the given operator.
 
 The matrix multiplication operator \verb=*= looks like the following:
 \begin{lstlisting}
@@ -307,9 +308,9 @@ where $A$ is an $l\times m$ matrix and $B$ is an $m \times n$ matrix.  The produ
 A = [1,2;
     1,2;
     1,2;
-    1,2]
+    1,2];
 B = [1,2,3;
-    1,2,3;]
+    1,2,3];
 C = A*B;
 \end{lstlisting}
 This would result in:
@@ -414,8 +415,8 @@ B = A^2;
 \end{lstlisting}
 This would result in:
 $$B=\begin{bmatrix}
-6&8\\
-10&12\\
+7&10\\
+15&22\\
 \end{bmatrix}$$
 
 In the $A^T$ case, $A$ is any $m\times n$ matrix, and $T$ is a reserved keyword.  This returns the transpose of $A$, an $n \times m$ matrix.  Example:
@@ -588,13 +589,13 @@ You may have noticed that though we have defined a number of operations on matri
 So what does this syntax actually do?  Ignore the underscore case for now.  The other three are commands to switch the command to the one denoted in the brackets.  Let's see an example:
 
 \begin{lstlisting}
-a = 2.1;
+a = 2;
 b = 3;
 c = 0;
 
 #arithmetic;
-a + b; //returns 5.1
-a * b; //returns 6.3
+a + b; //returns 5
+a * b; //returns 6
 a * c; //returns 0
 
 #logical;
@@ -604,15 +605,16 @@ a * c; //returns 0
 
 
 #maxmin;
-a + b; //returns 2.1; plus is now minimum
-a * b; //returns 3; times is now maximum
-a * c; //returns 2.1
+a + b; //returns 3: plus is now maximum
+a * b; //returns 2: times is now minimum
+a * c; //returns 0
 \end{lstlisting}
 
 \verb=#arithmetic= is the default, so that line was technically redundant, but included for clarity.
 The example we gave was with $1\times1$ matrices, but the semiring definitions work on matrices of any size:
 
 \begin{lstlisting}
+#maxmin;
 A = [1,4;
     6,3];
 B = [5,2;
@@ -621,8 +623,8 @@ C = A + B;
 \end{lstlisting}
 This would result in:
 $$C=\begin{bmatrix}
-1&2\\
-6&1
+5&4\\
+7&3
 \end{bmatrix}$$
 Semiring redefinition generally is reset back to the default arithmetic when you call a function:
 \begin{lstlisting}
@@ -667,7 +669,7 @@ B = !A;
 This would result in:
 $$B=\begin{bmatrix}
 0 & 1\\
-1 & 1
+1 & 0
 \end{bmatrix}$$
 This operator's behavior is invariant of the semiring, as do selection, transpose, inverse, vertical concatenation, and size.
 
@@ -710,9 +712,13 @@ BLAStoff will use pass-by-reference, return-by-reference and assign-by-value.  H
 def f(x){
     x += 1;
 }
+def g(x){
+    x[0] = 2;
+}
 a = 1;
 f(a);
-a == 1; //FALSE
+a == 1; //TRUE
+g(a);
 a == 2; //TRUE
 
 b = 1;
@@ -722,8 +728,6 @@ c == 2; //TRUE
 b == 2; //FALSE
 b == 1; //TRUE
 \end{lstlisting}
-
-Because we use assign-by-value, each matrix has a reference count of 1, and garbage collection is quite simple; you simply de-allocate all variables declared in a function after the function ends.
 
 \subsubsection{Scope}
 BLAStoff has scope shared between blocks in the same function call, but not in different function calls.   Example:
@@ -743,7 +747,7 @@ def f(x){
 \subsubsection{Printing}
 We provide the primitive function \verb=print= that takes in one non-negative column vector, with all values less than 127, and prints the corresponding ASCII characters.  As you may suspect, this is a good use of the string matrix definition:
 \begin{lstlisting}
-print("Hello World!\n");
+print('Hello World!');
 
 OUTPUT:
 Hello World!
@@ -843,7 +847,7 @@ def rangeFromVector(v){
 
 \subsubsection{Graph Algorithms}
 Here we demonstrate how pseudocode from a 2019 presentation by John Gilbert describing BFS in linear algebraic terms \cite{Gilbert} can be expressed in BLAStoff\\
-\includegraphics[scale=0.4]{figures/graphBLAS BFS pseudocode.png}\\
+\includegraphics[scale=0.4]{figures/pseudocode}\\
 Our code for BFS looks like the following:
 \begin{lstlisting}
 def BFS(G, frontier){
