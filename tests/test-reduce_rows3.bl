@@ -1,8 +1,0 @@
-#logical;
-A = [1,1,7,4,2;
-    1,0,0,0,0;
-    0,0,0,0,0];
-B = +%A;
-C = *%A;
-print(toString(B));
-print(toString(C));

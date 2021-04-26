@@ -1,3 +1,2 @@
 A = 'BLAS';
 print(toString(A));
-print(A:10);
