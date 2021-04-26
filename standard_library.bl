@@ -2,6 +2,10 @@ def plusColumnReduce(A){
     #_;
     return (+%(A^T))^T;
 }
+def timesColumnReduce(A){
+    #_;
+    return (*%(A^T))^T;
+}
 
 def rangeFromVector(v){
     #logical;

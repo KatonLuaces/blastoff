@@ -1,1 +1,53 @@
 \section{Tutorial}
+
+Welcome to BLAStoff!  It's quite easy to get started.  Let's start by learning how to define a matrix, which is the only variable type in the language:
+\begin{lstlisting}
+A = [5,6,7;
+    -1,-2,-3;
+    0,0,0];
+\end{lstlisting}
+
+As you can see, we define this matrix just by the elements in all the rows and columns.  It can be quite tedious to define every matrix this way, but we have some easy syntax for things like defining the adjacency matrix of a graph by an easy listing of the directed edges of the graph:
+\begin{lstlisting}
+G = [0->2;
+     1->2;
+     2->3
+];
+\end{lstlisting}
+
+Certain common forms of matrices (this one will make a $10\times15$ matrix with all zeroes):
+\begin{lstlisting}
+Z = Zero([10;15]);
+\end{lstlisting}
+
+Or just a $1\times1$ matrix.
+\begin{lstlisting}
+b = 5;
+\end{lstlisting}
+
+We have a bunch of operators, defined all below, that you can use on these matrices.  Let's see how you would use addition, \verb=+=:
+\begin{lstlisting}
+X = Y + Z;
+\end{lstlisting}
+
+Now that we know how to use operations, let's look at how to write a function that actually uses them. Function definition is a mix of C style and Python style.  We use the \verb=def= keyword and don't require types for the arguments (as there is only one type!), but we have brackets around the function body.  Functions can even be recursive:
+\begin{lstlisting}
+def factorial(A){
+    if (A < 2){
+        return 1;
+    }
+    return A + -1;
+}
+\end{lstlisting}
+As you can see, this function computes the factorial of the input.  However, it will throw an error if \verb=A= is not a $1\times 1$ matrix, as then \verb=A < 2= \verb=A + -1= will not be well-defined operations.
+
+The final core functionality of BLAStoff to highlight is semiring changing, which can be ued to redefine the behavior of operators.  Everything we've seen so far has been in the arithmetic semiring, so let's see what happens when we change to the logical semiring, where $+$ is logical or, and $\times$ is logical and:
+\begin{lstlisting}
+#logical;
+print(toString(5+1)); // prints 1
+print(toString(5+0)); // prints 1
+print(toString(0+0)); // prints 0
+print(toString(5*1)); // prints 1
+print(toString(5*0)); // prints 0
+print(toString(0*0)); // prints 0
+\end{lstlisting}

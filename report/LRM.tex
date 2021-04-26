@@ -1,4 +1,4 @@
-
+\section{Language Reference Manual}
 \subsection{Lexical Conventions}
 
 \subsubsection{Assignment}
@@ -122,7 +122,7 @@ $$A = \begin{bmatrix}66 \\ 76 \\ 65 \\ 83\end{bmatrix}$$
 It will be apparent later how this is useful.
 
 \subsubsection{Comments}
-There are two types of comments in BLASToff.  Single-line comments are denoted by \verb=//=.  Multi-line comments begin with  \verb=/*= and end with \verb=*/=.  For example:
+There are two types of comments in BLAStoff.  Single-line comments are denoted by \verb=//=.  Multi-line comments begin with  \verb=/*= and end with \verb=*/=.  For example:
 \begin{lstlisting}
 A = 6; // I'm a comment!
 B = 5; /* I'm a comment also but
@@ -132,7 +132,8 @@ I'm longer!*/
 \end{lstlisting}
 
 \subsubsection{Functions}
-Functions in BLAStoff are defined as follows:\begin{lstlisting}
+Functions in BLAStoff are defined as follows:
+\begin{lstlisting}
 def id(id, id, ...) {
     stmnt;
     stmnt;
@@ -203,8 +204,8 @@ Operations are where BLAStoff gets more interesting.
 
 We aim to implement a large subset of the basic primitives described in \cite{Gilbert} (several of which can be combined) as well as a few essential semirings.\\\\
 \label{sec:semirings}
-\includegraphics[scale=0.3]{figures/common Semirings.png}\\Do we
-\includegraphics[scale=0.3]{figures/BLAS primitives.png}\\
+\includegraphics[scale=0.3]{figures/semirings}\\
+\includegraphics[scale=0.3]{figures/primitives}\\
 
 This is how we implement these operators and some more:
 
@@ -222,7 +223,7 @@ M[A];
 \end{lstlisting}
 where $A,B$ are column vectors of non-negative integers ($n\times 1$ matrices) and $c,d$ are $1 \times 1$ non-negative matrices.  $c,d$ are optional and have a default value of $\begin{bmatrix}1\end{bmatrix}$. $B$ is also optional and its default value is $\begin{bmatrix}0\end{bmatrix}$.  Abstractly, the way this operator works is by taking the Cartesian product of $A,B$, $R=A\times B$, and for each $(j,i)\in R$, we select all the sub-matrices in $M$ with a top-left corner at row $j$, column $i$, height of $c$, and width of $d$.  (BLAStoff is 0-indexed.)  This Cartesian makes the select operator a very powerful operator that can do things like change a specific of indices, while also being general enough to allow for simple indexing.  Take the following code example:
 \begin{lstlisting}
-M = Zero(4)
+M = Zero(4);
 M[[0;2], [0;2]] = 1;
 \end{lstlisting}
 
@@ -255,7 +256,7 @@ u[[0;2]] = 2;
 \end{lstlisting}
 This would result in:
 $$v=\begin{bmatrix}1\\2\\1\end{bmatrix}$$
-$$u=\begin{bmatrix}2\\1\\1\end{bmatrix}$$
+$$u=\begin{bmatrix}2\\1\\2\end{bmatrix}$$
 Now, perhaps it is clear why we included the \verb=range= generator function.  Example:
 \begin{lstlisting}
 v = Zero([5;1]);
@@ -294,9 +295,9 @@ Do something about intersecting selections
 \paragraph{Matrix Multiplication}
 We now define a number of binary operators.  The grammars for these operators all look like
 \begin{lstlisting}
-expr % expr
+expr ? expr
 \end{lstlisting}
-where \verb=%= is the given operator.
+where \verb=?= is the given operator.
 
 The matrix multiplication operator \verb=*= looks like the following:
 \begin{lstlisting}
@@ -307,9 +308,9 @@ where $A$ is an $l\times m$ matrix and $B$ is an $m \times n$ matrix.  The produ
 A = [1,2;
     1,2;
     1,2;
-    1,2]
+    1,2];
 B = [1,2,3;
-    1,2,3;]
+    1,2,3];
 C = A*B;
 \end{lstlisting}
 This would result in:
@@ -414,8 +415,8 @@ B = A^2;
 \end{lstlisting}
 This would result in:
 $$B=\begin{bmatrix}
-6&8\\
-10&12\\
+7&10\\
+15&22\\
 \end{bmatrix}$$
 
 In the $A^T$ case, $A$ is any $m\times n$ matrix, and $T$ is a reserved keyword.  This returns the transpose of $A$, an $n \times m$ matrix.  Example:
@@ -483,13 +484,6 @@ $$C=\begin{bmatrix}
 5&6
 \end{bmatrix}$$
 
-\paragraph{A note on horizontal concatenation}
-\label{sec:2.6.8.1}
-We do not have horizontal concatenation operator.  Why is this?  Do we hate the horizontal direction?  No, it is because you can easily write an efficient function for horizontal concatenation using vertical concatenation, and we will show that function below.  In general, any potential operator that can be written as a function, but doesn't employ for loops heavily, that is just as effective as implementing a primitive, we do not use an operator for, and instead put it in our standard library, discussed below.
-
-(It is also worth noting that you can construct an efficient function for vertical concatenation using horizontal concatenation, but we have to choose one of them, and vertical is preferable as BLAStoff uses column vectors more often than row vectors).
-
-
 \paragraph{Reduce Rows}
 The reduce rows operator \verb=%=,  looks like the following:
 \begin{lstlisting}
@@ -542,8 +536,6 @@ $$C=\begin{bmatrix}
 30\\
 \end{bmatrix}$$
 
-\paragraph{A note on reduce columns}
-See \hyperref[sec:2.6.8.1]{2.6.8.1}.
 
 \paragraph{Assignment operators}
 The operator \verb|*=|, used as follows:
@@ -588,13 +580,13 @@ You may have noticed that though we have defined a number of operations on matri
 So what does this syntax actually do?  Ignore the underscore case for now.  The other three are commands to switch the command to the one denoted in the brackets.  Let's see an example:
 
 \begin{lstlisting}
-a = 2.1;
+a = 2;
 b = 3;
 c = 0;
 
 #arithmetic;
-a + b; //returns 5.1
-a * b; //returns 6.3
+a + b; //returns 5
+a * b; //returns 6
 a * c; //returns 0
 
 #logical;
@@ -604,15 +596,16 @@ a * c; //returns 0
 
 
 #maxmin;
-a + b; //returns 2.1; plus is now minimum
-a * b; //returns 3; times is now maximum
-a * c; //returns 2.1
+a + b; //returns 3: plus is now maximum
+a * b; //returns 2: times is now minimum
+a * c; //returns 0
 \end{lstlisting}
 
 \verb=#arithmetic= is the default, so that line was technically redundant, but included for clarity.
 The example we gave was with $1\times1$ matrices, but the semiring definitions work on matrices of any size:
 
 \begin{lstlisting}
+#maxmin;
 A = [1,4;
     6,3];
 B = [5,2;
@@ -621,8 +614,8 @@ C = A + B;
 \end{lstlisting}
 This would result in:
 $$C=\begin{bmatrix}
-1&2\\
-6&1
+5&4\\
+7&3
 \end{bmatrix}$$
 Semiring redefinition generally is reset back to the default arithmetic when you call a function:
 \begin{lstlisting}
@@ -667,7 +660,7 @@ B = !A;
 This would result in:
 $$B=\begin{bmatrix}
 0 & 1\\
-1 & 1
+1 & 0
 \end{bmatrix}$$
 This operator's behavior is invariant of the semiring, as do selection, transpose, inverse, vertical concatenation, and size.
 
@@ -700,7 +693,7 @@ Below is the precedence table for operators, from highest to lowest:
 \subsubsection{Keywords}
 BLAStoff reserves the following keywords:
 \begin{verbatim}
-I, Zero, range, def, return, if, else, for, while, T, print, inf
+I, Zero, range, def, return, if, else, for, while, T, print, toString
 \end{verbatim}
 
 \subsection{More Language Details}
@@ -710,9 +703,13 @@ BLAStoff will use pass-by-reference, return-by-reference and assign-by-value.  H
 def f(x){
     x += 1;
 }
+def g(x){
+    x[0] = 2;
+}
 a = 1;
 f(a);
-a == 1; //FALSE
+a == 1; //TRUE
+g(a);
 a == 2; //TRUE
 
 b = 1;
@@ -722,8 +719,6 @@ c == 2; //TRUE
 b == 2; //FALSE
 b == 1; //TRUE
 \end{lstlisting}
-
-Because we use assign-by-value, each matrix has a reference count of 1, and garbage collection is quite simple; you simply de-allocate all variables declared in a function after the function ends.
 
 \subsubsection{Scope}
 BLAStoff has scope shared between blocks in the same function call, but not in different function calls.   Example:
@@ -743,7 +738,7 @@ def f(x){
 \subsubsection{Printing}
 We provide the primitive function \verb=print= that takes in one non-negative column vector, with all values less than 127, and prints the corresponding ASCII characters.  As you may suspect, this is a good use of the string matrix definition:
 \begin{lstlisting}
-print("Hello World!\n");
+print('Hello World!');
 
 OUTPUT:
 Hello World!
@@ -762,21 +757,20 @@ OUTPUT:
 \subsection{Sample Code}
 
 \subsubsection{Some Standard Library Functions}
-As we have discussed, we intend to provide a standard library that should have include a good number of the other linear algebra operations that aren't primitives.  Here are some examples:
+We intend to provide a standard library that should have include a good number of the other linear algebra operations that aren't primitives.  Here are some examples:
 
 \paragraph{One}
 \verb=One= works exactly like \verb=Zero=, but has all 1s in the matrix:
 \begin{lstlisting}
 def One(size){
     A = Zero(size);
-    m = size[0];
     A[range(size[0]), range(size[1])] = 1;
     return A;
 }
 \end{lstlisting}
 
 \paragraph{Horizontal Concatenation}
-As we said, we don't include this as an operator because it is quite easy to write as a function using vertical concatentation and transpose:
+We don't include this as an operator because it is quite easy to write as a function using vertical concatentation and transpose:
 \begin{lstlisting}
 def horizontalConcat(A, B){
     return (A^T:B^T)^T;
@@ -788,12 +782,12 @@ Column reduction follows similarly:
 \begin{lstlisting}
 def plusColumnReduce(A){
     #_;
-    return ((+%A)^T)^T;
+    return (+%(A^T))^T;
 }
 
 def timesColumnReduce(A){
     #_;
-    return ((*%A)^T)^T;
+    return (*%(A^T))^T;
 }
 \end{lstlisting}
 
@@ -827,15 +821,16 @@ def rangeFromVector(v){
     #logical;
     vlogic = v~1;
     #arithmetic;
-    n = plusColumnReduce(v); // the number of non-zero values
-    u = Zero(n, 1);
+    n = plusColumnReduce(vlogic);
+    u = Zero(n:1);
     j = 0;
     for (i = 0; i < |v|[0]; i += 1) {
         if (v[i]) {
             u[j] = i;
-            j++;
+            j = j + 1;
         }
     }
+    return u;
 }
 \end{lstlisting}
 
@@ -843,49 +838,48 @@ def rangeFromVector(v){
 
 \subsubsection{Graph Algorithms}
 Here we demonstrate how pseudocode from a 2019 presentation by John Gilbert describing BFS in linear algebraic terms \cite{Gilbert} can be expressed in BLAStoff\\
-\includegraphics[scale=0.4]{figures/graphBLAS BFS pseudocode.png}\\
+\includegraphics[scale=0.4]{figures/pseudocode}\\
 Our code for BFS looks like the following:
 \begin{lstlisting}
 def BFS(G, frontier){
     #logical;
     N = |G|[0];
-    levels = Zero(N, 1);
+    levels = Zero(N : 1);
     maskedGT = G^T;
     depth = 0;
-    while (sum(frontier)) {
+    while (plusColumnReduce(frontier)) {
         #arithmetic;
-        depth += 1;
+        depth = depth + 1;
         #logical;
         levels[rangeFromVector(frontier)] = depth;
-        mask = !(frontier^T)[Zero(N), 0, 1, N];
-        maskedGT @= mask;
+        mask = !(frontier)[0, Zero(N:1), N, 1];
+        maskedGT = maskedGT @ mask;
         frontier = maskedGT*frontier;
     }
     #arithmetic;
-    return levels + (One(|levels|~(-1));
+    return levels + One(|levels|)~(-1);
 }
 \end{lstlisting}
 Let's look at how this code works.  It takes in an $n\times n$ adjacency matrix $G$ and a column vector $frontier$ of height $n$ as well, where each entry is 0 or a true value, to denote whether that vertex is in the starting list.  On line 4, we then create $levels$, a vector of the same size as $frontier$.  This will be our output vector, as it $levels[i]$ will contain the closest distance from vertex $i$ to a vertex in frontiers, or $-1$ if its unreachable.   You'll notice that we initialize $levels$ with 0s as we will decrement on line 17.  We then make a new variable $maskedGT$ on line 5, which is just the transpose of $G$.  We do this because we are going to be modifying this matrix, but we don't want to change the original $G$.  We take the transpose because that's what allows for part of the algorithm, which I'll explain in a second, and we don't want to do that on every iteration. We then set a variable $depth$ to 0 on 6.  This will keep track of our iterations.
 
 Then we start the while loop, which keeps going as long as there is one non-zero value in $frontier$; that is, we still have vertices we want to look at.  We then increment depth on line 9, switching quickly to arithmetic for this one line, as otherwise depth would never go above 1.  Using our range-from-vector function defined in the standard library, line 11 essentially sets $levels[i]$ equal to the current depth if $frontier[i]$ is non-zero.  That way, all the vertices that we're currently searching for have their distance in levels as the current iteration in our while loop.  This will be one more than the level, but we're going to decrement on line 17.   The key portion of this code is line 14, which mutilates $maskedGT\cdot frontier$.  Because of the way the adjacency matrix is constructed, this will give us a vector in the same format as $frontier$, only now with the vertices reachable from the vertices in the original $frontier$, and we will overwrite $frontier$ with this new frontier.  With all that I've explained so far, the algorithm would be give you the correct reachable nodes, but would run over paths to vertices for which we've already found a closer path, so depths would be wrong.
 
-To account for this, on lines 12 and 13 we remove all the edges to the nodes in frontier, so that as we continue in BFS, we add a previously visited node.  We generate a mask by taking our frontier, transposing it, concatenating it down $N$ times, and negating it.  Here's an example:
+To account for this, on lines 12 and 13 we remove all the edges to the nodes in frontier, so that as we continue in BFS, we add a previously visited node.  We generate a mask by taking our frontier, concatenating it across $N$ times, and negating it.  Here's an example:
 $$frontier = \begin{bmatrix}0 \\1\\1\\0\\0\\1\end{bmatrix}$$
-$$\begin{bmatrix}0&1&1&0&0&1\end{bmatrix}$$
 $$\begin{bmatrix}
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1\\
-0&1&1&0&0&1
+0&0&0&0&0&0\\
+1&1&1&1&1&1\\
+1&1&1&1&1&1\\
+0&0&0&0&0&0\\
+0&0&0&0&0&0\\
+1&1&1&1&1&1
 \end{bmatrix}$$
 $$\begin{bmatrix}
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0\\
-1&0&0&1&1&0
+1&1&1&1&1&1\\
+0&0&0&0&0&0\\
+0&0&0&0&0&0\\
+1&1&1&1&1&1\\
+1&1&1&1&1&1\\
+0&0&0&0&0&0
 \end{bmatrix}$$
 In this map, all the ones denote edges not to items in frontier, and thus edges we can keep.  So, if we do element-wise multiplication between this mask matrix and our ongoing, masked, $G^T$, we will keep removing those edges and ensure we never revisit!
