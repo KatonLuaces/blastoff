@@ -1,18 +1,38 @@
 \subsubsection{fail-else1.bl}
 \begin{lstlisting}
 else () {}\end{lstlisting}
+\subsubsection{fail-else1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-elseif1.bl}
 \begin{lstlisting}
 elseif () {}\end{lstlisting}
+\subsubsection{fail-elseif1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-for1.bl}
 \begin{lstlisting}
 for (;;)\end{lstlisting}
+\subsubsection{fail-for1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-for2.bl}
 \begin{lstlisting}
 for () {}\end{lstlisting}
+\subsubsection{fail-for2.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-for3.bl}
 \begin{lstlisting}
 for {}\end{lstlisting}
+\subsubsection{fail-for3.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-func.bl}
 \begin{lstlisting}
 def foo() {
@@ -22,61 +42,125 @@ def call(f) {
   return f();
 }
 print(call(foo));\end{lstlisting}
+\subsubsection{fail-func.err}
+\begin{lstlisting}
+Fatal error: exception Failure("Semantic Checking Error: Failure(\"Undeclared function f\")")
+\end{lstlisting}
 \subsubsection{fail-function1.bl}
 \begin{lstlisting}
 def foo {
   ;
 }\end{lstlisting}
+\subsubsection{fail-function1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-function2.bl}
 \begin{lstlisting}
 def () {
   ;
 }\end{lstlisting}
+\subsubsection{fail-function2.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-function3.bl}
 \begin{lstlisting}
 def foo()\end{lstlisting}
+\subsubsection{fail-function3.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-generators.bl}
 \begin{lstlisting}
 Zero\end{lstlisting}
+\subsubsection{fail-generators.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-graph1.bl}
 \begin{lstlisting}
 G = {
   0->;
 }\end{lstlisting}
+\subsubsection{fail-graph1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-graph2.bl}
 \begin{lstlisting}
 G = {
   ->1;
 }\end{lstlisting}
+\subsubsection{fail-graph2.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-graph3.bl}
 \begin{lstlisting}
 G = {
   0->1
 }\end{lstlisting}
+\subsubsection{fail-graph3.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-if1.bl}
 \begin{lstlisting}
 if { ; }\end{lstlisting}
+\subsubsection{fail-if1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-if2.bl}
 \begin{lstlisting}
 if ()\end{lstlisting}
+\subsubsection{fail-if2.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-selection1.bl}
 \begin{lstlisting}
 M[range]\end{lstlisting}
+\subsubsection{fail-selection1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-selection2.bl}
 \begin{lstlisting}
 M[[0;2], [0:2], a] /* 3 things */\end{lstlisting}
+\subsubsection{fail-selection2.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-semiring1.bl}
 \begin{lstlisting}
 <#katonsNameIsActuallyKatie>;\end{lstlisting}
+\subsubsection{fail-semiring1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-while1.bl}
 \begin{lstlisting}
 while () {} /* boolean is empty */\end{lstlisting}
+\subsubsection{fail-while1.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-while2.bl}
 \begin{lstlisting}
 while {}\end{lstlisting}
+\subsubsection{fail-while2.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{fail-while3.bl}
 \begin{lstlisting}
 while ()\end{lstlisting}
+\subsubsection{fail-while3.err}
+\begin{lstlisting}
+Fatal error: exception Stdlib.Parsing.Parse_error
+\end{lstlisting}
 \subsubsection{test-assignment\_ops.bl}
 \begin{lstlisting}
 A = 1;
@@ -93,6 +177,17 @@ A^=2;
 print(toString(A));
 A:=A;
 print(toString(A));
+\end{lstlisting}
+\subsubsection{test-assignment\_ops.out}
+\begin{lstlisting}
+1
+2
+4
+8
+9
+81
+81
+81
 \end{lstlisting}
 \subsubsection{test-bfs.bl}
 \begin{lstlisting}
@@ -169,6 +264,22 @@ frontier[0] = 1;
 
 print(toString(BFS(G, frontier)));
 \end{lstlisting}
+\subsubsection{test-bfs.out}
+\begin{lstlisting}
+0
+1
+2
+2
+2
+3
+3
+4
+5
+4
+5
+6
+-1
+\end{lstlisting}
 \subsubsection{test-column\_reduce.bl}
 \begin{lstlisting}
 def plusColumnReduce(A){
@@ -184,6 +295,11 @@ A = [3;2];
 print(toString(plusColumnReduce(A)));
 print(toString(timesColumnReduce(A)));
 \end{lstlisting}
+\subsubsection{test-column\_reduce.out}
+\begin{lstlisting}
+5
+6
+\end{lstlisting}
 \subsubsection{test-comment.bl}
 \begin{lstlisting}
 // This is a comment
@@ -195,9 +311,18 @@ Nah, we ain't finished yet!
 // Now we're done!
 print(toString(2));
 \end{lstlisting}
+\subsubsection{test-comment.out}
+\begin{lstlisting}
+4
+2
+\end{lstlisting}
 \subsubsection{test-compare-select.bl}
 \begin{lstlisting}
 print(toString(1 == 1[0]));
+\end{lstlisting}
+\subsubsection{test-compare-select.out}
+\begin{lstlisting}
+1
 \end{lstlisting}
 \subsubsection{test-convolution1.bl}
 \begin{lstlisting}
@@ -208,6 +333,10 @@ B = I(2);
 C = A~B;
 print(toString(C));
 \end{lstlisting}
+\subsubsection{test-convolution1.out}
+\begin{lstlisting}
+6 8
+12 14\end{lstlisting}
 \subsubsection{test-convolution2.bl}
 \begin{lstlisting}
 #logical;
@@ -217,27 +346,54 @@ A = [1,2,3;
 C = A~1;
 print(toString(C));
 \end{lstlisting}
+\subsubsection{test-convolution2.out}
+\begin{lstlisting}
+1 1 1
+1 0 1
+0 1 1
+\end{lstlisting}
 \subsubsection{test-el\_add.bl}
 \begin{lstlisting}
 M = [1, 3];
 N = [2, 4];
 print(toString(M + N));
 \end{lstlisting}
+\subsubsection{test-el\_add.out}
+\begin{lstlisting}
+3 7\end{lstlisting}
 \subsubsection{test-el\_mul.bl}
 \begin{lstlisting}
 M = [1, 3];
 N = [2, 4];
 print(toString(M @ N));\end{lstlisting}
+\subsubsection{test-el\_mul.out}
+\begin{lstlisting}
+2 12\end{lstlisting}
 \subsubsection{test-exp1.bl}
 \begin{lstlisting}
 M = [1, 2; 3, 4];
 b = 2;
 print(toString(M^b));\end{lstlisting}
+\subsubsection{test-exp1.out}
+\begin{lstlisting}
+7 10 
+15 22 \end{lstlisting}
 \subsubsection{test-for.bl}
 \begin{lstlisting}
 for(a = 0; a < 8; a+=1){
     print(toString(a));
 }
+\end{lstlisting}
+\subsubsection{test-for.out}
+\begin{lstlisting}
+0
+1
+2
+3
+4
+5
+6
+7
 \end{lstlisting}
 \subsubsection{test-func-one.bl}
 \begin{lstlisting}
@@ -251,6 +407,12 @@ def One(size){
 size = 3;
 print(toString(One(size)));
 \end{lstlisting}
+\subsubsection{test-func-one.out}
+\begin{lstlisting}
+1 1 1 
+1 1 1 
+1 1 1 
+\end{lstlisting}
 \subsubsection{test-func1.bl}
 \begin{lstlisting}
 def f(M) {
@@ -259,6 +421,11 @@ def f(M) {
 
 print(toString(f([3;3])));
 \end{lstlisting}
+\subsubsection{test-func1.out}
+\begin{lstlisting}
+3 
+3 
+\end{lstlisting}
 \subsubsection{test-func2.bl}
 \begin{lstlisting}
 def foo() {
@@ -266,6 +433,9 @@ def foo() {
 }
 
 print(toString(foo()));\end{lstlisting}
+\subsubsection{test-func2.out}
+\begin{lstlisting}
+\end{lstlisting}
 \subsubsection{test-func3.bl}
 \begin{lstlisting}
 def foo() {
@@ -273,6 +443,9 @@ def foo() {
 }
 
 print(toString(foo()));
+\end{lstlisting}
+\subsubsection{test-func3.out}
+\begin{lstlisting}
 \end{lstlisting}
 \subsubsection{test-func4.bl}
 \begin{lstlisting}
@@ -286,6 +459,10 @@ foo(M);
 
 print(toString(M));
 \end{lstlisting}
+\subsubsection{test-func4.out}
+\begin{lstlisting}
+4
+\end{lstlisting}
 \subsubsection{test-func5.bl}
 \begin{lstlisting}
 M = [3];
@@ -298,6 +475,10 @@ foo(M);
 
 print(toString(M));
 \end{lstlisting}
+\subsubsection{test-func5.out}
+\begin{lstlisting}
+3
+\end{lstlisting}
 \subsubsection{test-func6.bl}
 \begin{lstlisting}
 def a(G){
@@ -306,17 +487,44 @@ def a(G){
 
 a(1);
 \end{lstlisting}
+\subsubsection{test-func6.out}
+\begin{lstlisting}
+\end{lstlisting}
 \subsubsection{test-generator1.bl}
 \begin{lstlisting}
 print(toString(Zero([4])));
 print(toString(Zero([3;2])));\end{lstlisting}
+\subsubsection{test-generator1.out}
+\begin{lstlisting}
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0
+0 0
+0 0\end{lstlisting}
 \subsubsection{test-generator2.bl}
 \begin{lstlisting}
 print(toString(I(3)));\end{lstlisting}
+\subsubsection{test-generator2.out}
+\begin{lstlisting}
+1 0 0
+0 1 0
+0 0 1\end{lstlisting}
 \subsubsection{test-generator3.bl}
 \begin{lstlisting}
 print(toString(range(3)));
 print(toString(range([-2; 2])));
+\end{lstlisting}
+\subsubsection{test-generator3.out}
+\begin{lstlisting}
+0
+1
+2
+-2
+-1
+0
+1
 \end{lstlisting}
 \subsubsection{test-graph1.bl}
 \begin{lstlisting}
@@ -324,6 +532,10 @@ G = [
   0->1
 ];
 print(toString(G));\end{lstlisting}
+\subsubsection{test-graph1.out}
+\begin{lstlisting}
+0 1
+0 0\end{lstlisting}
 \subsubsection{test-graph2.bl}
 \begin{lstlisting}
 G = [
@@ -333,10 +545,34 @@ G = [
     4->17
 ];
 print(toString(G));\end{lstlisting}
+\subsubsection{test-graph2.out}
+\begin{lstlisting}
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+\end{lstlisting}
 \subsubsection{test-helloworld.bl}
 \begin{lstlisting}
 print([65;66;67;68]);
 \end{lstlisting}
+\subsubsection{test-helloworld.out}
+\begin{lstlisting}
+ABCD\end{lstlisting}
 \subsubsection{test-if1.bl}
 \begin{lstlisting}
 A = [0; 1];
@@ -345,6 +581,10 @@ if (A + [1; 1] > [1; 1]) {
 } else {
   print(toString(A + [3; 4]));
 }\end{lstlisting}
+\subsubsection{test-if1.out}
+\begin{lstlisting}
+3
+5\end{lstlisting}
 \subsubsection{test-if2.bl}
 \begin{lstlisting}
 A = 0;
@@ -360,16 +600,27 @@ if (A) {
 }
 print(toString(A));
 \end{lstlisting}
+\subsubsection{test-if2.out}
+\begin{lstlisting}
+1\end{lstlisting}
 \subsubsection{test-local1.bl}
 \begin{lstlisting}
 M = [65,66;67,68];
 
 print(toString(M));
 \end{lstlisting}
+\subsubsection{test-local1.out}
+\begin{lstlisting}
+65 66
+67 68\end{lstlisting}
 \subsubsection{test-local2.bl}
 \begin{lstlisting}
 {A = 3;}
 print(toString(A));
+\end{lstlisting}
+\subsubsection{test-local2.out}
+\begin{lstlisting}
+3
 \end{lstlisting}
 \subsubsection{test-matmul1.bl}
 \begin{lstlisting}
@@ -383,6 +634,13 @@ C = A*B;
 print(toString(C));
 
 \end{lstlisting}
+\subsubsection{test-matmul1.out}
+\begin{lstlisting}
+3 6 9
+3 6 9
+3 6 9
+3 6 9
+\end{lstlisting}
 \subsubsection{test-matmul2.bl}
 \begin{lstlisting}
 #logical;
@@ -392,15 +650,31 @@ print(toString(5 * 3));
 print(toString(5 * 0));
 print(toString(5 * 3));
 \end{lstlisting}
+\subsubsection{test-matmul2.out}
+\begin{lstlisting}
+0
+1
+0
+3
+\end{lstlisting}
 \subsubsection{test-neg.bl}
 \begin{lstlisting}
 A = [1,0;
     0,3];
 print(toString(!A));
 \end{lstlisting}
+\subsubsection{test-neg.out}
+\begin{lstlisting}
+0 1
+1 0
+\end{lstlisting}
 \subsubsection{test-print\_return.bl}
 \begin{lstlisting}
 A = print(toString(5));
+\end{lstlisting}
+\subsubsection{test-print\_return.out}
+\begin{lstlisting}
+5
 \end{lstlisting}
 \subsubsection{test-range\_from\_vector.bl}
 \begin{lstlisting}
@@ -428,6 +702,13 @@ def rangeFromVector(v){
 A = rangeFromVector([3;0;1;2;0;5]);
 print(toString(A));
 \end{lstlisting}
+\subsubsection{test-range\_from\_vector.out}
+\begin{lstlisting}
+0
+2
+3
+5
+\end{lstlisting}
 \subsubsection{test-reduce\_rows1.bl}
 \begin{lstlisting}
 A = [1,2;
@@ -437,6 +718,14 @@ B = +%A;
 C = *%A;
 print(toString(B));
 print(toString(C));\end{lstlisting}
+\subsubsection{test-reduce\_rows1.out}
+\begin{lstlisting}
+3
+7
+11
+2
+12
+30\end{lstlisting}
 \subsubsection{test-reduce\_rows2.bl}
 \begin{lstlisting}
 #maxmin;
@@ -448,11 +737,26 @@ C = *%A;
 print(toString(B));
 print(toString(C));
 \end{lstlisting}
+\subsubsection{test-reduce\_rows2.out}
+\begin{lstlisting}
+6
+4
+2
+3
+2
+-1
+\end{lstlisting}
 \subsubsection{test-selection1.bl}
 \begin{lstlisting}
 M = Zero(4);
 M[[0;2], [0;2]] = 1;
 print(toString(M));\end{lstlisting}
+\subsubsection{test-selection1.out}
+\begin{lstlisting}
+1 0  1 0
+0 0 0 0
+1 0 1 0
+0 0 0 0\end{lstlisting}
 \subsubsection{test-selection2.bl}
 \begin{lstlisting}
 M = Zero(2);
@@ -462,6 +766,13 @@ N[1, 1, 2, 2] = I(2);
 
 print(toString(M));
 print(toString(N));\end{lstlisting}
+\subsubsection{test-selection2.out}
+\begin{lstlisting}
+0 0
+1 0
+0 0 0
+0 1 0
+0 0 1\end{lstlisting}
 \subsubsection{test-selection3.bl}
 \begin{lstlisting}
 v = [1;1;1];
@@ -470,17 +781,37 @@ u = [1;1;1];
 u[[0;2]] = 2;
 print(toString(v));
 print(toString(u));\end{lstlisting}
+\subsubsection{test-selection3.out}
+\begin{lstlisting}
+1
+2
+1
+2
+1
+2
+\end{lstlisting}
 \subsubsection{test-selection4.bl}
 \begin{lstlisting}
 v = Zero([5;1]);
 v[range(5)] = 1;
 print(toString(v));
 \end{lstlisting}
+\subsubsection{test-selection4.out}
+\begin{lstlisting}
+1
+1
+1
+1
+1\end{lstlisting}
 \subsubsection{test-selection5.bl}
 \begin{lstlisting}
 A = [1,2,3;4,5,6;7,8,9];
 B = A[0,0,2,2];
 print(toString(B));\end{lstlisting}
+\subsubsection{test-selection5.out}
+\begin{lstlisting}
+1 2
+4 5\end{lstlisting}
 \subsubsection{test-selection6.bl}
 \begin{lstlisting}
 A = [1,2,3;
@@ -491,10 +822,20 @@ v = [1;2;3;4];
 u = v[[0;2;3]];
 print(toString(B));
 print(toString(u));\end{lstlisting}
+\subsubsection{test-selection6.out}
+\begin{lstlisting}
+1 3
+7 9
+1
+3
+4\end{lstlisting}
 \subsubsection{test-selection7.bl}
 \begin{lstlisting}
 A = [1,2;2,3][0,0,0,0];
 print(toString(A));
+\end{lstlisting}
+\subsubsection{test-selection7.out}
+\begin{lstlisting}
 \end{lstlisting}
 \subsubsection{test-semiring1.bl}
 \begin{lstlisting}
@@ -521,6 +862,18 @@ prints(a * c);
 prints(a + b);
 prints(a * b);
 prints(a * c);
+\end{lstlisting}
+\subsubsection{test-semiring1.out}
+\begin{lstlisting}
+5
+6
+0
+1
+1
+0
+3
+2
+0
 \end{lstlisting}
 \subsubsection{test-semiring2.bl}
 \begin{lstlisting}
@@ -577,11 +930,38 @@ f(A, B);
         5) logical
 */
 \end{lstlisting}
+\subsubsection{test-semiring2.out}
+\begin{lstlisting}
+3 4 0
+9 12 10
+15 20 20
+
+1 1 0
+3 3 2
+3 4 4
+
+1 1 0
+3 3 2
+3 4 4
+
+3 4 0
+9 12 10
+15 20 20
+
+1 1 0
+1 1 1
+1 1 1
+
+\end{lstlisting}
 \subsubsection{test-size.bl}
 \begin{lstlisting}
 A = [1,2,3;4,5,6];
 B = |A|;
 print(toString(B));\end{lstlisting}
+\subsubsection{test-size.out}
+\begin{lstlisting}
+2
+3\end{lstlisting}
 \subsubsection{test-standardlib.bl}
 \begin{lstlisting}
 def plusColumnReduce(A){
@@ -614,15 +994,29 @@ def One(size){
     return A;
 }
 \end{lstlisting}
+\subsubsection{test-standardlib.out}
+\begin{lstlisting}
+\end{lstlisting}
 \subsubsection{test-string1.bl}
 \begin{lstlisting}
 A = 'BLAS';
 print(toString(A));
 \end{lstlisting}
+\subsubsection{test-string1.out}
+\begin{lstlisting}
+66
+76
+65
+83
+\end{lstlisting}
 \subsubsection{test-transpose.bl}
 \begin{lstlisting}
 M = [1, 2; 3, 4];
 print(toString(M^T));\end{lstlisting}
+\subsubsection{test-transpose.out}
+\begin{lstlisting}
+1 3
+2 4\end{lstlisting}
 \subsubsection{test-vert\_concat.bl}
 \begin{lstlisting}
 A = [1,2];
@@ -630,6 +1024,11 @@ B = [3,4;
     5,6];
 C = A:B;
 print(toString(C));\end{lstlisting}
+\subsubsection{test-vert\_concat.out}
+\begin{lstlisting}
+1 2
+3 4
+5 6\end{lstlisting}
 \subsubsection{test-while1.bl}
 \begin{lstlisting}
 A = 1;
@@ -644,6 +1043,23 @@ while (C < B) {
   C = C + 1;
 }
 \end{lstlisting}
+\subsubsection{test-while1.out}
+\begin{lstlisting}
+2
+3
+4
+5
+6
+7
+8
+9
+10
+4
+5
+6
+7
+8
+9\end{lstlisting}
 \subsubsection{test-while2.bl}
 \begin{lstlisting}
 def doubler(A) {
@@ -657,3 +1073,6 @@ def doubler(A) {
 }
 
 print(toString(doubler(4)));\end{lstlisting}
+\subsubsection{test-while2.out}
+\begin{lstlisting}
+16\end{lstlisting}
