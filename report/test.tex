@@ -1,5 +1,17 @@
 \section{Test Plan}
 
+We began by just testing our scanner and parser. Each BLAStoff test program had a corresponding output that contained the program's prettified abstract syntax tree. These tests helped us keep plan and track which operators and expressions remained to be parsed. The tests were written at the time the initial Language Reference Manual was submitted to better guide development. These tests included fail cases (\texttt{fail-*.bl} and corresponding errors \texttt{fail-*.err}) that we knew should never be parsed correctly so as to prevent rules that weren't narrowly tailored enough to our language. Jason had the responsibility of writing and organizing this portion of testing.
+
+After we had implemented the most bare bones code generator, we were ready to add more features. At this point, we began to add more and more testing. As the Tester, Jason wrote a set of preliminary tests to guide the prototype of BLAStoff. These tests included common matrix operations like addition and element-wise multiplication, as well as common control flow statements. After the preliminary tests passed, all team members chipped in to work on language features. During this stage, team members wrote tests for their own features if the test did not already exist.
+
+\subsection{Testing suite}
+
+There were a total of 72 tests — 21 fail cases (as explained above) and 51 feature tests.
+
+\subsection{Automation}
+
+We used the provided \texttt{./testall.sh} from the MicroC parser to automate out parser. From time to time, we made modifications as to best fit our needs. When we were testing our scanner and parser for instance, we added functions to only check the output of the abstract syntax tree. We later added convenience arguments, such as an argument \texttt{stem} that automatically became the glob pattern \texttt{test-stem*.bl}.
+
 \subsection{Listing of tests}
 Below are all tests, and their outputs.\\
 \input{appendix_test}
