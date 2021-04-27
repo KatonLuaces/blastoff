@@ -46,9 +46,9 @@ TESTFILES = $(TESTS:%=test-%.bl) $(TESTS:%=test-%.out) \
 	    $(FAILS:%=fail-%.bl) $(FAILS:%=fail-%.out)
 
 TARFILES = ast.ml codegen.ml Makefile _tags blastoff.ml parser.mly \
-	README.md scanner.mll semant.ml \
+	README.md scanner.mll semant.ml definitions.ml\
 	testlocal.sh testall.sh \
-	backend.c \
+	backend.c graphblas.h\
 	Dockerfile \
 	.ocamlformat \
 	tests/
