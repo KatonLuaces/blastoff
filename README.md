@@ -7,6 +7,6 @@ First, download [GraphBLAS v4.0.3](https://github.com/DrTimothyAldenDavis/GraphB
 
 Next, run `run-docker.sh` to spin up a Docker container corresponding to the provided Dockerfile. Inside the container, run `make` to build the compiler and automatically run all tests.
 
-To re-run tests without re-building, you can also directly run the `testall.sh` script.
+To re-run tests without re-building, you can also directly run the `testall.sh` script.  Run `testall.sh fail` for the fail scripts.
 
 To run an individual .bl file and see the output, you can run the `testlocal.sh` script, with the filename as an argument.
