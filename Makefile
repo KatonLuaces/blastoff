@@ -12,7 +12,7 @@ all : blastoff.native backend.o
 #
 # See https://github.com/ocaml/ocamlbuild/blob/master/manual/manual.adoc
 
-blastoff.native : blastoff.ml ast.ml parser.mly scanner.mll codegen.ml backend.bc
+blastoff.native : blastoff.ml ast.ml parser.mly scanner.mll semant.ml codegen.ml backend.bc
 	opam config exec -- \
 	ocamlbuild -use-ocamlfind blastoff.native -pkgs llvm.bitreader
 
@@ -45,13 +45,14 @@ FAILS = \
 TESTFILES = $(TESTS:%=test-%.bl) $(TESTS:%=test-%.out) \
 	    $(FAILS:%=fail-%.bl) $(FAILS:%=fail-%.out)
 
-TARFILES = ast.ml sast.ml codegen.ml Makefile _tags blastoff.ml parser.mly \
-	README scanner.mll semant.ml testall.sh \
-	arcade-font.pbm font2c \
+TARFILES = ast.ml codegen.ml Makefile _tags blastoff.ml parser.mly \
+	README.md scanner.mll semant.ml \
+	testlocal.sh testall.sh \
+	backend.c \
 	Dockerfile \
-	$(TESTFILES:%=tests/%)
+	.ocamlformat \
+	tests/
 
 blastoff.tar.gz : $(TARFILES)
 	cd .. && tar czf blastoff/blastoff.tar.gz \
 		$(TARFILES:%=blastoff/%)
-
