@@ -1,0 +1,659 @@
+\subsubsection{fail-else1.bl}
+\begin{lstlisting}
+else () {}\end{lstlisting}
+\subsubsection{fail-elseif1.bl}
+\begin{lstlisting}
+elseif () {}\end{lstlisting}
+\subsubsection{fail-for1.bl}
+\begin{lstlisting}
+for (;;)\end{lstlisting}
+\subsubsection{fail-for2.bl}
+\begin{lstlisting}
+for () {}\end{lstlisting}
+\subsubsection{fail-for3.bl}
+\begin{lstlisting}
+for {}\end{lstlisting}
+\subsubsection{fail-func.bl}
+\begin{lstlisting}
+def foo() {
+  return [3];
+}
+def call(f) {
+  return f();
+}
+print(call(foo));\end{lstlisting}
+\subsubsection{fail-function1.bl}
+\begin{lstlisting}
+def foo {
+  ;
+}\end{lstlisting}
+\subsubsection{fail-function2.bl}
+\begin{lstlisting}
+def () {
+  ;
+}\end{lstlisting}
+\subsubsection{fail-function3.bl}
+\begin{lstlisting}
+def foo()\end{lstlisting}
+\subsubsection{fail-generators.bl}
+\begin{lstlisting}
+Zero\end{lstlisting}
+\subsubsection{fail-graph1.bl}
+\begin{lstlisting}
+G = {
+  0->;
+}\end{lstlisting}
+\subsubsection{fail-graph2.bl}
+\begin{lstlisting}
+G = {
+  ->1;
+}\end{lstlisting}
+\subsubsection{fail-graph3.bl}
+\begin{lstlisting}
+G = {
+  0->1
+}\end{lstlisting}
+\subsubsection{fail-if1.bl}
+\begin{lstlisting}
+if { ; }\end{lstlisting}
+\subsubsection{fail-if2.bl}
+\begin{lstlisting}
+if ()\end{lstlisting}
+\subsubsection{fail-selection1.bl}
+\begin{lstlisting}
+M[range]\end{lstlisting}
+\subsubsection{fail-selection2.bl}
+\begin{lstlisting}
+M[[0;2], [0:2], a] /* 3 things */\end{lstlisting}
+\subsubsection{fail-semiring1.bl}
+\begin{lstlisting}
+<#katonsNameIsActuallyKatie>;\end{lstlisting}
+\subsubsection{fail-while1.bl}
+\begin{lstlisting}
+while () {} /* boolean is empty */\end{lstlisting}
+\subsubsection{fail-while2.bl}
+\begin{lstlisting}
+while {}\end{lstlisting}
+\subsubsection{fail-while3.bl}
+\begin{lstlisting}
+while ()\end{lstlisting}
+\subsubsection{test-assignment\_ops.bl}
+\begin{lstlisting}
+A = 1;
+print(toString(A));
+A*=2;
+print(toString(A));
+A~=2;
+print(toString(A));
+A@=2;
+print(toString(A));
+A+=1;
+print(toString(A));
+A^=2;
+print(toString(A));
+A:=A;
+print(toString(A));
+\end{lstlisting}
+\subsubsection{test-bfs.bl}
+\begin{lstlisting}
+def plusColumnReduce(A){
+    #_;
+    return (+%(A^T))^T;
+}
+
+def rangeFromVector(v){
+    #logical;
+    vlogic = v~1;
+    #arithmetic;
+    n = plusColumnReduce(vlogic);
+    u = Zero(n:1);
+    j = 0;
+    for (i = 0; i < |v|[0]; i += 1) {
+        if (v[i]) {
+            u[j] = i;
+            j = j + 1;
+        }
+    }
+    return u;
+}
+
+def One(size){
+    A = Zero(size);
+    A[range(size[0]), range(size[1])] = 1;
+    return A;
+}
+
+def BFS(G, frontier){
+    #logical;
+    N = |G|[0];
+    levels = Zero(N : 1);
+    maskedGT = G^T;
+    depth = 0;
+    while (plusColumnReduce(frontier)) {
+        #arithmetic;
+        depth = depth + 1;
+        #logical;
+        levels[rangeFromVector(frontier)] = depth;
+        mask = !(frontier)[0, Zero(N:1), N, 1];
+        maskedGT = maskedGT @ mask;
+        frontier = maskedGT*frontier;
+    }
+    #arithmetic;
+    return levels + One(|levels|)~(-1);
+}
+
+
+// Graph is from Algorithms, Papadimitriou et al., Figure 3.9.a
+G = [
+  0->1;
+  1->2;
+  1->3;
+  1->4;
+  2->5;
+  4->1;
+  4->5;
+  4->6;
+  5->2;
+  5->7;
+  6->7;
+  6->9;
+  7->10;
+  8->6;
+  9->8;
+  10->11;
+  11->9;
+  12->0
+];
+frontier = Zero(|G|[0] : 1);
+frontier[0] = 1;
+
+print(toString(BFS(G, frontier)));
+\end{lstlisting}
+\subsubsection{test-column\_reduce.bl}
+\begin{lstlisting}
+def plusColumnReduce(A){
+    #_;
+    return (+%(A^T))^T;
+}
+
+def timesColumnReduce(A){
+    #_;
+    return (*%(A^T))^T;
+}
+A = [3;2];
+print(toString(plusColumnReduce(A)));
+print(toString(timesColumnReduce(A)));
+\end{lstlisting}
+\subsubsection{test-comment.bl}
+\begin{lstlisting}
+// This is a comment
+print(toString(4));
+/* So is this
+print(toString(3));
+Nah, we ain't finished yet!
+*/
+// Now we're done!
+print(toString(2));
+\end{lstlisting}
+\subsubsection{test-compare-select.bl}
+\begin{lstlisting}
+print(toString(1 == 1[0]));
+\end{lstlisting}
+\subsubsection{test-convolution1.bl}
+\begin{lstlisting}
+A = [1,2,3;
+    4,5,6;
+    7,8,9];
+B = I(2);
+C = A~B;
+print(toString(C));
+\end{lstlisting}
+\subsubsection{test-convolution2.bl}
+\begin{lstlisting}
+#logical;
+A = [1,2,3;
+    4,0,6;
+    0,8,9];
+C = A~1;
+print(toString(C));
+\end{lstlisting}
+\subsubsection{test-el\_add.bl}
+\begin{lstlisting}
+M = [1, 3];
+N = [2, 4];
+print(toString(M + N));
+\end{lstlisting}
+\subsubsection{test-el\_mul.bl}
+\begin{lstlisting}
+M = [1, 3];
+N = [2, 4];
+print(toString(M @ N));\end{lstlisting}
+\subsubsection{test-exp1.bl}
+\begin{lstlisting}
+M = [1, 2; 3, 4];
+b = 2;
+print(toString(M^b));\end{lstlisting}
+\subsubsection{test-for.bl}
+\begin{lstlisting}
+for(a = 0; a < 8; a+=1){
+    print(toString(a));
+}
+\end{lstlisting}
+\subsubsection{test-func-one.bl}
+\begin{lstlisting}
+def One(size){
+    A = Zero(size);
+    oneSize = |A|;
+    A[range(oneSize[0]), range(oneSize[1])] = 1;
+    return A;
+}
+
+size = 3;
+print(toString(One(size)));
+\end{lstlisting}
+\subsubsection{test-func1.bl}
+\begin{lstlisting}
+def f(M) {
+  return M;
+}
+
+print(toString(f([3;3])));
+\end{lstlisting}
+\subsubsection{test-func2.bl}
+\begin{lstlisting}
+def foo() {
+    return [];
+}
+
+print(toString(foo()));\end{lstlisting}
+\subsubsection{test-func3.bl}
+\begin{lstlisting}
+def foo() {
+    return;
+}
+
+print(toString(foo()));
+\end{lstlisting}
+\subsubsection{test-func4.bl}
+\begin{lstlisting}
+M = [3];
+
+def foo(M) {
+  M[0] = [4];
+}
+
+foo(M);
+
+print(toString(M));
+\end{lstlisting}
+\subsubsection{test-func5.bl}
+\begin{lstlisting}
+M = [3];
+
+def foo(M) {
+  M = [4];
+}
+
+foo(M);
+
+print(toString(M));
+\end{lstlisting}
+\subsubsection{test-func6.bl}
+\begin{lstlisting}
+def a(G){
+    G = G + 1;
+}
+
+a(1);
+\end{lstlisting}
+\subsubsection{test-generator1.bl}
+\begin{lstlisting}
+print(toString(Zero([4])));
+print(toString(Zero([3;2])));\end{lstlisting}
+\subsubsection{test-generator2.bl}
+\begin{lstlisting}
+print(toString(I(3)));\end{lstlisting}
+\subsubsection{test-generator3.bl}
+\begin{lstlisting}
+print(toString(range(3)));
+print(toString(range([-2; 2])));
+\end{lstlisting}
+\subsubsection{test-graph1.bl}
+\begin{lstlisting}
+G = [
+  0->1
+];
+print(toString(G));\end{lstlisting}
+\subsubsection{test-graph2.bl}
+\begin{lstlisting}
+G = [
+    0->1;
+    1->0;
+    1->2;
+    4->17
+];
+print(toString(G));\end{lstlisting}
+\subsubsection{test-helloworld.bl}
+\begin{lstlisting}
+print([65;66;67;68]);
+\end{lstlisting}
+\subsubsection{test-if1.bl}
+\begin{lstlisting}
+A = [0; 1];
+if (A + [1; 1] > [1; 1]) {
+  print(toString(A + [1; 2]));
+} else {
+  print(toString(A + [3; 4]));
+}\end{lstlisting}
+\subsubsection{test-if2.bl}
+\begin{lstlisting}
+A = 0;
+if (A) {
+  A = 0;
+} else {
+  A = 3;
+}
+if (A) {
+  A = 1;
+} else {
+  A = 3;
+}
+print(toString(A));
+\end{lstlisting}
+\subsubsection{test-local1.bl}
+\begin{lstlisting}
+M = [65,66;67,68];
+
+print(toString(M));
+\end{lstlisting}
+\subsubsection{test-local2.bl}
+\begin{lstlisting}
+{A = 3;}
+print(toString(A));
+\end{lstlisting}
+\subsubsection{test-matmul1.bl}
+\begin{lstlisting}
+A = [1,2;
+    1,2;
+    1,2;
+    1,2];
+B = [1,2,3;
+    1,2,3];
+C = A*B;
+print(toString(C));
+
+\end{lstlisting}
+\subsubsection{test-matmul2.bl}
+\begin{lstlisting}
+#logical;
+print(toString(5 * 0));
+print(toString(5 * 3));
+#maxmin;
+print(toString(5 * 0));
+print(toString(5 * 3));
+\end{lstlisting}
+\subsubsection{test-neg.bl}
+\begin{lstlisting}
+A = [1,0;
+    0,3];
+print(toString(!A));
+\end{lstlisting}
+\subsubsection{test-print\_return.bl}
+\begin{lstlisting}
+A = print(toString(5));
+\end{lstlisting}
+\subsubsection{test-range\_from\_vector.bl}
+\begin{lstlisting}
+def plusColumnReduce(A){
+    #_;
+    return (+%(A^T))^T;
+}
+
+def rangeFromVector(v){
+    #logical;
+    vlogic = v~1;
+    #arithmetic;
+    n = plusColumnReduce(vlogic);
+    u = Zero(n:1);
+    j = 0;
+    for (i = 0; i < |v|[0]; i += 1) {
+        if (v[i]) {
+            u[j] = i;
+            j = j + 1;
+        }
+    }
+    return u;
+}
+
+A = rangeFromVector([3;0;1;2;0;5]);
+print(toString(A));
+\end{lstlisting}
+\subsubsection{test-reduce\_rows1.bl}
+\begin{lstlisting}
+A = [1,2;
+    3,4;
+    5,6];
+B = +%A;
+C = *%A;
+print(toString(B));
+print(toString(C));\end{lstlisting}
+\subsubsection{test-reduce\_rows2.bl}
+\begin{lstlisting}
+#maxmin;
+A = [3,6;
+    2,4;
+    -1,2];
+B = +%A;
+C = *%A;
+print(toString(B));
+print(toString(C));
+\end{lstlisting}
+\subsubsection{test-selection1.bl}
+\begin{lstlisting}
+M = Zero(4);
+M[[0;2], [0;2]] = 1;
+print(toString(M));\end{lstlisting}
+\subsubsection{test-selection2.bl}
+\begin{lstlisting}
+M = Zero(2);
+M[1, 0] = 1;
+N = Zero(3);
+N[1, 1, 2, 2] = I(2);
+
+print(toString(M));
+print(toString(N));\end{lstlisting}
+\subsubsection{test-selection3.bl}
+\begin{lstlisting}
+v = [1;1;1];
+v[1] = 2;
+u = [1;1;1];
+u[[0;2]] = 2;
+print(toString(v));
+print(toString(u));\end{lstlisting}
+\subsubsection{test-selection4.bl}
+\begin{lstlisting}
+v = Zero([5;1]);
+v[range(5)] = 1;
+print(toString(v));
+\end{lstlisting}
+\subsubsection{test-selection5.bl}
+\begin{lstlisting}
+A = [1,2,3;4,5,6;7,8,9];
+B = A[0,0,2,2];
+print(toString(B));\end{lstlisting}
+\subsubsection{test-selection6.bl}
+\begin{lstlisting}
+A = [1,2,3;
+    4,5,6;
+    7,8,9];
+B = A[[0;2], [0;2] , 1, 1];
+v = [1;2;3;4];
+u = v[[0;2;3]];
+print(toString(B));
+print(toString(u));\end{lstlisting}
+\subsubsection{test-selection7.bl}
+\begin{lstlisting}
+A = [1,2;2,3][0,0,0,0];
+print(toString(A));
+\end{lstlisting}
+\subsubsection{test-semiring1.bl}
+\begin{lstlisting}
+def prints(M) {
+    print(toString(M));
+    return;
+}
+
+a = 2;
+b = 3;
+c = 0;
+
+#arithmetic;
+prints(a + b);
+prints(a * b);
+prints(a * c);
+
+#logical;
+prints(a + b);
+prints(a * b);
+prints(a * c);
+
+#maxmin;
+prints(a + b);
+prints(a * b);
+prints(a * c);
+\end{lstlisting}
+\subsubsection{test-semiring2.bl}
+\begin{lstlisting}
+def prints(M) {
+    print(toString(M));
+    print([10]);
+    return;
+}
+
+def g1(A, B) {
+    #maxmin;
+    prints(A * B);
+    return;
+}
+
+def g2(A, B) {
+    prints(A * B);
+    return;
+}
+
+def g3(A, B) {
+    #_;
+    prints(A * B);
+    return;
+}
+
+def f(A, B) {
+    #maxmin;
+    prints(A * B);
+    #logical;
+    g1(A, B);
+    g2(A, B);
+    g3(A, B);
+    return;
+}
+
+A = [0,1;
+     2,3;
+     4,5];
+
+B = [0,0,5;
+     3,4,0];
+
+prints(A * B);
+
+f(A, B);
+
+/*
+    Should be:
+        1) arithmetic
+        2) maxmin
+        3) maxmin
+        4) arithmetic
+        5) logical
+*/
+\end{lstlisting}
+\subsubsection{test-size.bl}
+\begin{lstlisting}
+A = [1,2,3;4,5,6];
+B = |A|;
+print(toString(B));\end{lstlisting}
+\subsubsection{test-standardlib.bl}
+\begin{lstlisting}
+def plusColumnReduce(A){
+    #_;
+    return (+%(A^T))^T;
+}
+
+def rangeFromVector(v){
+    #logical;
+    vlogic = v~1;
+    #arithmetic;
+    n = plusColumnReduce(vlogic);
+    u = Zero(n:1);
+    j = 0;
+    i = 0;
+    while (i < |v|[0]) {
+        if (v[i]) {
+            u[j] = i;
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return u;
+}
+
+def One(size){
+    A = Zero(size);
+    oneSize = |A|;
+    A[range(oneSize[0]), range(oneSize[1])] = 1;
+    return A;
+}
+\end{lstlisting}
+\subsubsection{test-string1.bl}
+\begin{lstlisting}
+A = 'BLAS';
+print(toString(A));
+\end{lstlisting}
+\subsubsection{test-transpose.bl}
+\begin{lstlisting}
+M = [1, 2; 3, 4];
+print(toString(M^T));\end{lstlisting}
+\subsubsection{test-vert\_concat.bl}
+\begin{lstlisting}
+A = [1,2];
+B = [3,4;
+    5,6];
+C = A:B;
+print(toString(C));\end{lstlisting}
+\subsubsection{test-while1.bl}
+\begin{lstlisting}
+A = 1;
+B = 10;
+while (A < B) {
+  A = A + 1;
+  print(toString(A));
+}
+C = 4;
+while (C < B) {
+  print(toString(C));
+  C = C + 1;
+}
+\end{lstlisting}
+\subsubsection{test-while2.bl}
+\begin{lstlisting}
+def doubler(A) {
+  i = 0;
+  B = 1;
+  while (i < A) {
+    B = B @ 2;
+    i = i + 1;
+  }
+  return B;
+}
+
+print(toString(doubler(4)));\end{lstlisting}

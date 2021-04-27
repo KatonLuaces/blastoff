@@ -3,14 +3,17 @@
 import os
 
 TEST_DIR = '../tests/'
-tests = sorted(os.listdir(TEST_DIR))
+output = ""
 
-for t in tests:
+for t in sorted(os.listdir(TEST_DIR)):
     if not t.endswith('.bl'):
         continue
+    output += '\subsubsection{' + t.replace('_', '\_') + '}\n'
+    output += '\\begin{lstlisting}\n'
     with open(TEST_DIR + t) as f:
-        contents = f.read()
-    print('\subsubsection{' + t + '}')
-    print('\\begin{lstlisting}')
-    print(contents)
-    print('\\end{lstlisting}')
+        output += f.read()
+    output += '\\end{lstlisting}\n'
+
+# print(output)
+with open('appendix_test.tex', 'w') as f:
+    f.write(output)
