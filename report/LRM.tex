@@ -45,12 +45,12 @@ int -> int
 \end{lstlisting}
 Here's an example:
 \begin{lstlisting}
-G = {
+G = [
     0->1;
     1->0;
     1->2;
     4;
-};
+];
 \end{lstlisting}
 This will set $M$ as the adjacency matrix for the graph described, which in this case would be: $$\begin{bmatrix}0&1&0&0&0\\1&0&1&0&0\\0&0&0&0&0\\0&0&0&0&0\\0&0&0&0&0\end{bmatrix}$$  As we can see in this code example, each line in the graph definition can be an edge $a\to b;$ defining a node between vertices $a$ and $b$ where $a,b$ are non-negative integers, or just a vertex $c;$ where $c$ is also a non-negative integer, which just defines that the vertex $c$ exists.  The matrix created will be an $n \times n$ matrix, where $n$ is the highest vertex (in our case 4) defined plus 1.  Thus, the graph created will have nodes $[0,n-1]$.  Any vertices not mentioned in the definition but in the range $[0,n-1]$ will be created, but not have any edges to or from it (such as vertex 3 in this case). \begin{comment}
 We could easily extend this syntax to allow for bi-directional or weighted graphs, and will decide later whether to do this.
@@ -671,11 +671,11 @@ Below is the precedence table for operators, from highest to lowest:
     \hline
     Operator &  Symbol & Associativity\\
     \hline
+    Logical Negation & \verb|!| & Right\\
+    \hline
     Exponentiation & \verb|^| & Right\\
     \hline
     Selection & \verb|[]| & Left\\
-    \hline
-    Logical Negation & \verb|!| & Right\\
     \hline
     Reduce Rows & \verb|+%|, \verb|*%| & Right\\
     \hline
@@ -686,6 +686,8 @@ Below is the precedence table for operators, from highest to lowest:
     Addition &  \verb|+| & Left\\
     \hline
     Comparisons &  \verb|<|, \verb|>|, \verb|==|, \verb|<=|, \verb|>=|  & Left\\
+    \hline
+    Assignment &  \verb|=|  & Left\\
     \hline
 \end{tabular}
 \end{center}

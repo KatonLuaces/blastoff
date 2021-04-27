@@ -27,7 +27,7 @@ open Ast
 %left PLUS
 %left MATMUL ELMUL
 %left CONCAT CONV
-%left RAISE
+%right RAISE
 %left EDGE
 %right PLUSREDUCE MULREDUCE
 %left TRANSP
